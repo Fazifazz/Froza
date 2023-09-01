@@ -19,6 +19,10 @@
                             </div>
                             <form action="/signup" method="post">
 
+                                <% if (typeof error !== "undefined") { %>
+                                    <div class="alert alert-danger mb-2"><%= error %></div>
+                                <% } %>
+
 
                                 <div class="form-outline mb-3 row ">
                                     <div class=" col-md-6 col-12 mb-3">

@@ -9,7 +9,10 @@ const {
     destroyCategory, 
     updateCategory, 
     showCreateCategory, 
-    createCategory 
+    createCategory, 
+    showProductCreate,
+    createProduct,
+    showProductsIndex
 } = require('../controllers/adminController')
 
 router.get('/login', loadLogin)
@@ -27,9 +30,9 @@ router.patch('/categories/:id', middleware.uploadCategoryImage, middleware.resiz
 
 // Products Routes
 
-// router.get('/products', showProductsIndex)
-// router.get('/products/create', showProductCreate)
-// router.post('/products', createProduct)
+router.get('/products', showProductsIndex)
+router.get('/products/create', showProductCreate)
+router.post('/products',middleware.uploadProductImages, createProduct)
 // router.get('/products/:id/edit', showProductEdit)
 // router.put('/products/:id', updateProduct)
 // router.delete('/products/:id', destroyProduct)

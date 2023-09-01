@@ -2,6 +2,7 @@ const Admin = require('../models/adminModel')
 const bcrypt = require('bcrypt');
 const catchAsync = require('../utils/catchAsync')
 const Category = require('../models/categoryModel')
+const Product = require('../models/productModel')
 const fs = require('fs')
 const path = require('path')
 
@@ -18,21 +19,21 @@ exports.loadLogin = (req, res) => {
 }
 
 
-exports.verifyAdminLogin = async(req,res, next) => {
+exports.verifyAdminLogin = async (req, res, next) => {
     try {
-        const {email, password} = req.body;
-        const adminData = await Admin.findOne({email})
-        
-        if(adminData){
+        const { email, password } = req.body;
+        const adminData = await Admin.findOne({ email })
+
+        if (adminData) {
             const passwordMatch = await bcrypt.compare(password, adminData.password)
-            if(passwordMatch){
+            if (passwordMatch) {
                 req.session.adminId = adminData._id;
                 res.redirect('/admin/dashboard')
-            }else{
-                res.render('admin/adminLogin',{error:'password is invalid'})
+            } else {
+                res.render('admin/adminLogin', { error: 'password is invalid' })
             }
-        }else{
-            res.render('admin/adminLogin',{error:'email is invalid'})
+        } else {
+            res.render('admin/adminLogin', { error: 'email is invalid' })
         }
 
     } catch (error) {
@@ -53,14 +54,14 @@ exports.showCreateCategory = (req, res) => {
 }
 
 
-exports.createCategory = catchAsync(async(req,res)=>{
+exports.createCategory = catchAsync(async (req, res) => {
     const { name, photo } = req.body;
     if (name.length === 0 || photo.length === 0) return res.render('admin/categories/new', { error: 'Name and Photo are required fields.' })
     await Category.create({
         name,
         image: '/category/' + photo
     })
-    req.flash('success','Category Added successfully')
+    req.flash('success', 'Category Added successfully')
     res.redirect("/admin/Category");
 })
 
@@ -100,6 +101,33 @@ exports.updateCategory = catchAsync(async (req, res) => {
 
     res.redirect('/admin/Category')
 })
+
+exports.showProductCreate = catchAsync(async (req, res) => {
+    const categories = await Category.find({})
+    res.render('admin/products/new', { categories })
+})
+
+exports.createProduct = catchAsync(async (req, res) => {
+    const { title, description, mrp, regular, stock, category, } = req.body;
+    const images = req.files.map(file => '/products/' + file.filename)
+    await Product.create({
+        title,
+        images,
+        description,
+        mrp,
+        regularPrice: regular,
+        stock,
+        category
+    })
+
+    res.redirect("/admin/products");
+})
+
+exports.showProductsIndex = catchAsync(async (req, res) => {
+    const products = await Product.find({}).populate('category')
+    res.render('admin/products/index', { products })
+})
+
 
 // exports.updateCategory = catchAsync(async(req,res)=>{
 //     const {name,photo} = req.body;

@@ -1,5 +1,8 @@
 const User = require('../models/userModel');
 const bcrypt = require('bcrypt')
+const email = require('../utils/email')
+const randomString = require('randomstring');
+const catchAsync = require('../utils/catchAsync');
 require('dotenv').config()
 // const { getOTP, getReferralCode, securePassword } = require('../helpers/generator')
 const securePassword=async (password)=>{
@@ -12,6 +15,7 @@ const securePassword=async (password)=>{
     }
  
 }
+
 
 exports.index = (req, res) => {
     res.render('users/index')
@@ -30,16 +34,30 @@ exports.insertUser=async (req,res)=>{
     const userExists = await User.findOne({ email: req.body.email })
       if (userExists) return res.render('users/signup', { message: null, error: "User already exists." })
       const secPassword=await securePassword(req.body.password)  
+      const otp = randomString.generate({
+        length:4,
+        charset:'numeric',
+      })
       const user=new User({
         fname: req.body.fname,
         lname: req.body.lname,
         mobile: req.body.mobile,
         email: req.body.email,
         password: secPassword,
+        otp:otp,
       })
+
       const userData=await user.save()
       if(userData){
-        res.redirect('/login')
+        const options = {
+          from:process.env.EMAIL,
+          to:req.body.email,
+          subject: 'Froza varification OTP',
+          html:`<center> <h2>Varify Your Email </h2> <br> <h5>OTP :${otp}</h5><br><p>This otp is only valid for 5 minutes only</p></center>`
+      }
+        await email.sendMail(options);
+        return res.redirect('/verifyOtp')
+        
       }else{
         res.render('users/signup',{ error:"Your registration has been failed", message: null })
       }
@@ -67,110 +85,32 @@ exports.validLogin = async (req, res)=>{
     }
   }
 
-// exports.saveAndLogin = async(req,res, next) => {
-//     try {
-//         const { fname, lname, email, mobile, password, confirmPassword, referral } = req.body;
-//         if(password === confirmPassword){
+exports.showVerifyOtp = (req,res) => {
+    res.render('users/validateOtp')
+}
 
-//             const userData = await User.findOne({email})
-//             if(userData){
-//                 return res.render('signup',{message : 'User Already Exists'})
-//             }
-
-//             // const OTP = req.session.OTP = getOTP()
-            
-//             // sendVerifyMail(email, OTP); 
-
-//             // setTimeout(() => {
-//             //     req.session.OTP = null; // Or delete req.session.otp;
-//             // }, 600000); 
-
-//             res.render('otpValidation',{ fname, lname, email, mobile, password, referral, message : 'Check Spam mails' })
-
-//         }else{
-//             res.render('signup',{message : 'Password not matching'})
-//         }
-
-
-//     } catch (error) {
-//         next(error);
-//     }
-// }
-
-// exports.validateOTP = async(req,res, next) => { 
-//     try {
-//         const { fname, lname, email, mobile, password } = req.body
-
-//         const userOTP = req.body.OTP
-//         const referral = req.body.referral.trim()
-
-//         if(userOTP == req.session.OTP){
-//             const sPassword = await securePassword(password)
-//             const referralCode = await getReferralCode()
+exports.varifyOtp = catchAsync(async (req,res) => {
+  const { otp } = req.body;
+  const user = await User.findOne({ otp })
+  if(!user){
+    req.flash('error','invalid')
+    res.redirect('/verifyOtp')
+  }else{
+    const isVarified = await User.findOneAndUpdate({_id:user._id},{$set:{verified:true}},{new:true});
+    console.log(isVarified.verified);
+    if(isVarified.verified){
+      // res.flash('success','You are Verified!')
+      res.redirect('/')
+    }else{
+      // req.flash('error','invalid')
+      res.redirect('/varifyOtp')
+    }
+  }
+})
 
 
-//             let newUserData;
-//             if(referral){
 
-//                 const isReferrerExist = await User.findOne({referralCode: referral})
-//                 if(isReferrerExist){
-//                     let referrerId = isReferrerExist._id;
 
-//                     const walletHistory = {
-//                         date: new Date(),
-//                         amount: 100,
-//                         message: 'Joining Bonus'
-//                     }
-
-//                     newUserData = await new User({
-//                         fname, lname, email, mobile,
-//                         password:sPassword, referralCode,
-//                         referredBy: referral, wallet: 100,
-//                         walletHistory
-//                     }).save();
-    
-//                     updateWallet(referrerId, 100, 'Refferal Reward')
-//                 }
-
-//             }else{
-
-//                 newUserData = await new User({
-//                     fname, lname, email, mobile,
-//                     password:sPassword, referralCode
-//                 }).save();
-
-//             }
-
-//             req.session.userId = newUserData._id;
-
-//             res.redirect('/');
-//         }else{
-//             console.log('Incorrect OTP');
-//             res.render('otpValidation',{ fname, lname, email, mobile, password, referral, message : 'Incorrect OTP' })
-//         }
-//     } catch (error) {
-//         next(error);
-//     }
-// }
-
-// exports.resendOTP = async(req, res, next) => {
-//     try {
-//         console.log('in resend otp controller');
-//         const { email } = req.body
-//         const OTP = req.session.OTP = getOTP()
-//         console.log('resending otp '+OTP+' to '+email);
-//         setTimeout(() => {
-//             req.session.OTP = null; // Or delete req.session.otp;
-//             console.log('otp time out');
-//         }, 600000); 
-//         sendVerifyMail(email, OTP); 
-
-//         res.json({isResend: true})
-
-//     } catch (error) {
-//         next(error);
-//     }
-// }
 
 
 

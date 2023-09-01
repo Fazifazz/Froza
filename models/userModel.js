@@ -66,19 +66,14 @@ const userSchema = new mongoose.Schema({
         type : mongoose.Schema.Types.ObjectId,
         ref: 'Products'
     }],
-    isVerified: {
+    verified: {
         type: Boolean,
         default: false,
     },
-    // referralCode:{
-    //     type: String,
-    //     required : true,
-    //     unique : true
-    // },
-    // referredBy:{ 
-    //     type: String,
-    //     readOnly: true
-    // }
+    otp:{
+        type:Number,
+        createdAt:{type:Date,expires:'5m',default:Date.now}
+    },
 },
 {
     timestamps:true,

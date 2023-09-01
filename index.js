@@ -4,14 +4,14 @@ const config = require('./config/db')
 const path = require('path')
 const session = require('express-session')
 const methodOverride = require('method-override')
-const flash = require('flash')
-
+const flash = require('connect-flash')
+const morgan = require('morgan');
 const app = express()
 
 app.set('view engine', 'ejs')
 
 app.use(express.static(path.join(__dirname, 'public')))
-
+app.use(morgan('dev'));
 app.use(express.urlencoded({ extended: true }))
 app.use(session({
     secret: 'uhdsguakgdfjsafd',
