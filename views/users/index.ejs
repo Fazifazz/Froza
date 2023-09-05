@@ -1,5 +1,5 @@
 <%- include('../layouts/header') %>
-		
+
 	<div class="colorlib-loader"></div>
 
 	<div id="page">
@@ -8,21 +8,22 @@
 				<div class="container">
 					<div class="row">
 						<div class="col-sm-7 col-md-9">
-							<div id="colorlib-logo"><a href="/">Froza</a></div>
+							<div id="colorlib-logo"><a href="/">FROZA</a></div>
 						</div>
 						<div class="col-sm-5 col-md-3">
-			            <form action="#" class="search-wrap">
-			               <div class="form-group">
-			                  <input type="search" class="form-control search" placeholder="Search">
-			                  <button class="btn btn-primary submit-search text-center" type="submit"><i class="icon-search"></i></button>
-			               </div>
-			            </form>
-			         </div>
-		         </div>
+							<form action="#" class="search-wrap">
+								<div class="form-group">
+									<input type="search" class="form-control search" placeholder="Search">
+									<button class="btn btn-primary submit-search text-center" type="submit"><i
+											class="icon-search"></i></button>
+								</div>
+							</form>
+						</div>
+					</div>
 					<div class="row">
 						<div class="col-sm-12 text-left menu-1">
 							<ul>
-								<li class="active"><a href="index.html">Home</a></li>
+								<li class="active"><a href="/">Home</a></li>
 								<li class="has-dropdown">
 									<a href="men.html">Men</a>
 									<ul class="dropdown">
@@ -36,10 +37,17 @@
 								<li><a href="women.html">Women</a></li>
 								<li><a href="about.html">About</a></li>
 								<li><a href="contact.html">Contact</a></li>
-                                <li class="float-right">
-                                    <a href="/login" class="btn btn-primary">Log in</a>
-                                </li>
-								<li class="cart"><a href="cart.html"><i class="icon-shopping-cart"></i> Cart [0]</a></li>
+								<li class="float-right dropdown">
+									<a href="#" class="btn btn-primary dropdown-toggle" id="accountDropdown"
+										data-toggle="dropdown"><i class="fas fa-user"></i>
+									</a>
+									<div class="dropdown-menu" aria-labelledby="accountDropdown">
+										<a class="dropdown-item" href="#">Profile</a>	
+										<a class="dropdown-item" href="/login">Login</a>
+										<a class="dropdown-item" href="/logout">Logout</a>
+								</li>
+								<li class="cart"><a href="cart.html"><i class="icon-shopping-cart"></i> Cart [0]</a>
+								</li>
 							</ul>
 						</div>
 					</div>
@@ -71,68 +79,70 @@
 		<aside id="colorlib-hero">
 			<div class="flexslider">
 				<ul class="slides">
-			   	<li style="background-image: url(images/img_bg_1.jpg);">
-			   		<div class="overlay"></div>
-			   		<div class="container-fluid">
-			   			<div class="row">
-				   			<div class="col-sm-6 offset-sm-3 text-center slider-text">
-				   				<div class="slider-text-inner">
-				   					<div class="desc">
-					   					<h1 class="head-1">Men's</h1>
-					   					<h2 class="head-2">Shoes</h2>
-					   					<h2 class="head-3">Collection</h2>
-					   					<p class="category"><span>New trending shoes</span></p>
-					   					<p><a href="#" class="btn btn-primary">Shop Collection</a></p>
-				   					</div>
-				   				</div>
-				   			</div>
-				   		</div>
-			   		</div>
-			   	</li>
-			   	<li style="background-image: url(images/img_bg_2.jpg);">
-			   		<div class="overlay"></div>
-			   		<div class="container-fluid">
-			   			<div class="row">
-				   			<div class="col-sm-6 offset-sm-3 text-center slider-text">
-				   				<div class="slider-text-inner">
-				   					<div class="desc">
-					   					<h1 class="head-1">Huge</h1>
-					   					<h2 class="head-2">Sale</h2>
-					   					<h2 class="head-3"><strong class="font-weight-bold">50%</strong> Off</h2>
-					   					<p class="category"><span>Big sale sandals</span></p>
-					   					<p><a href="#" class="btn btn-primary">Shop Collection</a></p>
-				   					</div>
-				   				</div>
-				   			</div>
-				   		</div>
-			   		</div>
-			   	</li>
-			   	<li style="background-image: url(images/img_bg_3.jpg);">
-			   		<div class="overlay"></div>
-			   		<div class="container-fluid">
-			   			<div class="row">
-				   			<div class="col-sm-6 offset-sm-3 text-center slider-text">
-				   				<div class="slider-text-inner">
-				   					<div class="desc">
-					   					<h1 class="head-1">New</h1>
-					   					<h2 class="head-2">Arrival</h2>
-					   					<h2 class="head-3">up to <strong class="font-weight-bold">30%</strong> off</h2>
-					   					<p class="category"><span>New stylish shoes for men</span></p>
-					   					<p><a href="#" class="btn btn-primary">Shop Collection</a></p>
-				   					</div>
-				   				</div>
-				   			</div>
-				   		</div>
-			   		</div>
-			   	</li>
-			  	</ul>
-		  	</div>
+					<li style="background-image: url(images/img_bg_1.jpg);">
+						<div class="overlay"></div>
+						<div class="container-fluid">
+							<div class="row">
+								<div class="col-sm-6 offset-sm-3 text-center slider-text">
+									<div class="slider-text-inner">
+										<div class="desc">
+											<h1 class="head-1">Men's</h1>
+											<h2 class="head-2">Shoes</h2>
+											<h2 class="head-3">Collection</h2>
+											<p class="category"><span>New trending shoes</span></p>
+											<p><a href="#" class="btn btn-primary">Shop Collection</a></p>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+					<li style="background-image: url(images/img_bg_2.jpg);">
+						<div class="overlay"></div>
+						<div class="container-fluid">
+							<div class="row">
+								<div class="col-sm-6 offset-sm-3 text-center slider-text">
+									<div class="slider-text-inner">
+										<div class="desc">
+											<h1 class="head-1">Huge</h1>
+											<h2 class="head-2">Sale</h2>
+											<h2 class="head-3"><strong class="font-weight-bold">50%</strong> Off</h2>
+											<p class="category"><span>Big sale sandals</span></p>
+											<p><a href="#" class="btn btn-primary">Shop Collection</a></p>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+					<li style="background-image: url(images/img_bg_3.jpg);">
+						<div class="overlay"></div>
+						<div class="container-fluid">
+							<div class="row">
+								<div class="col-sm-6 offset-sm-3 text-center slider-text">
+									<div class="slider-text-inner">
+										<div class="desc">
+											<h1 class="head-1">New</h1>
+											<h2 class="head-2">Arrival</h2>
+											<h2 class="head-3">up to <strong class="font-weight-bold">30%</strong> off
+											</h2>
+											<p class="category"><span>New stylish shoes for men</span></p>
+											<p><a href="#" class="btn btn-primary">Shop Collection</a></p>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+				</ul>
+			</div>
 		</aside>
 		<div class="colorlib-intro">
 			<div class="container">
 				<div class="row">
 					<div class="col-sm-12 text-center">
-						<h2 class="intro">It started with a simple idea: Create quality, well-designed products that I wanted myself.</h2>
+						<h2 class="intro">It started with a simple idea: Create quality, well-designed products that I
+							wanted myself.</h2>
 					</div>
 				</div>
 			</div>
@@ -167,19 +177,44 @@
 						<h2>Best Sellers</h2>
 					</div>
 				</div>
+
+
 				<div class="row row-pb-md">
-					<div class="col-lg-3 mb-4 text-center">
-						<div class="product-entry border">
-							<a href="#" class="prod-img">
-								<img src="images/item-1.jpg" class="img-fluid" alt="Free html5 bootstrap 4 template">
-							</a>
-							<div class="desc">
-								<h2><a href="#">Women's Boots Shoes Maca</a></h2>
-								<span class="price">$139.00</span>
+					<% products.forEach((prdct)=>{ %>
+						<% if (!prdct.is_deleted) { %>
+
+							<div class="col-lg-3 mb-4 text-center">
+								<div class="product-entry border">
+									<div>
+										<a href="/productDetails/<%= prdct._id %>" class="prod-img">
+											<img src="<%= prdct.images[0]%>" class="img-fluid" alt="<%= prdct.title %>">
+										</a>
+									</div>
+									<div class="desc">
+										<h2><a href="#">
+												<%= prdct.title %>
+											</a></h2>
+										<span class="price">&#8377;<%= prdct.mrp %></span>
+									</div>
+								</div>
 							</div>
-						</div>
-					</div>
-					<div class="col-lg-3 mb-4 text-center">
+							<% } %>
+								<%})%>
+				</div>
+			</div>
+		</div>
+
+
+
+		<script>
+			document.getElementById('clickableImage').addEventListener('click', function () {
+				window.location.href = '';
+			});
+		</script>
+
+
+
+		<!-- <div class="col-lg-3 mb-4 text-center">
 						<div class="product-entry border">
 							<a href="#" class="prod-img">
 								<img src="images/item-2.jpg" class="img-fluid" alt="Free html5 bootstrap 4 template">
@@ -353,8 +388,11 @@
 						<p><a href="#" class="btn btn-primary btn-lg">Shop All Products</a></p>
 					</div>
 				</div>
-			</div>
-		</div>
+			</div> -->
+
+
+
+
 
 		<div class="colorlib-partner">
 			<div class="container">
@@ -384,7 +422,4 @@
 		</div>
 
 
-        <%- include('../layouts/footer-section') %>
-
-		
-        <%- include('../layouts/footer') %>
+		<%- include('../layouts/footer') %>

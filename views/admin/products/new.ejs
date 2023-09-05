@@ -41,7 +41,7 @@
                                                                 <div class="form-group">
                                                                     <label for="exampleInputName1">Product title</label>
                                                                     <input type="text" class="form-control" name="title"
-                                                                        id="exampleInputName1" />
+                                                                        id="exampleInputName1" required/>
                                                                 </div>
 
                                                                 <div class="form-group">
@@ -49,34 +49,34 @@
                                                                         description</label>
                                                                     <textarea rows="3" class="form-control"
                                                                         name="description"
-                                                                        id="exampleInputName1"></textarea>
+                                                                        id="exampleInputName1" required></textarea>
                                                                 </div>
 
                                                                 <div class="form-group">
                                                                     <label for="exampleInputName1">Product price
                                                                         (MRP)</label>
-                                                                    <input type="text" class="form-control" name="mrp"
-                                                                        id="exampleInputName1" />
+                                                                    <input type="number" class="form-control" name="mrp"
+                                                                        id="exampleInputName1" required />
                                                                 </div>
 
                                                                 <div class="form-group">
                                                                     <label for="exampleInputName1">Product price
                                                                         (Regular)</label>
-                                                                    <input type="text" class="form-control"
-                                                                        name="regular" id="exampleInputName1" />
+                                                                    <input type="number" class="form-control" 
+                                                                        name="regular" id="exampleInputName1" required />
                                                                 </div>
 
                                                                 <div class="form-group">
                                                                     <label for="exampleInputName1">Stock</label>
-                                                                    <input type="text" class="form-control" name="stock"
-                                                                        id="exampleInputName1" />
+                                                                    <input type="number" class="form-control" name="stock"
+                                                                        id="exampleInputName1"   required />
                                                                 </div>
 
                                                                 <div class="form-group">
                                                                     <label for="exampleInputName1">Product
                                                                         category</label>
                                                                     <select class="form-control" name="category"
-                                                                        id="cate">
+                                                                        id="cate" required>
                                                                         <option value="-1" disabled selected>Choose
                                                                         </option>
                                                                         <% categories.forEach(cat=> { %>
@@ -95,9 +95,9 @@
                                                                             <div class="input-group col-xs-12">
                                                                                 <input type="file" multiple
                                                                                     accept="image/*"
-                                                                                    data-target-index="1" name="photo"
+                                                                                    data-target-index="1" name="images"
                                                                                     class="form-control previewInput file-upload-info"
-                                                                                    id="preview-input" />
+                                                                                    id="preview-input" required/>
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -147,7 +147,7 @@
 
                                                                 <button type="submit"
                                                                     class="btn btn-primary mr-2">Create</button>
-                                                                <a href="/admin/products" class="btn btn-light">Back</a>
+                                                                <button type="button" class="btn btn-light" onclick="goBack()">Back</button>
                                                             </form>
                                                         </div>
                                                     </div>
@@ -172,6 +172,11 @@
         <!-- page-body-wrapper ends -->
         </div>
         <!-- container-scroller -->
+        <script>
+            function goBack() {
+                window.history.back()
+            }
+          </script>
 
         <script>
             function hideErrorMessage() {
@@ -200,6 +205,9 @@
                     previewArea.style.display = 'block'
                 }
             })
+
+
+            
         </script>
         <!-- plugins:js -->
         <script src="/admin/vendors/js/vendor.bundle.base.js"></script>

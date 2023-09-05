@@ -1,11 +1,7 @@
 const mongoose = require('mongoose')
 
 const userSchema = new mongoose.Schema({
-    fname:{
-        type:String,
-        required : true
-    },
-    lname:{
+    name:{
         type:String,
         required : true
     },
@@ -16,6 +12,10 @@ const userSchema = new mongoose.Schema({
     email:{
         type:String,
         required : true
+    },
+    profile:{
+        type:String,
+        default:'user.png'
     },
     dob:{
         type:Date,

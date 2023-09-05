@@ -12,69 +12,54 @@
             <div class="row d-flex justify-content-center align-items-center h-100">
                 <div class="col-12 col-md-9 col-sm-12">
                     <div class="card shadow-2-strong">
-                        <div class=" p-5 ">
+                        <div class="p-5">
                             <div class="text-center">
-                                <h3 class="mb-3">SIGN UP</h3>
-                               
+                                <h3 class="mb-3">USER SIGN UP</h3>
                             </div>
-                            <form action="/signup" method="post">
-
+                            <form action="/signup" method="post" onsubmit="return validateForm()">
                                 <% if (typeof error !== "undefined") { %>
                                     <div class="alert alert-danger mb-2"><%= error %></div>
                                 <% } %>
-
-
-                                <div class="form-outline mb-3 row ">
-                                    <div class=" col-md-6 col-12 mb-3">
-                                        <label class="form-label" for="fname">First Name</label>
-                                        <input type="text" id="fname" class="form-control form-control-md rounded-0"
-                                        placeholder="Enter first name" name="fname" required/>
-                                        <small id="fnameErr" class="error"></small>
-                                    </div>
-                                    <div class="col-md-6 col-12">
-                                        <label class="form-label" for="lname">Last Name</label>
-                                        <input type="text" id="lname" class="form-control form-control-md rounded-0" placeholder="Enter last name" name="lname" required/>
-                                        <small id="lnameErr" class="error"></small>
-                                    </div>
+                            
+                                <div class="form-outline mb-3">
+                                    <label class="form-label" for="name">Full Name</label>
+                                    <input type="text" id="name" class="form-control form-control-md rounded-0"
+                                        placeholder="Enter the Full name" name="name" required />
+                                    <small id="nameErr" class="error"></small>
                                 </div>
-                                <div class="form-outline mb-3 row">
-                                    <div class=" col-md-6 col-12 mb-3">
-                                        <label class="form-label" for="mobile">Mobile</label>
-                                        <input type="number" id="mobile"
-                                            class="form-control form-control-md rounded-0" placeholder="Enter Mobile No." name="mobile" required/>
-                                            <small id="mobileErr" class="error"></small>
-                                    </div>
-                                    <div class="col-md-6 col-12">
-                                        <label class="form-label" for="email">Email</label>
-                                        <input type="email" id="email" class="form-control form-control-md rounded-0" placeholder="Enter email" name="email" required/>
-                                        <small id="emailErr" class="error"></small>                                     
-                                    </div>
+                            
+                                <div class="form-outline mb-3">
+                                    <label class="form-label" for="mobile">Mobile</label>
+                                    <input type="number" id="mobile" class="form-control form-control-md rounded-0"
+                                        placeholder="Enter Mobile No." name="mobile" required pattern="[0-9]{10}" required />
+                                    <small id="mobileErr" class="error"></small>
                                 </div>
-                                <div class="form-outline mb-3 row">
-                                    <div class=" col-md-6 col-12 mb-3">
-                                        <label class="form-label" for="password">Password</label>
-                                        <input type="password" id="password"
-                                            class="form-control form-control-md rounded-0" placeholder="Enter your password" name="password" required/>
-                                            <small id="passwordErr" class="error"></small>
-                                    </div>
-                                    <div class="col-md-6 col-12">
-                                        <label class="form-label" for="confirmPassword">Confirm Password</label>
-                                        <input type="password" id="confirmPassword"
-                                            class="form-control form-control-md rounded-0" placeholder="Confirm Password" name="confirmPassword"  required/>
-                                            <small id="confirmPasswordErr" class="error"></small>
-                                    </div>
+                            
+                                <div class="form-outline mb-3">
+                                    <label class="form-label" for="email">Email</label>
+                                    <input type="email" id="email" class="form-control form-control-md rounded-0"
+                                        placeholder="Enter email" name="email" required />
+                                    <small id="emailErr" class="error"></small>
                                 </div>
-                                <!-- <div class="form-outline mb-3 row">
-                                    <div class=" col-12 mb-3">
-                                        <label class="form-label" for="referral">Referral Code</label>
-                                        <input type="referral" id="referral"
-                                            class="form-control form-control-md rounded-0" value="<%= locals.referral %>" placeholder="Enter Referral (Optional)" name="referral"/>
-                                            <small id="referralErr" class="error"></small>
-                                    </div>
-                                </div> -->
+                            
+                                <div class="form-outline mb-3">
+                                    <label class="form-label" for="password">Password</label>
+                                    <input type="password" id="password"
+                                        class="form-control form-control-md rounded-0" placeholder="Enter your password" name="password" required />
+                                    <small id="passwordErr" class="error"></small>
+                                </div>
+                            
+                                <div class="form-outline mb-3">
+                                    <label class="form-label" for="confirmPassword">Confirm Password</label>
+                                    <input type="password" id="confirmPassword"
+                                        class="form-control form-control-md rounded-0" placeholder="Confirm Password" name="confirmPassword" required />
+                                    <small id="confirmPasswordErr" class="error"></small>
+                                </div>
+                                <!-- Add Referral Code field here if needed -->
+                                
                                 <div class="text-center">
                                     <button class="btn btn-dark btn-md rounded-pill px-5 py-2 login-btn" type="submit" onclick="return validateSignUp()">SIGN UP</button>
-                                    <p><%= locals.message?message:'' %></p>
+                                    <p><%= locals.message ? message : '' %></p>
                                     <div class="mt-2">
                                         <p>Already registered ? <a href="/login">Login</a></p>
                                     </div>
@@ -88,6 +73,78 @@
     </section>
 
     <script src="/validations/signupValidation.js"></script>
-
+    <script>
+        function validateForm() {
+            // Get form input values
+            var name = document.getElementById("name").value;
+            var mobile = document.getElementById("mobile").value;
+            var email = document.getElementById("email").value;
+            var password = document.getElementById("password").value;
+            var confirmPassword = document.getElementById("confirmPassword").value;
+    
+            // Define regular expressions for validation
+            var mobilePattern = /^[0-9]{10}$/;
+            var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    
+            // Initialize error messages
+            var errors = [];
+    
+            // Validate name (required)
+            if (name.trim() === "") {
+                errors.push("Full Name is required.");
+                document.getElementById("nameErr").textContent = "Full Name is required.";
+            } else {
+                document.getElementById("nameErr").textContent = "";
+            }
+    
+            // Validate mobile number (required and format)
+            if (mobile.trim() === "") {
+                errors.push("Mobile is required.");
+                document.getElementById("mobileErr").textContent = "Mobile is required.";
+            } else if (!mobile.match(mobilePattern)) {
+                errors.push("Invalid Mobile number format.");
+                document.getElementById("mobileErr").textContent = "Invalid Mobile number format.";
+            } else {
+                document.getElementById("mobileErr").textContent = "";
+            }
+    
+            // Validate email (required and format)
+            if (email.trim() === "") {
+                errors.push("Email is required.");
+                document.getElementById("emailErr").textContent = "Email is required.";
+            } else if (!email.match(emailPattern)) {
+                errors.push("Invalid Email format.");
+                document.getElementById("emailErr").textContent = "Invalid Email format.";
+            } else {
+                document.getElementById("emailErr").textContent = "";
+            }
+    
+            // Validate password (required)
+            if (password.trim() === "") {
+                errors.push("Password is required.");
+                document.getElementById("passwordErr").textContent = "Password is required.";
+            } else {
+                document.getElementById("passwordErr").textContent = "";
+            }
+    
+            // Validate confirm password (required and match with password)
+            if (confirmPassword.trim() === "") {
+                errors.push("Confirm Password is required.");
+                document.getElementById("confirmPasswordErr").textContent = "Confirm Password is required.";
+            } else if (confirmPassword !== password) {
+                errors.push("Passwords do not match.");
+                document.getElementById("confirmPasswordErr").textContent = "Passwords do not match.";
+            } else {
+                document.getElementById("confirmPasswordErr").textContent = "";
+            }
+    
+            // If there are errors, prevent form submission
+            if (errors.length > 0) {
+                return false;
+            }
+    
+            return true; // Form is valid and can be submitted
+        }
+    </script>
 
 <%- include('../layouts/footer') %>

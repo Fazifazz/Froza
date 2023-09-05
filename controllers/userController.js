@@ -1,10 +1,12 @@
 const User = require('../models/userModel');
+const Product = require('../models/productModel')
 const bcrypt = require('bcrypt')
 const email = require('../utils/email')
 const randomString = require('randomstring');
 const catchAsync = require('../utils/catchAsync');
+const Category = require('../models/categoryModel');
 require('dotenv').config()
-// const { getOTP, getReferralCode, securePassword } = require('../helpers/generator')
+
 const securePassword=async (password)=>{
     try{
         const passwordHash=await bcrypt.hash(password, 10)
@@ -17,9 +19,10 @@ const securePassword=async (password)=>{
 }
 
 
-exports.index = (req, res) => {
-    res.render('users/index')
-}
+exports.index =catchAsync(async (req, res) => {
+  const products = await Product.find()
+  res.render('users/index', { products })
+}) 
 
 exports.showLogin = (req, res) => {
     res.render('users/login')
@@ -31,7 +34,16 @@ exports.showSignup = (req, res) => {
 
 exports.insertUser=async (req,res)=>{
    try {
-    const userExists = await User.findOne({ email: req.body.email })
+    const { password, confirmPassword } = req.body;
+
+    // Check if password and confirmPassword match
+    if (password !== confirmPassword) {
+      return res.render('users/signup', {
+        message: null,
+        error: "Password and confirm password do not match."
+      });
+    }
+     const userExists = await User.findOne({ email: req.body.email })
       if (userExists) return res.render('users/signup', { message: null, error: "User already exists." })
       const secPassword=await securePassword(req.body.password)  
       const otp = randomString.generate({
@@ -39,8 +51,7 @@ exports.insertUser=async (req,res)=>{
         charset:'numeric',
       })
       const user=new User({
-        fname: req.body.fname,
-        lname: req.body.lname,
+        name: req.body.name,
         mobile: req.body.mobile,
         email: req.body.email,
         password: secPassword,
@@ -99,15 +110,27 @@ exports.varifyOtp = catchAsync(async (req,res) => {
     const isVarified = await User.findOneAndUpdate({_id:user._id},{$set:{verified:true}},{new:true});
     console.log(isVarified.verified);
     if(isVarified.verified){
-      // res.flash('success','You are Verified!')
+      
       res.redirect('/')
     }else{
-      // req.flash('error','invalid')
+      
       res.redirect('/varifyOtp')
     }
   }
 })
 
+exports.getProductDetails = catchAsync(async (req,res) =>{
+ 
+  const product = await Product.findOne({_id:req.params.id})
+  const category = await Category.findOne({_id:product.category})
+  res.render('users/productDetails', { product ,category })
+})
+
+
+exports.userLogout = (req,res) => {
+  req.session.destroy()
+  res.redirect('/login')
+}
 
 
 
