@@ -130,8 +130,8 @@ exports.createProduct = async (req, res) => {
 }
 
 exports.showProductCreate= async (req,res)=>{
-    const products = await Product.find({}).populate('category')
-    res.render('admin/products/index',{products})
+    const categories = await Category.find({})
+    res.render('admin/products/new',{categories})
 }
 
 exports.showProductEdit = async (req, res)=>{
@@ -194,7 +194,7 @@ exports.updateProduct = async (req, res) => {
       
     }
   }
-  
+
 exports.softDeleteProduct = async (req, res) => {
     const id  = req.body.id;
     const state = Boolean(req.body.state)
@@ -223,7 +223,7 @@ exports.blockUser = catchAsync(async(req,res)=> {
 })
 
 exports.adminLogout = (req, res) => {
-    req.session.destroy();
+    req.session.admin=null
     res.redirect('/admin/login');
 }
 

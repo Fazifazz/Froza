@@ -1,5 +1,5 @@
 const router = require('express').Router()
-const { isUserLoggedIn,isUserLoggedOut,isUserBlocked } = require('../middlewares/auth')
+const { isUserLoggedIn,isUserLoggedOut } = require('../middlewares/auth')
 const
     {   
         index,
@@ -13,7 +13,7 @@ const
         userLogout
     } = require('../controllers/userController')
 
-// router.use('/',isUserBlocked)
+
 
 router.get('/', index)
 router.get('/login',isUserLoggedOut, showLogin)
@@ -28,13 +28,4 @@ router.post('/verifyOtp', varifyOtp)
 
 router.get('/productDetails/:id',getProductDetails)
 
-// router.use('/',isUserLoggedIn)
-
-
-
-
-// router.post('/signup',saveAndLogin)
-
-// router.post('/validateOTP',validateOTP)
-// router.post('/resendOIP',resendOTP)
 module.exports = router

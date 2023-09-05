@@ -89,9 +89,14 @@ exports.validLogin = async (req, res)=>{
         return res.render('users/login', { error: "Wrong password.", message: null })
       }else{
         req.session.user = user._id;
-        res.redirect('/');
+        if(!user.isBlocked){
+          res.redirect('/');
+         }else{
+          req.session.user = null
+          return res.render('users/login', { error: "Sorry, you are blocked by the admin!", message: null })
+         }
       }   
-    } catch (error) {
+    } catch (error) { 
       console.log(error.message);    
     }
   }
@@ -128,7 +133,7 @@ exports.getProductDetails = catchAsync(async (req,res) =>{
 
 
 exports.userLogout = (req,res) => {
-  req.session.destroy()
+  req.session.user=null
   res.redirect('/login')
 }
 
