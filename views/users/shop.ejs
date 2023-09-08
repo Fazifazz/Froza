@@ -1,0 +1,140 @@
+<%- include('../layouts/header') %>
+
+<body>
+
+	<div class="colorlib-loader"></div>
+
+	<div id="page">
+		<%- include('../layouts/userNav') %>
+
+		<div class="breadcrumbs">
+			<div class="container">
+				<div class="row">
+					<div class="col">
+						<p class="bread"><span><a href="index.html">Home</a></span> / <span>Product Details</span></p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+<div class="colorlib-product">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 col-xl-3">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="side border mb-1">
+                            <h3>Brand</h3>
+                            <ul>
+                                <li><a href="#">Nike</a></li>
+                                <li><a href="#">Adidas</a></li>
+                                <li><a href="#">Merrel</a></li>
+                                <li><a href="#">Gucci</a></li>
+                                <li><a href="#">Skechers</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="side border mb-1">
+                            <h3>Size</h3>
+                            <div class="block-26 mb-2">
+                                <h4>Size</h4>
+                           <ul>
+                              <li><a href="#">7</a></li>
+                              <li><a href="#">8</a></li>
+                              <li><a href="#">9</a></li>
+                              <li><a href="#">10</a></li>
+                              <li><a href="#">11</a></li>
+                              <li><a href="#">12</a></li>
+                           
+                           </ul>
+                        </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="side border mb-1">
+                            <h3>Category</h3>
+                            <ul>
+                                <li><a href="#">Slip Ons</a></li>
+                                <li><a href="#">Boots</a></li>
+                                <li><a href="#">Sandals</a></li>
+                                <li><a href="#">Lace Ups</a></li>
+                                <li><a href="#">Oxfords</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="side border mb-1">
+                            <h3>Colors</h3>
+                            <ul>
+                                <li><a href="#">Black</a></li>
+                                <li><a href="#">White</a></li>
+                                <li><a href="#">Blue</a></li>
+                                <li><a href="#">Red</a></li>
+                                <li><a href="#">Green</a></li>
+                                <li><a href="#">Grey</a></li>
+                                <li><a href="#">Orange</a></li>
+                                <li><a href="#">Cream</a></li>
+                                <li><a href="#">Brown</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="col-lg-9 col-xl-9">
+                <div class="row row-pb-md">
+                    <div class="row row-pb-md">
+						<% products.forEach((prdct) => { %>
+							<% if (!prdct.is_deleted) { %>
+								<div class="col-lg-3 mb-4 text-center">
+                                    <div class="product-entry border">
+                                        <div class="prod-img">
+                                            <a href="/shop/<%= prdct._id %>">
+                                                <img src="<%= prdct.images[0] %>" class="img-fluid" alt="<%= prdct.title %>">
+                                            </a>
+                                        </div>
+                                        <div class="desc">
+                                            <h2><a href="#"><%= prdct.title %></a></h2>
+                                            <span class="price">&#8377;<%= prdct.mrp %></span>
+                                        </div>
+                                        <div class="icons">
+                                            <form action="/cart/<%= prdct._id %>" method="post">
+                                                <input type="hidden" name="productId" value="<%= prdct._id %>">
+                                                <button class="btn btn-dark" type="submit">
+                                                    <i class="fa fa-shopping-cart"></i> Add to Cart
+                                                </button>
+                                            </form>
+                                            <a class="btn btn-success" href="#">
+                                                <i class="fa fa-shopping-bag"></i> Shop  Now
+                                            </a>
+                                        </div>
+                                    </div>
+                                    
+								</div>
+							<% } %>
+						<% }) %>
+					</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <div class="block-27">
+                       <ul>
+                           <li><a href="#"><i class="ion-ios-arrow-back"></i></a></li>
+                          <li class="active"><span>1</span></li>
+                          <li><a href="#">2</a></li>
+                          <li><a href="#">3</a></li>
+                          <li><a href="#">4</a></li>
+                          <li><a href="#">5</a></li>
+                          <li><a href="#"><i class="ion-ios-arrow-forward"></i></a></li>
+                       </ul>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('../layouts/footer') %>

@@ -21,24 +21,37 @@ const userSchema = new mongoose.Schema({
         type:Date,
         default: new Date('1990-01-01')
     },
-    cart:[{
-        productId:{
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Products',
-        },
-        quantity:{
-            type : Number,
-            default: 1
-        },
-        productPrice:{
-            type: Number,
-            required : true
-        },
-        discountPrice:{
-            type : Number,
-            required : true
+    cart:[
+        {
+           product:{
+               type: mongoose.Schema.Types.ObjectId,
+               ref: 'Product',
+           },
+           quantity:{
+               type : Number,
+               default: 1
+           },
+           total:{
+              type:Number,
+              default:0
+           }
+        }
+    ],
+    totalCartAmount:{
+        type:Number,
+        default:0
+    },
+    address: [{
+        address:{
+            type:mongoose.Schema.Types.ObjectId,
+            ref:'Address'
         }
     }],
+    defaultAddress:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'Address'
+    },
+       
     password:{
         type:String,
         required : true
@@ -72,7 +85,7 @@ const userSchema = new mongoose.Schema({
     },
     otp:{
         type:Number,
-        createdAt:{type:Date,expires:'5m',default:Date.now}
+        createdAt:{type:Date,expires:'2m',default:Date.now}
     },
 },
 {

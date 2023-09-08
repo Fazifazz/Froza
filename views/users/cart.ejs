@@ -1,0 +1,257 @@
+<%- include('../layouts/header') %>
+
+<body>
+  <div class="colorlib-loader"></div>
+
+  <div id="page">
+    <%- include('../layouts/userNav') %>
+
+    <div class="colorlib-product">
+      <div class="container">
+        <div class="row row-pb-lg">
+          <div class="col-md-12">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Product Details</th>
+                  <th class="text-center">Price</th>
+                  <th class="text-center">Quantity</th>
+                  <th class="text-center">Total</th>
+                  <th class="text-center">Remove</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% cart.forEach(cartprdt => { %>
+
+                <tr>
+                  <td>
+                    <div class="product-cart d-flex">
+                      <div class="one-forth">
+                        <div
+                          class="product-img"
+                          style="
+                            background-image: url(<%=cartprdt.product.images[0]%>);
+                          "
+                        ></div>
+                        <div class="display-tc">
+                          <h3><%= cartprdt.product.title %></h3>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="text-center">
+                    <div class="display-tc">
+                      <span class="price"
+                        >&#8377;<%= cartprdt.product.regularPrice %></span
+                      >
+                    </div>
+                  </td>
+                  <td class="text-center">
+                    <div class="product_count">
+                      <button
+                        class="btn input-number-decrement"
+                        data-action="decrement"
+                        data-cart-item-id="<%= cartprdt._id %>"
+                      >
+                        -
+                      </button>
+                      <input
+                        class="input-number"
+                        type="text"
+                        value="<%= cartprdt.quantity %>"
+                        min="0"
+                        max="10"
+                      />
+                      <button
+                        class="btn input-number-increment"
+                        data-action="increment"
+                        data-cart-item-id="<%= cartprdt._id %>"
+                      >
+                        +
+                      </button>
+                    </div>
+                  </td>
+                  <td class="text-center">
+                    <div class="display-tc">
+                      <span class="price" id="cartTotal_<%= cartprdt._id %>" data-cart-total-id="change_total" name="totalAmount"
+                        >&#8377;<%=cartprdt.total %></span
+                      >
+                    </div>
+                  </td>
+                  <td class="text-center">
+                    <div class="display-tc">
+                      <a href="/cart/<%= cartprdt._id %>" class="closed">
+                        <i class="fa fa-trash" aria-hidden="true"></i>
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="row row-pb-lg">
+          <div class="col-md-12">
+            <div class="total-wrap">
+              <div class="row">
+                <div class="col-sm-8">
+                  <form action="#">
+                    <div class="row form-group">
+                      <div class="col-sm-9">
+                        <input
+                          type="text"
+                          name="quantity"
+                          class="form-control input-number"
+                          placeholder="Your Coupon Number..."
+                        />
+                      </div>
+                      <div class="col-sm-3">
+                        <input
+                          type="submit"
+                          value="Apply Coupon"
+                          class="btn btn-primary"
+                        />
+                      </div>
+                    </div>
+                  </form>
+                </div>
+                <div class="col-sm-4 text-center">
+                  <div class="total">
+                    <div class="sub">
+                      <p>
+                        <span>Subtotal:</span>
+                        <span id="subtotalAmount">&#8377;<%= totalCartAmount %></span>
+                      </p>
+                      <p><span>Delivery:</span> <span>&#8377;0.00</span></p>
+                      <p><span>Discount:</span> <span>&#8377;0.00</span></p>
+                    </div>
+                    <div class="grand-total">
+                      <p>
+                        <span><strong>Total:</strong></span>
+                        <span id="totalAmount"
+                          >&#8377;<%= totalCartAmount %></span
+                        >
+                      </p>
+                    </div>
+                  </div>
+                  <button type="submit" class="btn btn-dark rounded-pill">
+                    Proceed to Checkout
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+      .product_count {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 200px; /* You can adjust the width as needed */
+        margin: 0 auto; /* Center the whole element */
+      }
+
+      .input-number {
+        text-align: center; /* Center the text */
+        width: 30px; /* Adjust the width as needed */
+        border: none; /* Remove the border */
+      }
+
+      .input-number-decrement,
+      .input-number-increment {
+        cursor: pointer;
+      }
+
+      /* Add icon styles here (font size, color, etc.) */
+    </style>
+
+    <script>
+      // Get all input elements and increment/decrement buttons
+      const inputNumbers = document.querySelectorAll(".input-number");
+      const incrementButtons = document.querySelectorAll(
+        ".input-number-increment"
+      );
+      const decrementButtons = document.querySelectorAll(
+        ".input-number-decrement"
+      );
+    
+      // Add click event listeners for all increment and decrement buttons
+      incrementButtons.forEach((button, index) => {
+        button.addEventListener("click", () => {
+            console.log(inputNumbers[index], 'index');
+          updateCartItemQuantity(inputNumbers[index], "increment");
+        });
+      });
+
+      decrementButtons.forEach((button, index) => {
+        button.addEventListener("click", () => {
+          updateCartItemQuantity(inputNumbers[index], "decrement");
+        });
+      });
+
+      function updateCartItemQuantity(inputElement, action) {
+        const cartItemId = inputElement.parentElement
+          .querySelector(".input-number-increment")
+          .getAttribute("data-cart-item-id");
+
+        let currentValue = parseInt(inputElement.value);
+
+        if (!isNaN(currentValue)) {
+          if (action === "increment" && currentValue < 10) {
+            currentValue++;
+          } else if (action === "decrement" && currentValue > 1) {
+            currentValue--;
+          }
+
+          // Update the input value
+          inputElement.value = currentValue;
+
+          // Perform an AJAX request to update the cart item's quantity on the server
+          // Replace '/update-cart-item-quantity' with your server endpoint
+          $.ajax({
+            url: "/update-cart-item-quantity", // Replace with your server-side route
+            method: "POST", // or 'PUT' depending on your API
+            data: {
+              cartItemId: cartItemId,
+              quantity: currentValue,
+            },
+            success: function (response) {
+              // window.location.reload()
+              if (response) {
+                
+                const newTotal = response.total;
+                const cartTotal = document.querySelector(`#cartTotal_${cartItemId}`);
+                cartTotal.textContent = newTotal;
+                
+                const newTotalAmount = response.totalCartAmount;
+                const totalAmountElement =
+                  document.querySelector("#totalAmount"); // Add an ID to your total amount element
+                totalAmountElement.textContent = `₹${newTotalAmount}`;
+
+
+                const subtotalAmount = response.totalCartAmount;
+                const subtotalAmountElement =
+                  document.querySelector("#subtotalAmount"); // Add an ID to your total amount element
+                  subtotalAmountElement.textContent = `₹${subtotalAmount}`;
+
+                // Update the total and other UI elements if needed
+              } else {
+                // Handle the error, e.g., display a message
+              }
+            },
+            error: function () {
+              // Handle the AJAX error
+            },
+          });
+        }
+      }
+    </script>
+    <%- include('../layouts/footer') %>
+  </div>
+</body>

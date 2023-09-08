@@ -43,7 +43,7 @@ exports.verifyAdminLogin = async (req, res, next) => {
 
 exports.getCategories = catchAsync(async (req, res) => {
     const categories = await Category.find({})
-    res.render('admin/categories/index', { categories });
+    res.render('admin/categories/index', { categories,success:req.flash('success') });
 })
 
 exports.showCreateCategory = (req, res) => {

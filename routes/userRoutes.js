@@ -10,7 +10,12 @@ const
         showVerifyOtp,
         varifyOtp,
         getProductDetails,
-        userLogout
+        showshopIndex,
+        addTocart,
+        userLogout,
+        showAddToCart,
+        destroyCartItem,
+        updateCartQauntity,
     } = require('../controllers/userController')
 
 
@@ -27,5 +32,16 @@ router.get('/verifyOtp', showVerifyOtp)
 router.post('/verifyOtp', varifyOtp)
 
 router.get('/productDetails/:id',getProductDetails)
+
+router.get('/shop',showshopIndex)
+router.get('/shop/:id',getProductDetails)
+
+router.get('/cart',showAddToCart)
+router.post('/cart/:id', addTocart);
+// router.patch('/cart/:id',updateCartQuantity)
+router.get('/cart/:id', destroyCartItem);
+
+router.post('/update-cart-item-quantity',updateCartQauntity)
+
 
 module.exports = router

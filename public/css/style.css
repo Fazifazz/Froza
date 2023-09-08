@@ -2797,7 +2797,7 @@ input[type="button"].btn-block {
     -webkit-box-flex: 1;
     -ms-flex: 1 1 auto;
     flex: 1 1 auto;
-    width: 1%;
+    width: 30px;
     margin-bottom: 0; }
     .input-group > .form-control:focus,
     .input-group > .custom-select:focus,
@@ -7714,7 +7714,9 @@ h1, h2, h3, h4, h5,
     padding: 1.5em; }
     .product-entry .desc h2 {
       text-transform: uppercase;
-      font-size: 18px; }
+      font-size: 18px; 
+      height: 50px;
+    }
       .product-entry .desc h2 a {
         color: #000; }
     .product-entry .desc span.price {
@@ -8050,7 +8052,9 @@ h1, h2, h3, h4, h5,
     .product-cart .display-tc h3, .product-name .display-tc h3 {
       margin-bottom: 0;
       padding-left: 30px;
-      font-size: 14px; }
+      font-size: 14px;
+      width: 300px; 
+    }
     .product-cart .display-tc .closed, .product-name .display-tc .closed {
       display: block;
       margin: 0 auto;

@@ -15,6 +15,14 @@
         <div class="content-wrapper">
           <div class="row">
 
+            <% if (success && success.length > 0) { %>
+              <div class="alert alert-success">
+                <% success.forEach(function(message) { %>
+                  <p><%= message %></p>
+                <% }); %>
+              </div>
+            <% } %>
+            
             <div class="col-lg-12 grid-margin stretch-card">
               <div class="card">
                 <div class="card-body">
@@ -22,6 +30,9 @@
                     <h4 class="card-title">Category Table</h4>
                     <a href="/admin/categories/create" class="btn btn-primary btn-sm">Create Category</a>
                   </div>
+
+                  
+
                   <div class="table-responsive">
                     <table class="table table-striped">
                       <thead>

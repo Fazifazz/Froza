@@ -4,7 +4,7 @@ const config = require('./config/db')
 const path = require('path')
 const session = require('express-session')
 const methodOverride = require('method-override')
-const flash = require('connect-flash')
+const flash = require('express-flash')
 const nocache = require('nocache')
 const morgan = require('morgan');
 const app = express()
@@ -12,7 +12,7 @@ const app = express()
 app.set('view engine', 'ejs')
 
 app.use(express.static(path.join(__dirname, 'public')))
-// app.use(morgan('dev'));
+app.use(morgan('dev'));
 app.use(nocache())
 app.use(express.urlencoded({ extended: true }))
 app.use(session({
