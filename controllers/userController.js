@@ -137,20 +137,11 @@ exports.showshopIndex = async (req, res) => {
 }
 
 
+// exports.showForgetPassword = async (req,res) => {
+//   const user = req.cookies
+// }
 
-// exports.showAddToCart = catchAsync(async (req, res) => {
-//   const userId = req.session.user;
-//   const user = await User.findById(userId).populate('cartItems.product');
-//   if (!user) {
-//     return res.status(404).json({ error: 'User not found' });
-//   }
-//   const  cartItems = user.cartItems;
-//   let  subtotal = 0;
-//     await cartItems.forEach((item)=>{
-//       subtotal+=item.product.regularPrice * item.quantity
-//     })
-//   res.render('users/cart', { cartItems,subtotal});
-// })
+
 
 exports.showAddToCart=async (req,res)=>{
   try {
@@ -188,7 +179,7 @@ exports.addTocart=async (req,res)=>{
       }
      await user.save()
      req.flash('success','product added to cart successfully')
-     res.redirect('/cart')
+     res.redirect(req.url)
   }catch (error) {
       console.log(error.message)
       res.status(500).send('Internal Server Error');
@@ -199,35 +190,25 @@ exports.addTocart=async (req,res)=>{
 exports.updateCartQauntity = catchAsync ( async (req,res) => {
   const user = await User.findById(req.session.user);
         const cartItemId = req.body.cartItemId;
-        const newQuantity = req.body.quantity; // Assuming you send the new quantity in the request body
-        
+        const newQuantity = req.body.quantity;
         // Find the cart item by its ID
-        const cartItem = user.cart.find(item => item._id.equals(cartItemId));
-        
+        const cartItem = user.cart.find(item => item._id.equals(cartItemId));     
         if (!cartItem) {
             return res.status(404).json({ message: 'Cart item not found' });
         }
-
         // Calculate the new total based on the product's price and new quantity
         const product = await Product.findById(cartItem.product);
         const newTotal = newQuantity * product.regularPrice;
-
         // Update cart item properties
         cartItem.quantity = newQuantity;
         cartItem.total = newTotal;
-
         // Update totalCartAmount by calculating the sum of all cart item totals
         let totalCartAmount = 0;
         user.cart.forEach(item => {
             totalCartAmount += item.total;
         });
-
-        // Update user's totalCartAmount
         user.totalCartAmount = totalCartAmount;
-
-        // Save the changes to the user document
         await user.save();
-
         res.json({ message: 'Cart item quantity updated successfully',totalCartAmount, total: newTotal });
 })
 
@@ -235,7 +216,6 @@ exports.destroyCartItem = catchAsync ( async (req,res) => {
   const userId = req.session.user; 
   const user = await User.findById(userId)
   const cartItemId = req.params.id
- 
   const cartIndex = user.cart.findIndex((item) => item._id.equals(cartItemId) )
   if(cartIndex !== -1){
      user.totalCartAmount = user.totalCartAmount - user.cart[cartIndex].total
@@ -243,6 +223,21 @@ exports.destroyCartItem = catchAsync ( async (req,res) => {
      await user.save();
   }
   res.redirect('/cart')
+})
+
+
+exports.showCheckout = catchAsync(async (req,res) => {
+  const userId = req.session.user;
+  const user = await User.findById(userId).populate('cart.product')
+  const cart = user.cart;
+  const totalCartAmount=user.totalCartAmount
+  res.render('users/checkout',{cart,totalCartAmount})
+})
+
+exports.showProfileIndex = catchAsync ( async (req,res) => {
+  const userid = req.session.user;
+  const user = await User.findById(userid)
+  res.render('users/profile',{user})
 })
 
 

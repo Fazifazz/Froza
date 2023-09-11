@@ -15,7 +15,11 @@ const addressSchema = new mongoose.Schema({
         type:Number,
         required:true
     },
-    city:{
+    state:{
+        type:String,
+        required:true
+    },
+    district:{
         type:String,
         required:true
     },
@@ -29,6 +33,10 @@ const addressSchema = new mongoose.Schema({
     },
     alternativePhoneNumber:{
         type:Number,
+    },
+    address:{
+        type:String,
+        required:true
     },
     defaultAddress:{
         type:Boolean,

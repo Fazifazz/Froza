@@ -24,6 +24,13 @@ exports.uploadProductImages = upload.fields([
   }
 ])
 
+exports.uploadBannerImages = upload.fields([
+  {
+    name: 'images',
+    maxCount: 3
+  }
+])
+
 exports.resizeProductImages = async (req, res, next) => {
   if(!req.files.images) return next();
   req.body.images = []

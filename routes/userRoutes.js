@@ -16,8 +16,10 @@ const
         showAddToCart,
         destroyCartItem,
         updateCartQauntity,
+        showCheckout,
     } = require('../controllers/userController')
 
+    const accountController = require('../controllers/accountController')
 
 
 router.get('/', index)
@@ -38,10 +40,21 @@ router.get('/shop/:id',getProductDetails)
 
 router.get('/cart',showAddToCart)
 router.post('/cart/:id', addTocart);
-// router.patch('/cart/:id',updateCartQuantity)
+
 router.get('/cart/:id', destroyCartItem);
 
 router.post('/update-cart-item-quantity',updateCartQauntity)
+
+router.get('/checkout',showCheckout)
+// router.get('/forgotPassword',)
+
+router.get('/profile',accountController.showProfile)
+router.get('/profile/address',accountController.showAddress)
+router.get('/profile/addAddress',accountController.showAddaddress)
+router.post('/profile/addAddress',accountController.addAddress)
+router.get('/profile/editAddress/:id',accountController.showEditaddress)
+router.put('/profile/editAddress/:id',accountController.editAddress)
+router.get('/profile/deleteAddress/:id',accountController.deleteAddress)
 
 
 module.exports = router

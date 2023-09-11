@@ -1,6 +1,8 @@
 const router = require('express').Router()
 const middleware = require('../middlewares/middleware')
 const { isAdminLoggedIn,isAdminLoggedOut  } = require('../middlewares/auth')
+const bannerCtrl = require('../controllers/bannerController')
+const upload = require('../middlewares/middleware');
 const { 
     dashboard, 
     loadLogin, 
@@ -56,6 +58,16 @@ router.patch('/products/:id/img/add', isAdminLoggedIn, middleware.uploadProductI
 //user routes
 router.get('/users', isAdminLoggedIn,showUserIndex)
 router.post('/users/destroy',  isAdminLoggedIn,blockUser)
+
+//banner
+router.get('/banners', isAdminLoggedIn, bannerCtrl.showBannerIndex)
+router.get('/banners/create', isAdminLoggedIn, bannerCtrl.showBannerCreate)
+router.post('/banners' , isAdminLoggedIn,middleware.uploadBannerImages,bannerCtrl.createBanner)
+router.get('/banners/:id/edit', isAdminLoggedIn, bannerCtrl.showEditBanners)
+router.post('/banners/destroy', isAdminLoggedIn,bannerCtrl.deleteBanner)
+router.patch('/banners/:id', isAdminLoggedIn, bannerCtrl.updateBanner)
+// router.delete('/banners/:id/img/delete', isAdminLoggedIn, destroyProductImage)
+router.patch('/banners/:id/img/add', isAdminLoggedIn,  middleware.resizeProductImages, bannerCtrl.updateBannerImages)
 
 router.get('/logout',  isAdminLoggedIn,adminLogout)
 

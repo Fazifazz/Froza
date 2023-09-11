@@ -126,13 +126,16 @@
 											<span class="price">&#8377;<%= prdct.mrp %></span>
 										</div>
 										<div class="icons">
-											<a class="btn btn-dark" href="#">
-												<i class="fa fa-shopping-cart"></i> Add to Cart
-											</a>
-											<a class="btn btn-success" href="#">
-												<i class="fa fa-shopping-bag"></i> Shop  Now
-											</a>
-										</div>
+                                            <form action="/cart/<%= prdct._id %>" method="post">
+                                                <input type="hidden" name="productId" value="<%= prdct._id %>">
+                                                <button class="btn btn-dark" type="submit">
+                                                    <i class="fa fa-shopping-cart"></i> Add to Cart
+                                                </button>
+                                            </form>
+                                            <a class="btn btn-success" href="#">
+                                                <i class="fa fa-shopping-bag"></i> Shop  Now
+                                            </a>
+                                        </div>
 									</div>
 								</div>
 							<% } %>
