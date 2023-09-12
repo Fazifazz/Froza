@@ -5,6 +5,9 @@ const email = require('../utils/email')
 const randomString = require('randomstring');
 const catchAsync = require('../utils/catchAsync');
 const Category = require('../models/categoryModel');
+const path = require('path')
+const Address = require('../models/addressModel')
+const Banner = require('../models/bannerModel');
 require('dotenv').config()
 
 const securePassword = async (password) => {
@@ -21,7 +24,8 @@ const securePassword = async (password) => {
 
 exports.index = catchAsync(async (req, res) => {
   const products = await Product.find()
-  res.render('users/index', { products })
+  const banners = await Banner.find()
+  res.render('users/index', { products,banners })
 })
 
 exports.showLogin = (req, res) => {
@@ -137,10 +141,6 @@ exports.showshopIndex = async (req, res) => {
 }
 
 
-// exports.showForgetPassword = async (req,res) => {
-//   const user = req.cookies
-// }
-
 
 
 exports.showAddToCart=async (req,res)=>{
@@ -179,7 +179,7 @@ exports.addTocart=async (req,res)=>{
       }
      await user.save()
      req.flash('success','product added to cart successfully')
-     res.redirect(req.url)
+     res.redirect(req.header.referrer)
   }catch (error) {
       console.log(error.message)
       res.status(500).send('Internal Server Error');
@@ -212,33 +212,23 @@ exports.updateCartQauntity = catchAsync ( async (req,res) => {
         res.json({ message: 'Cart item quantity updated successfully',totalCartAmount, total: newTotal });
 })
 
-exports.destroyCartItem = catchAsync ( async (req,res) => {
-  const userId = req.session.user; 
-  const user = await User.findById(userId)
-  const cartItemId = req.params.id
-  const cartIndex = user.cart.findIndex((item) => item._id.equals(cartItemId) )
-  if(cartIndex !== -1){
-     user.totalCartAmount = user.totalCartAmount - user.cart[cartIndex].total
-     user.cart.splice(cartIndex,1);
-     await user.save();
-  }
-  res.redirect('/cart')
-})
-
-
-exports.showCheckout = catchAsync(async (req,res) => {
+exports.destroyCartItem = catchAsync(async (req, res) => {
   const userId = req.session.user;
-  const user = await User.findById(userId).populate('cart.product')
-  const cart = user.cart;
-  const totalCartAmount=user.totalCartAmount
-  res.render('users/checkout',{cart,totalCartAmount})
-})
-
-exports.showProfileIndex = catchAsync ( async (req,res) => {
-  const userid = req.session.user;
-  const user = await User.findById(userid)
-  res.render('users/profile',{user})
-})
+  const user = await User.findById(userId);
+  const cartItemId = req.params.id;
+  const cartIndex = user.cart.findIndex((item) => item._id.equals(cartItemId));
+  
+  if (cartIndex !== -1) {
+    user.totalCartAmount = user.totalCartAmount - user.cart[cartIndex].total;
+    user.cart.splice(cartIndex, 1);
+    await user.save();
+    req.flash('success', 'Item removed from the cart.'); // Flash a success message
+  } else {
+    req.flash('error', 'Item not found in the cart.'); // Flash an error message
+  }
+  
+  res.redirect('/cart');
+});
 
 
 

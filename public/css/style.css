@@ -8613,13 +8613,13 @@ input[type="text"] {
       -webkit-transition: all .2s ease-out;
       -o-transition: all .2s ease-out;
       transition: all .2s ease-out; }
-  .colorlib-nav-toggle.colorlib-nav-white > i {
+  /* .colorlib-nav-toggle.colorlib-nav-white > i {
     color: #fff;
     background: #000; }
     .colorlib-nav-toggle.colorlib-nav-white > i::before, .colorlib-nav-toggle.colorlib-nav-white > i::after {
-      background: #000; }
+      background: #000; } */
 
-.colorlib-nav-toggle i::before {
+/* .colorlib-nav-toggle i::before {
   top: -7px; }
 
 .colorlib-nav-toggle i::after {
@@ -8629,9 +8629,9 @@ input[type="text"] {
   top: -8px; }
 
 .colorlib-nav-toggle:hover i::after {
-  bottom: -8px; }
+  bottom: -8px; } */
 
-.colorlib-nav-toggle.active i {
+/* .colorlib-nav-toggle.active i {
   background: transparent; }
 
 .colorlib-nav-toggle.active i::before {
@@ -8667,7 +8667,7 @@ input[type="text"] {
   border-bottom: none !important; }
   @media (max-width: 767.98px) {
     .colorlib-nav-toggle {
-      display: block; } }
+      display: block; } } */
 
 .pagination li {
   margin: 2px; }

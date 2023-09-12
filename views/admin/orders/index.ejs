@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Include your meta tags and CSS links here -->
+</head>
+<body>
+    <!-- Include header -->
+    <%- include('../../layouts/headerAdmin') %>
+
+    <!-- Navbar -->
+    <%- include('../../layouts/_navbar') %>
+
+    <div class="container-scroller">
+        <div class="container-fluid page-body-wrapper">
+            <!-- Sidebar -->
+            <%- include('../../layouts/_sidebar') %>
+
+            <!-- Main Content -->
+            <div class="main-panel">
+                <div class="content-wrapper">
+                    <div class="row">
+                        <div class="col-lg-12 grid-margin stretch-card">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Products</th>
+                                                    <th>Total Price</th>
+                                                    <th>Delivery Address</th>
+                                                    <th>Status</th>
+                                                    <th>Payment Method</th>
+                                                    <th>Details</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <% orders.forEach((order) => { %>
+                                                    <tr>
+                                                        <td class="py-1">
+                                                            <% order.products.product.forEach((prdt)=>{ %>
+                                                                <p>*<%= prdt.title %></p>
+                                                            <% }) %>
+                                                        </td>
+                                                        <td>
+                                                            <p>&#8377;<%= order.totalPrice %></p>
+                                                        </td>
+                                                        <td class="py-1">
+                                                            <p><%= order.deliveryAddress[0].name %></p>
+                                                            <p><%= order.deliveryAddress[0].phone %></p>
+                                                            <p><%= order.deliveryAddress[0].pincode %></p>
+                                                            <p><%= order.deliveryAddress[0].district %></p>
+                                                            <p><%= order.deliveryAddress[0].locality %></p>
+                                                        </td>
+                                                        <td>
+                                                            <% if(order.status != 'Cancel'){ %>
+                                                                <form action="/admin/orders?_method=PATCH" method="POST">
+                                                                    <select name="status" class="status_order <%= order.status %>" id="floatingSelectGrid">
+                                                                        <% for (const option of ['Pending', 'Processing','Shipped', 'Delivered']) { %>
+                                                                            <option value="<%= option %>" <% if(option == order.status) { %> selected <% } %>>
+                                                                                <%= option %> 
+                                                                            </option>
+                                                                        <% } %>
+                                                                    </select>
+                                                                    <input type="hidden" name="orderId" value="<%= order.orderId %>">
+                                                                    <button type="submit" class="status_update btn btn-outline-primary">Update</button>
+                                                                </form>
+                                                            <% } else { %>
+                                                                <p class="Cancel">Order Cancelled</p>
+                                                            <% } %>
+                                                        </td>
+                                                        <td>
+                                                            <p><%= order.paymentMethod %></p>
+                                                        </td>
+                                                        <td>
+                                                          <a href="/admin/orders/<%= order.orderId  %>">View</a>
+                                                        </td>
+                                                    </tr>
+                                                <% }) %>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Include Bootstrap JS and jQuery -->
+    <script src="/admin/vendors/js/vendor.bundle.base.js"></script>
+    <!-- endinject -->
+    <!-- Plugin js for this page -->
+    <!-- End plugin js for this page -->
+    <!-- inject:js -->
+    <script src="/admin/js/off-canvas.js"></script>
+    <script src="/admin/js/hoverable-collapse.js"></script>
+    <script src="/admin/js/template.js"></script>
+    <script src="/admin/js/settings.js"></script>
+    <script src="/admin/js/todolist.js"></script>
+  
+    <!-- Include your script tags here -->
+
+    <!-- Include footer -->
+    <%- include('../../layouts/footerAdmin') %>
+</body>
+</html>

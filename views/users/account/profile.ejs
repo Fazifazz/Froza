@@ -1,31 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FROZA</title>
-    <!-- Include Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>FROZA</title>
-    <link rel="icon" href="img/favicon.png">
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="/css/bootstrap.min.css">
-    <!-- animate CSS -->
-    <link rel="stylesheet" href="/css/animate.css">
-    <!-- owl carousel CSS -->
-    <link rel="stylesheet" href="/css/owl.carousel.min.css">
-    <!-- font awesome CSS -->
-    <link rel="stylesheet" href="/css/all.css">
-    <!-- flaticon CSS -->
-    <link rel="stylesheet" href="/css/flaticon.css">
-    <link rel="stylesheet" href="/css/themify-icons.css">
-    <!-- font awesome CSS -->
-    <link rel="stylesheet" href="/css/magnific-popup.css">
-    <!-- swiper CSS -->
-    <link rel="stylesheet" href="/css/slick.css">
+<%- include('../../layouts/header') %>
    
     <style>
         /* Basic styling for the readonly box */
@@ -53,11 +26,10 @@
 
 
 
-    
-</head>
+
 <body>
     <!-- Navbar -->
-    <%- include('../../layouts/profile_navbar') -%>
+    <%- include('../../layouts/userNav') -%>
 
 
     <!-- Sidebar -->
@@ -73,7 +45,6 @@
                     <p class="user-details"><b>Name</b><br> <%= user.name  %></p>
                     <p class="user-details"><b>Email</b> <br> <%= user.email  %></p>
                     <p class="user-details"><b>Phone</b><br> <%= user.mobile  %></p>
-                    <p class="user-details"><b>Address</b><br> ananthavoor p.o</p>
                 </div>
 
             </main>

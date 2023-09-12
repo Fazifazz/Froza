@@ -12,8 +12,6 @@ exports.showProfile=async (req,res)=>{
     }
 }
 
-
-
 exports.showAddress=async (req,res)=>{
     try {
         const user=await User.findById(req.session.user)
@@ -88,6 +86,27 @@ exports.editAddress=async (req,res)=>{
         }
         await Address.updateOne({_id:req.params.id},updatedAddress);
         res.redirect('/profile/address');
+    } catch (error) {
+        console.log(error.message)
+        res.status(500).send('Internal Server Error');
+    }
+}
+
+exports.setDefaultAddress=async (req,res)=>{
+    try {
+        const user=await User.findById(req.session.user)
+        const userAddresses=await Address.find({userId:user._id})
+        let newDefault
+        const oldDefault=await Address.findOne({defaultAddress:true})
+        if(!oldDefault){
+            newDefault=await Address.findByIdAndUpdate({_id:req.body.id},{defaultAddress:true},{new:true})
+        }else{
+            await Address.updateOne({defaultAddress:true},{defaultAddress:false})
+            newDefault=await Address.findByIdAndUpdate({_id:req.body.id},{defaultAddress:true},{new:true})
+        }
+        user.defaultAddress=newDefault._id
+        await user.save()
+        res.redirect('/profile/address')
     } catch (error) {
         console.log(error.message)
         res.status(500).send('Internal Server Error');

@@ -43,6 +43,9 @@
             font-weight: normal;
         }
 
+        .card {
+            width: 600px;
+        }
         /* Add responsiveness for smaller screens */
         @media (max-width: 768px) {
             .readonly-box {
@@ -54,109 +57,128 @@
 
 
     
-</head>
+
 <body>
     <!-- Navbar -->
-    <%- include('../../layouts/profile_navbar') -%>
+    <%- include('../../layouts/userNav') -%>
 
     <!-- Sidebar -->
     <div class="container-fluid">
         <div class="row">
             
             <%- include('../../layouts/profile_sidebar') -%>
+            <div class="centered-container">
+            <div class="main-panel">
+                <div class="content-wrapper">
+                  <div class="row">
+                    <div class="col-lg-6 grid-margin stretch-card">
+                      <div class="card">
+                        <div class="card-body">
 
-            <!-- Main Content -->
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                
-                <div class="main-panel">
-                    <div class="content-wrapper">
-                      <div class="row">
-                        <div class="col-lg-6 grid-margin stretch-card">
-                          <div class="card">
-                            <div class="card-body">
-
-                                <div class="table-responsive">
-                                    <table class="table">
-                                      <thead>
-                                        
-                                      </thead>
-                                      <tbody>
-                                        
-                                        <a href="/profile/addAddress" class="btn btn-outline-primary">Add address</a>
-                                
-                                      </tbody>
-                                    </table>
-                                </div>
-<!--                               
-                              <div class="table-responsive">
+                            <div class="table-responsive">
                                 <table class="table">
                                   <thead>
-                                    <tr>
-                                      <th>No.</th>
-                                      <th>Address</th>    
-                                    </tr>
+                                    
                                   </thead>
                                   <tbody>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>
-                                            <span>2132432546</span><br>
-                                            <span>masfkfjnsdj dnasjfndsjf nsjdbcsdjjfbh csjdvbsdvjhb 39548697</span>
-                                        </td>
-                                        <td><a href="/profile/editAddress" class="btn btn-info">edit</a></td>
-                                    </tr>
-                                    <tr>
-                                        <td>2</td>
-                                        <td>
-                                            <span>2132432546</span><br>
-                                            <span>masfkfjnsdj dnasjfndsjf nsjdbcsdjjfbh csjdvbsdvjhb 39548697</span>
-                                        </td>
-                                        <td><a href="" class="btn btn-info">edit</a></td>
-                                    </tr>
-
+                                    
+                                    <a href="/profile/addAddress" class="btn btn-outline-primary">Add address</a>
                             
                                   </tbody>
                                 </table>
-                              </div> -->
-                              <!-- addressList.ejs -->
+                            </div>
+
+
+                            <div class="table-responsive">
+                                <table class="table">
+                                  <thead>
+                                    <tr>
+                                      <th>Default Address</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <% addresses.forEach(function(address, index) { %>
+                                    <tr>
+                                    <% if(address.defaultAddress){ %>
+                                        <td>
+                                            <span><%= address.phone %></span><br>
+                                            <span><%= address.address %>,<%= address.landMark  %>,<%= address.locality %>,
+                                                <%= address.district  %> District,<%= address.state  %>,<%= address.pincode %>.
+                                            </span>
+                                        </td>
+                                        <td><a href="/profile/editAddress/<%= address._id %>" class="">edit</a></td>
+                                    <% } %>
+                                   </tr>
+                                   <% }); %>
+                        
+                              </tbody>
+                            </table>
+                        </div>
+                                       
+                            
+
+                         
+                          
 <!-- addressList.ejs -->
 <div class="table-responsive">
-    <table class="table">
-        <thead>
+<table class="table">
+    <thead>
+        <tr>
+            <th>no.</th>
+            <th>secondary address</th>
+            <th>actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% addresses.forEach(function(address, index) { %>
+        <% if(!address.defaultAddress){ %>     
             <tr>
-                <th>No.</th>
-                <th>Address</th>
+                 
+                <td><%= index + 1 %></td>
+                
+
+                <td>
+                    <span><%= address.phone %></span><br>
+                    <span><%= address.address %>,<%= address.landMark  %>,<%= address.locality %>,
+                        <%= address.district  %> District,<%= address.state  %>,<%= address.pincode %>.
+                    </span>
+                </td>
+                <td>
+                  
+                    <a href="/profile/editAddress/<%= address._id %>" class="">edit</a>
+                    <a href="/profile/deleteAddress/<%=address._id%>" class="">remove</a>
+
+                    <form action="/profile/setDefaultAddress" method="post">
+                        <input type="hidden" name="id" value="<%= address._id  %>">
+                        <button type="submit" class="btn btn-sm btn-secondary mt-2">Set as default</button>
+                    </form>
+                 
+                </td>
+                  
+                 
             </tr>
-        </thead>
-        <tbody>
-            <% addresses.forEach(function(address, index) { %>
-                <tr>
-                    <td><%= index + 1 %></td>
-                    <td>
-                        <span><%= address.phone %></span><br>
-                        <span><%= address.address %>,<%= address.landMark  %>,<%= address.locality %>,
-                            <%= address.district  %> District,<%= address.state  %>,<%= address.pincode %>.
-                        </span>
-                    </td>
-                    <td><a href="/profile/editAddress/<%= address._id %>" class="btn btn-info">edit</a></td>
-                    <td><a href="/profile/deleteAddress/<%=address._id%>" class="btn btn-info">remove</a></td>
-                </tr>
-            <% }); %>
-        </tbody>
-    </table>
+        <% } %>   
+        <% }); %>
+    </tbody>
+</table>
 </div>
 
 
-                            </div>
-                          </div>
                         </div>
-                                      
-                                      
+                      </div>
+                    </div>
 
 
-            </main>
+
+
+
+
+
+
         </div>
     </div>
+</div>
+
 
     <!-- Include Bootstrap JS and jQuery -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

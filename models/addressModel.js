@@ -40,7 +40,7 @@ const addressSchema = new mongoose.Schema({
     },
     defaultAddress:{
         type:Boolean,
-        deafult:false
+        default:false
     },
     landMark:{
         type:String

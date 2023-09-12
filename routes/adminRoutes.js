@@ -25,6 +25,7 @@ const {
     blockUser,
     adminLogout,
 } = require('../controllers/adminController')
+const orderController = require('../controllers/orderController')
 
 router.get('/login',isAdminLoggedOut, loadLogin)
 router.post('/login',isAdminLoggedOut, verifyAdminLogin)
@@ -62,12 +63,17 @@ router.post('/users/destroy',  isAdminLoggedIn,blockUser)
 //banner
 router.get('/banners', isAdminLoggedIn, bannerCtrl.showBannerIndex)
 router.get('/banners/create', isAdminLoggedIn, bannerCtrl.showBannerCreate)
-router.post('/banners' , isAdminLoggedIn,middleware.uploadBannerImages,bannerCtrl.createBanner)
+router.post('/banners' , isAdminLoggedIn,middleware.uploadBannerImages,middleware.resizeBannerImages,bannerCtrl.createBanner)
 router.get('/banners/:id/edit', isAdminLoggedIn, bannerCtrl.showEditBanners)
 router.post('/banners/destroy', isAdminLoggedIn,bannerCtrl.deleteBanner)
 router.patch('/banners/:id', isAdminLoggedIn, bannerCtrl.updateBanner)
-// router.delete('/banners/:id/img/delete', isAdminLoggedIn, destroyProductImage)
-router.patch('/banners/:id/img/add', isAdminLoggedIn,  middleware.resizeProductImages, bannerCtrl.updateBannerImages)
+router.delete('/banners/:id/img/delete', isAdminLoggedIn, bannerCtrl.destroyBannerImage)
+router.patch('/banners/:id/img/add', isAdminLoggedIn,middleware.uploadBannerImages,middleware.resizeBannerImages, bannerCtrl.updateBannerImages)
+
+//orders
+router.get('/orders',isAdminLoggedIn,orderController.getOrderList)
+router.get('/orders/:id',isAdminLoggedIn,orderController.orderDetails)
+router.patch('/orders',isAdminLoggedIn,orderController.updateOrderStatus)
 
 router.get('/logout',  isAdminLoggedIn,adminLogout)
 

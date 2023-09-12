@@ -15,8 +15,7 @@ exports.showBannerCreate = catchAsync( async (req,res) => {
 })
 
 exports.createBanner  = async (req,res) => {
-    const { heading } = req.body
-    const {images } = req.files.images
+    const { heading ,images} = req.body
     console.log(images);
     const imagesWithPath = images.map(img => '/banners/' + img)
     try{
@@ -34,16 +33,16 @@ exports.createBanner  = async (req,res) => {
 
 exports.showEditBanners = catchAsync (async (req,res) =>{
     const { id }= req.params
-    const banner = await Banner.findById(id)
-    res.render('admin/banners/edit',{ banner })
+    const banners = await Banner.findById(id)
+    res.render('admin/banners/edit',{ banners })
 })
 
 
 exports.updateBanner = catchAsync (async (req,res) => {
     const { id } = req.params;
-    const { name } =req.body;
+    const { heading } =req.body;
     const banner = await Banner.findByIdAndUpdate(id,{$set:{
-        name
+        heading
     }},{new:true})
 
     res.redirect('/admin/banners')
@@ -52,6 +51,7 @@ exports.updateBanner = catchAsync (async (req,res) => {
 exports.updateBannerImages = catchAsync ( async (req,res) => {
     const { id } = req.params;
     const { images } = req.body;
+    let imagesWithPath
     if(images.length){
         imagesWithPath = images.map(image => '/banners/' + image)
     }
@@ -64,5 +64,16 @@ exports.deleteBanner = catchAsync(async (req,res) => {
     const id  = req.body.id;
     const state = Boolean(req.body.state)
     const banner = await Banner.findByIdAndUpdate(id, {$set:{ is_deleted: state} }, { new: true });
-        res.redirect('/admin/products')
+        res.redirect('/admin/banners')
+})
+
+
+exports.destroyBannerImage =  catchAsync ( async (req,res) => {
+    const { id } = req.params
+    const { image } = req.body
+    const banner = await Banner.findByIdAndUpdate(id,{$pull: { images: image}}, {new: true})
+    fs.unlink(path.join(__dirname,'../public', image), (err)=>{
+        if(err)console.log(err);
+    })
+    res.redirect(`/admin/banners/${id}/edit`)
 })

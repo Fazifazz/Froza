@@ -1,94 +1,118 @@
 <%- include('../layouts/header') %>
 
 <body>
+
+
   <div class="colorlib-loader"></div>
 
   <div id="page">
     <%- include('../layouts/userNav') %>
 
+    <div class="breadcrumbs">
+      <div class="container">
+          <div class="row">
+              <div class="col">
+                  <p class="bread"><span><a href="index.html">Home</a></span> / <span>Cart</span></p>
+              </div>
+          </div>
+      </div>
+  </div>
+
+
     <div class="colorlib-product">
       <div class="container">
+        <% if (messages.success) { %>
+          <div class="alert alert-success">
+            <%= messages.success %>
+          </div>
+        <% } %>
+        <% if(cart.length){ %>
         <div class="row row-pb-lg">
           <div class="col-md-12">
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>Product Details</th>
-                  <th class="text-center">Price</th>
-                  <th class="text-center">Quantity</th>
-                  <th class="text-center">Total</th>
-                  <th class="text-center">Remove</th>
-                </tr>
-              </thead>
-              <tbody>
-                <% cart.forEach(cartprdt => { %>
-
-                <tr>
-                  <td>
-                    <div class="product-cart d-flex">
-                      <div class="one-forth">
-                        <div
-                          class="product-img"
-                          style="
-                            background-image: url(<%=cartprdt.product.images[0]%>);
-                          "
-                        ></div>
-                        <div class="display-tc">
-                          <h3><%= cartprdt.product.title %></h3>
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Product Details</th>
+                    <th class="text-center">Price</th>
+                    <th class="text-center">Quantity</th>
+                    <th class="text-center">Total</th>
+                    <th class="text-center">Remove</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% cart.forEach(cartprdt => { %>
+                  <tr>
+                    <td>
+                      <div class="product-cart d-md-flex">
+                        <div class="one-forth">
+                          <div
+                            class="product-img"
+                            style="
+                              background-image: url(<%=cartprdt.product.images[0]%>);
+                            "
+                          ></div>
+                          <div class="display-tc">
+                            <h3><%= cartprdt.product.title %></h3>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </td>
-                  <td class="text-center">
-                    <div class="display-tc">
-                      <span class="price"
-                        >&#8377;<%= cartprdt.product.regularPrice %></span
-                      >
-                    </div>
-                  </td>
-                  <td class="text-center">
-                    <div class="product_count">
-                      <button
-                        class="btn input-number-decrement"
-                        data-action="decrement"
-                        data-cart-item-id="<%= cartprdt._id %>"
-                      >
-                        -
-                      </button>
-                      <input
-                        class="input-number"
-                        type="text"
-                        value="<%= cartprdt.quantity %>"
-                        min="0"
-                        max="10"
-                      />
-                      <button
-                        class="btn input-number-increment"
-                        data-action="increment"
-                        data-cart-item-id="<%= cartprdt._id %>"
-                      >
-                        +
-                      </button>
-                    </div>
-                  </td>
-                  <td class="text-center">
-                    <div class="display-tc">
-                      <span class="price" id="cartTotal_<%= cartprdt._id %>" data-cart-total-id="change_total" name="totalAmount"
-                        >&#8377;<%=cartprdt.total %></span
-                      >
-                    </div>
-                  </td>
-                  <td class="text-center">
-                    <div class="display-tc">
-                      <a href="/cart/<%= cartprdt._id %>" class="closed">
-                        <i class="fa fa-trash" aria-hidden="true"></i>
-                      </a>
-                    </div>
-                  </td>
-                </tr>
-                <% }); %>
-              </tbody>
-            </table>
+                    </td>
+                    <td class="text-center">
+                      <div class="display-tc">
+                        <span class="price"
+                          >&#8377;<%= cartprdt.product.regularPrice %></span
+                        >
+                      </div>
+                    </td>
+                    <td class="text-center">
+                      <div class="product_count">
+                        <button
+                          class="btn input-number-decrement"
+                          data-action="decrement"
+                          data-cart-item-id="<%= cartprdt._id %>"
+                        >
+                          -
+                        </button>
+                        <input
+                          class="input-number"
+                          type="text"
+                          value="<%= cartprdt.quantity %>"
+                          min="0"
+                          max="10"
+                        />
+                        <button
+                          class="btn input-number-increment"
+                          data-action="increment"
+                          data-cart-item-id="<%= cartprdt._id %>"
+                        >
+                          +
+                        </button>
+                      </div>
+                    </td>
+                    <td class="text-center">
+                      <div class="display-tc">
+                        <span
+                          class="price"
+                          id="cartTotal_<%= cartprdt._id %>"
+                          data-cart-total-id="change_total"
+                          name="totalAmount"
+                          >&#8377;<%=cartprdt.total %></span
+                        >
+                      </div>
+                    </td>
+                    <td class="text-center">
+                      <div class="display-tc">
+                        <a href="/cart/<%= cartprdt._id %>" class="closed">
+                          <i class="fa fa-trash" aria-hidden="true"></i>
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+                  <% }); %>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
         <div class="row row-pb-lg">
@@ -107,11 +131,11 @@
                         />
                       </div>
                       <div class="col-sm-3">
-                        <input
+                        <!-- <input
                           type="submit"
                           value="Apply Coupon"
                           class="btn btn-primary"
-                        />
+                        /> -->
                       </div>
                     </div>
                   </form>
@@ -145,6 +169,9 @@
             </div>
           </div>
         </div>
+        <% }else{ %>
+          <h6><center>Cart is Empty...Please add some items!</center></h6>
+          <% } %>
       </div>
     </div>
 
@@ -253,8 +280,16 @@
           });
         }
       }
+
+
+
+
+      
     </script>
+
   </div>
 
 
 <%- include('../layouts/footer') %>
+</body>
+</html>

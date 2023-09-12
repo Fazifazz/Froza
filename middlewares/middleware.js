@@ -3,6 +3,7 @@ const multer = require('multer');
 const sharp =  require('sharp')
 const path = require('path')
 const { v4 } = require('uuid')
+const catchAsync = require('../utils/catchAsync')
 
 const storage = multer.memoryStorage();
 
@@ -30,6 +31,30 @@ exports.uploadBannerImages = upload.fields([
     maxCount: 3
   }
 ])
+
+exports.resizeBannerImages = async (req, res, next) => {
+  if(!req.files.images) return next();
+  req.body.images = []
+  await Promise.all(
+    req.files.images.map(async(file) => {
+      const filename = `banners-${v4()}.jpeg`
+      await sharp(file.buffer)
+        .resize(1519,600)//640
+        .toFormat('jpeg')
+        .jpeg( { quality:90 } )
+        .toFile(path.join(__dirname, '../public', 'banners', filename))
+
+        req.body.images.push(filename)
+    })
+  )
+  next()
+}
+
+
+exports.previousRouteTracker =catchAsync(async (req,res,next)=>{
+  req.previousUrl = req.header('Referer') || '/';
+  next();
+})
 
 exports.resizeProductImages = async (req, res, next) => {
   if(!req.files.images) return next();
