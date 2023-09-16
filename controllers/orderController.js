@@ -2,7 +2,15 @@ const Order = require('../models/orderModel')
 const catchAsync = require('../utils/catchAsync')
 const User = require('../models/userModel')
 const Address = require('../models/addressModel')
+const Product = require('../models/productModel')
 const crypto = require('crypto')
+const Razorpay = require('razorpay')
+
+
+var instance = new Razorpay({
+  key_id:process.env.KEY_ID,
+  key_secret: process.env.KEY_SECRET,
+});
 
 
 exports.showCheckout = catchAsync(async (req,res) => {
@@ -12,7 +20,7 @@ exports.showCheckout = catchAsync(async (req,res) => {
         const addresses=await Address.find({userId:req.session.user})
         const cart = user.cart;
         const totalCartAmount=user.totalCartAmount
-        res.render('users/checkout',{cart,totalCartAmount,addresses})
+        res.render('users/checkout',{cart,totalCartAmount,addresses,error:req.flash('error')})
     }else{
         res.redirect('/cart')
     }
@@ -25,6 +33,10 @@ exports.showCheckout = catchAsync(async (req,res) => {
         return res.redirect('/checkout')
      }
      const user = await User.findById(req.session.user)
+     if(!user.defaultAddress){
+      req.flash('error','Please add an address');
+      return res.redirect('/checkout')
+     }
      const orderId = crypto.randomUUID();
      const order = await Order.create({
         orderId,
@@ -35,6 +47,15 @@ exports.showCheckout = catchAsync(async (req,res) => {
         paymentMethod: req.body.paymentOptions
     });
     await User.updateOne({_id:user._id},{$set:{cart:[],totalCartAmount:0}})
+  
+    //razorpay
+    // if(req.body[paymentOptions]==='cod'){
+    //   res.json({status:true})
+    // }else {
+      
+    // }
+
+    req.flash('success','order placed Successfully')
     res.redirect('/showOrders')
   })
 
@@ -68,7 +89,7 @@ exports.showCheckout = catchAsync(async (req,res) => {
       }
     ]);
   res.render('users/account/orders',{
-      user,orders:myOrders
+      user,orders:myOrders,success:req.flash('success')
   }); 
 
 })

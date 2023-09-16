@@ -116,7 +116,7 @@ exports.setDefaultAddress=async (req,res)=>{
 
 exports.deleteAddress=async (req,res)=>{
     try {
-        await Address.deleteOne({_id:req.params.id});
+        await Address.findOneAndUpdate({_id:req.params.id},{is_deleted:true})
         res.redirect('/profile/address')
     } catch (error) {
         console.log(error.message)

@@ -16,11 +16,19 @@
           <div class="row">
 
             <% if (success && success.length > 0) { %>
-              <div class="alert alert-success">
+              <div class="alert alert-success" id="success-message">
                 <% success.forEach(function(message) { %>
                   <p><%= message %></p>
                 <% }); %>
               </div>
+              <script>
+                setTimeout(function() {
+                  var successMessage = document.getElementById('success-message');
+                  if (successMessage) {
+                    successMessage.style.display = 'none';
+                  }
+                }, 2000); 
+              </script>
             <% } %>
             
             <div class="col-lg-12 grid-margin stretch-card">
@@ -60,7 +68,40 @@
                             
 <td>
   <a href="/admin/categories/<%= cat._id %>/edit" class="btn btn-info btn-sm">Edit</a>
-  <button class="btn btn-danger btn-sm" onclick="confirmDelete('<%= cat._id %>')">Delete</button>
+  <%if(cat.is_deleted){%>
+    <form action="/admin/categories/destroy" method="post" class="d-inline">
+      <input type="hidden" name="id" value="<%= cat._id %>">
+      <input type="hidden" name="state" value="">
+      <button type="submit" class="btn btn-success btn-sm">Acivate</button>
+    </form>
+<% } else { %>
+    <form action="/admin/categories/destroy" method="post" class="d-inline">
+        <input type="hidden" name="id" value="<%=cat._id%>">
+        <input type="hidden" name="state" value="1">
+        <button data-toggle="modal" data-target="#orderModal<%= cat._id %>" type="button" class="btn btn-danger btn-sm">DeActivate</button>
+        <!-- modal  -->
+        <div class="modal fade" id="orderModal<%= cat._id %>" tabindex="-1" role="dialog" aria-labelledby="orderModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="orderModalLabel">Confirm Delete</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                Are you sure you want to Delete this Category?
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-success">Delete</button>
+              </div>
+            </div>
+          </div>
+        </div>             
+      </form>
+<%}%>
+                                      <!-- Modal -->
 </td>
                           </tr>
                         <% }) %>
@@ -79,15 +120,7 @@
             </div>
           </div>
         </div>
-        <!-- content-wrapper ends -->
-        <!-- partial:../../partials/_footer.html -->
-        <!-- <footer class="footer">
-          <div class="d-sm-flex justify-content-center justify-content-sm-between">
-            <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Copyright © 2021.  Premium <a href="https://www.bootstrapdash.com/" target="_blank">Bootstrap admin template</a> from BootstrapDash. All rights reserved.</span>
-            <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Hand-crafted & made with <i class="ti-heart text-danger ml-1"></i></span>
-          </div>
-        </footer> -->
-        <!-- partial -->
+        
       </div>
       <!-- main-panel ends -->
     </div>
@@ -156,65 +189,6 @@
             }
         })
     })
-
-
-    //pop up for delete category
-
-    // Function to show the confirmation dialog
-  
-    // Function to show a success toast message
-    // Function to show a success toast message
-    function showSuccessToast(message) {
-        Toastify({
-            text: message,
-            duration: 3000, // 3 seconds
-            gravity: 'top', // Display at the top
-            position: 'right', // Position on the right
-            backgroundColor: 'green', // Background color for success
-        }).showToast();
-    }
-
-    // Function to show an error toast message
-    function showErrorToast(message) {
-        Toastify({
-            text: message,
-            duration: 3000, // 3 seconds
-            gravity: 'top', // Display at the top
-            position: 'right', // Position on the right
-            backgroundColor: 'red', // Background color for error
-        }).showToast();
-    }
-
-    // Function to show the confirmation dialog and handle the delete action
-    function confirmDelete(categoryId) {
-        const confirmation = confirm('Are you sure you want to delete this category?');
-
-        if (confirmation) {
-            // If the user confirms, proceed with the delete action
-            const form = document.createElement('form');
-            form.method = 'post';
-            form.action = `/admin/categories/${categoryId}?_method=DELETE`;
-
-            // Submit the form to trigger the delete action
-            document.body.appendChild(form);
-
-            // Show a success toast message for delete
-            showSuccessToast('Item deleted');
-
-            // Add a delay before submitting the form and refreshing the page
-            setTimeout(function () {
-                form.submit();
-            }, 1000); // Adjust the delay time as needed
-        } else {
-            // If the user cancels, show an error toast message
-            showErrorToast('Delete action canceled');
-        }
-    }
-
-    // Function to show a success toast message after editing
-    function showEditSuccessToast() {
-        showSuccessToast('Item edited');
-    }
 
   </script>
 

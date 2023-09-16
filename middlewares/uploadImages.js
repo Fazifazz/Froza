@@ -25,12 +25,32 @@ exports.uploadProductImages = upload.fields([
   }
 ])
 
+exports.resizeProductImages = async (req, res, next) => {
+  if(!req.files.images) return next();
+  req.body.images = []
+  await Promise.all(
+    req.files.images.map(async(file) => {
+      const filename = `products-${v4()}.jpeg`
+      await sharp(file.buffer)
+        .resize(640,640)//640
+        .toFormat('jpeg')
+        .jpeg( { quality:90 } )
+        .toFile(path.join(__dirname, '../public', 'products', filename))
+
+        req.body.images.push(filename)
+    })
+  )
+  next()
+}
+
+//banners
 exports.uploadBannerImages = upload.fields([
   {
     name: 'images',
     maxCount: 3
   }
 ])
+
 
 exports.resizeBannerImages = async (req, res, next) => {
   if(!req.files.images) return next();
@@ -51,28 +71,6 @@ exports.resizeBannerImages = async (req, res, next) => {
 }
 
 
-exports.previousRouteTracker =catchAsync(async (req,res,next)=>{
-  req.previousUrl = req.header('Referer') || '/';
-  next();
-})
-
-exports.resizeProductImages = async (req, res, next) => {
-  if(!req.files.images) return next();
-  req.body.images = []
-  await Promise.all(
-    req.files.images.map(async(file) => {
-      const filename = `products-${v4()}.jpeg`
-      await sharp(file.buffer)
-        .resize(640,640)//640
-        .toFormat('jpeg')
-        .jpeg( { quality:90 } )
-        .toFile(path.join(__dirname, '../public', 'products', filename))
-
-        req.body.images.push(filename)
-    })
-  )
-  next()
-}
 //category
 exports.uploadCategoryImage = upload.single('photo')
 
@@ -93,6 +91,27 @@ exports.resizeCategoryImage = async(req, res, next) => {
        console.log(error.message)
    }
 
+}
+
+//profile
+
+exports.uploadProfileImage = upload.single('image');
+
+exports.resizeProfileImage =async  (req,res,next) => {
+  try {
+    if(!req.file) return next();
+    req.file.originalname = `userProfile-${Date.now()}.png`;
+    console.log('Working me...')
+    req.body.image = req.file.originalname
+    await sharp(req.file.buffer)
+    .resize(300,300)
+    .toFormat('png')
+    .png({quality:90}).toFile(`public/profile/${req.file.originalname}`);
+    next();
+    
+  } catch (error) {
+    console.log(error.message)
+  }
 }
 
   

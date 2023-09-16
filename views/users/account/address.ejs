@@ -6,10 +6,6 @@
     <title>FROZA</title>
     <!-- Include Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>FROZA</title>
     <link rel="icon" href="img/favicon.png">
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -131,6 +127,7 @@
     </thead>
     <tbody>
         <% addresses.forEach(function(address, index) { %>
+        <% if(!address.is_deleted){ %>
         <% if(!address.defaultAddress){ %>     
             <tr>
                  
@@ -147,6 +144,7 @@
                   
                     <a href="/profile/editAddress/<%= address._id %>" class="">edit</a>
                     <a href="/profile/deleteAddress/<%=address._id%>" class="">remove</a>
+                        
 
                     <form action="/profile/setDefaultAddress" method="post">
                         <input type="hidden" name="id" value="<%= address._id  %>">
@@ -157,7 +155,8 @@
                   
                  
             </tr>
-        <% } %>   
+        <% } %>  
+        <% } %> 
         <% }); %>
     </tbody>
 </table>

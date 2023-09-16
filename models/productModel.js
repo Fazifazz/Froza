@@ -5,20 +5,27 @@ const productSchema = new mongoose.Schema ({
         type:String,
         required:true,
     },
+    brand: {
+        type: String,
+        required: true
+    },
     description:{
         type:String,
         required:true
     },
     mrp:{
-        type:String,
+        type:Number,
         required:true
     },
     regularPrice:{
-        type:String,
+        type:Number,
         required:true
     },
+    size: {
+        type: Array,
+    },
     stock:{
-        type:String,
+        type:Number,
         required:true
     },
     images:{

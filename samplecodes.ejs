@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Product</title>
+    <!-- Add your CSS and JavaScript links here -->
+</head>
+
+<body>
+    <aside>
+        <!-- Include your adminAside content here -->
+    </aside>
+
+    <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg">
+        <header>
+            <!-- Include your adminNavbar content here -->
+        </header>
+
+        <div class="container-fluid py-4">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card my-4">
+                        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                            <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between">
+                                <h6 class="text-white text-capitalize ps-3">Add Product</h6>
+                            </div>
+                        </div>
+                        <div class="card-body px-0 pb-2">
+                            <div class="table-responsive p-0">
+                                <form class="p-4" action="/admin/products/addProduct" method="post" enctype="multipart/form-data">
+                                    <div class="row input-group input-group-outline mb-3">
+                                        <div class="form-group col-md-4">
+                                            <label for="brand">Brand</label>
+                                            <input type="brand" class="form-control" name="brand" id="brand" placeholder="Brand">
+                                            <small id="brandErr" class="error"></small>
+                                        </div>
+                                        <div class="form-group col-md-8">
+                                            <label for="name">Product Name</label>
+                                            <input type="name" class="form-control" name="productName" id="name" placeholder="Product name">
+                                            <small id="nameErr" class="error"></small>
+                                        </div>
+                                    </div>
+                                    <div class="row input-group input-group-outline mb-3">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="category">Category</label>
+                                                <select id="category" name="category" class="form-control">
+                                                    <!-- Add your category options here -->
+                                                </select>
+                                            </div>
+
+                                            <div class="row input-group form-check">
+                                                <!-- Add your size checkboxes here -->
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-md-8">
+                                            <label for="inputAddress">Description</label>
+                                            <textarea type="text" rows="4" class="form-control" name="description" id="description" placeholder="Enter Product Description"></textarea>
+                                            <small id="descriptionErr" class="error"></small>
+                                        </div>
+                                    </div>
+                                    <div class="row input-group input-group-outline mb-3">
+                                        <div class="form-group col-md-4">
+                                            <label for="quantity">Quantity</label>
+                                            <input type="Number" name="quantity" class="form-control" id="quantity" placeholder="Quantity">
+                                            <small id="quantityErr" class="error"></small>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="price">Price</label>
+                                            <input type="number" name="price" id="price" class="form-control" placeholder="price">
+                                            <small id="priceErr" class="error"></small>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="dprice">Discount Price</label>
+                                            <input type="number" name="dprice" id="dprice" class="form-control" placeholder="Discount price">
+                                            <small id="dpriceErr" class="error"></small>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Choose product images</label>
+                                    </div>
+                                    <div class="d-flex justify-content-around">
+                                        <input type="file" class="form-control-file" name="images" id="image" multiple accept="image/*" required>
+                                        <small id="imageErr" class="error"></small>
+                                    </div>
+                                    <br>
+                                    <div class="d-flex justify-content-end">
+                                        <button type="submit" class="btn btn-primary">Add Product</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <!-- Include your adminFooter content here -->
+        </footer>
+    </main>
+
+    <!-- Add your JavaScript code here -->
+    <script>
+        // Your JavaScript code for handling checkboxes can be added here
+    </script>
+</body>
+
+</html>

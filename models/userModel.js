@@ -15,11 +15,7 @@ const userSchema = new mongoose.Schema({
     },
     profile:{
         type:String,
-        default:'user.png'
-    },
-    dob:{
-        type:Date,
-        default: new Date('1990-01-01')
+        default:'avatar.png'
     },
     cart:[
         {
@@ -40,7 +36,7 @@ const userSchema = new mongoose.Schema({
     totalCartAmount:{
         type:Number,
         default:0
-    },
+    },
     address: [{
         address:{
             type:mongoose.Schema.Types.ObjectId,

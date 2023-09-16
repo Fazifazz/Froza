@@ -16,7 +16,21 @@
 				</div>
 			</div>
 		</div>
-
+		<% if (success && success.length > 0) { %>
+			<div class="alert alert-success" id="success-message">
+			  <% success.forEach(function(message) { %>
+				<p><%= message %></p>
+			  <% }); %>
+			</div>
+			<script>
+			  setTimeout(function() {
+				var successMessage = document.getElementById('success-message');
+				if (successMessage) {
+				  successMessage.style.display = 'none';
+				}
+			  }, 2000); 
+			</script>
+		  <% } %>
 
 		<div class="colorlib-product">
 			<div class="container">
@@ -31,7 +45,7 @@
 												data-interval="10000">
 												<a href="<%= img %>" class="popup-image" data-mfp-src="<%= img %>">
 													<img src="<%= img %>" class="d-block w-100"
-														alt="Image <%= imgIndex + 1 %>">
+														alt="Image <%= imgIndex + 1 %>" id="<%= img %>"  onclick="imgClick(this.id)">
 												</a>
 											</div>
 											<% }) %>
@@ -80,15 +94,14 @@
 								<div class="block-26 mb-2">
 									<h4>Size</h4>
 									<ul>
-										<li><a href="#">7</a></li>
-										<li><a href="#">8</a></li>
-										<li><a href="#">9</a></li>
-										<li><a href="#">10</a></li>	
+										<% product.size.forEach((siz)=>{ %>
+										<li><a href="#"><%= siz %></a></li>
+										<% }) %>
 									</ul>
 								</div>
 								
 							</div>
-							<div class="input-group mb-4">
+							<!-- <div class="input-group mb-4">
 								<span class="input-group-btn">
 									<button type="button" class="quantity-left-minus btn" data-type="minus"
 										data-field="">
@@ -103,7 +116,7 @@
 										<i class="icon-plus2"></i>
 									</button>
 								</span>
-							</div>
+							</div> -->
 							<div class="row">
 								<div class="col-sm-12 text-center">
 									<form action="/cart/<%= product._id %>" method="post">
@@ -407,6 +420,53 @@
 
 
 		</script>
+
+
+<!-- for effective zooming -->
+<!-- 
+<script>
+
+    const mainImage = document.querySelector('.main-image');
+    const img = document.getElementById('main-img');
+
+    mainImage.addEventListener('mousemove', zoomIn);
+    mainImage.addEventListener('mouseleave', zoomOut);
+
+    function zoomIn(event) {
+        const boundingRect = mainImage.getBoundingClientRect();
+        const mouseX = event.clientX - boundingRect.left;
+        const mouseY = event.clientY - boundingRect.top; 
+
+        const offsetX = (mouseX / boundingRect.width) * 100;
+        const offsetY = (mouseY / boundingRect.height) * 100;
+
+        img.style.transformOrigin = `${offsetX}% ${offsetY}%`;
+        img.style.transform = 'scale(2)'; // Adjust the scale factor as desired
+    }
+
+    function zoomOut() {
+        img.style.transform = 'scale(1)';
+    }
+
+    function imgClick(id) {
+
+        let img = document.getElementById(id).src
+        document.getElementById('main-img').src = img
+
+    }
+
+    function selectLabel(element) {
+        var labels = document.querySelectorAll('.custom-label');
+        for (var i = 0; i < labels.length; i++) {
+            labels[i].classList.remove('selected');
+        }
+
+        element.classList.add('selected');
+    }
+    // 
+    window.addEventListener('resize', slideImage);
+
+</script> -->
 
 </body>
 

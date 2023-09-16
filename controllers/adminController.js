@@ -47,20 +47,32 @@ exports.getCategories = catchAsync(async (req, res) => {
 })
 
 exports.showCreateCategory = (req, res) => {
-    res.render('admin/categories/new')
+    res.render('admin/categories/new',{error:req.flash('error')})
 }
 
 
 exports.createCategory = catchAsync(async (req, res) => {
     const { name, photo } = req.body;
-    if (name.length === 0 || photo.length === 0) return res.render('admin/categories/new', { error: 'Name and Photo are required fields.' })
-    await Category.create({
-        name,
-        image: '/category/' + photo
-    })
-    req.flash('success', 'Category Added successfully')
-    res.redirect("/admin/Category");
-})
+    
+    if (name.length === 0 || photo.length === 0) {
+        return res.render('admin/categories/new', { error: 'Name and Photo are required fields.' });
+    }
+    
+    const oldCategoryName = await Category.find({ name: new RegExp(name, 'i') });
+    
+    if (oldCategoryName.length === 0) { // Check the length of the array
+        await Category.create({
+            name,
+            image: '/category/' + photo
+        });
+        req.flash('success', 'Category Added successfully');
+        return res.redirect("/admin/Category");
+    } else {
+        req.flash('error', 'Category name already exists');
+        return res.redirect('/admin/categories/create');
+    }
+});
+
 
 exports.editCategory = catchAsync(async (req, res) => {
     const { id } = req.params
@@ -69,13 +81,10 @@ exports.editCategory = catchAsync(async (req, res) => {
 })
 
 exports.destroyCategory = catchAsync(async (req, res) => {
-    const { id } = req.params
-    const category = await Category.findById(id)
-    fs.unlink(path.join(__dirname, '../public', category.image), async (err) => {
-        if (err) console.log(err);
-        await category.deleteOne();
+    const  id  = req.body.id
+    const state = Boolean(req.body.state)
+    const category = await Category.findByIdAndUpdate(id,{$set:{ is_deleted:state} },{new:true})
         res.redirect('/admin/Category')
-    })
 })
 
 exports.updateCategory = catchAsync(async (req, res) => {
@@ -110,24 +119,42 @@ exports.showProductsIndex = catchAsync(async (req, res) => {
 
 
 exports.createProduct = async (req, res) => {
-    const { title, description, mrp,regular, images, stock, category } = req.body
-    const imagesWithPath = images.map(img => '/products/' + img)
-    try {
-        const product = await Product.create({
-        title,
-        images:imagesWithPath,
-        description,
-        mrp,
-        regularPrice: regular,
-        stock,
-        category
-        })
+    const { title, brand, description, mrp, regular, check1, check2, check3, check4, check5, check6, images, stock, category } = req.body;
+    const imagesWithPath = images.map(img => '/products/' + img);
 
-        res.redirect('/admin/products')
+    try {
+        let size = []
+        if(check1) size.push(check1)
+        if(check2) size.push(check2)
+        if(check3) size.push(check3)
+        if(check4) size.push(check4)
+        if(check5) size.push(check5)
+        if(check6) size.push(check6)
+        if(check7) size.push(check7)
+        if(check8) size.push(check8)
+        if(check9) size.push(check9)
+        if(check10) size.push(check10)
+        if(check11) size.push(check11)
+        if(check12) size.push(check12)
+
+        const product = await Product.create({
+            title,
+            brand,
+            images: imagesWithPath,
+            description,
+            mrp,
+            regularPrice: regular,
+            size, // Assign the 'size' array directly
+            stock,
+            category
+        });
+
+        res.redirect('/admin/products');
     } catch (error) {
-        console.log(error.message)
+        console.error(error.message);
     }
-}
+};
+
 
 exports.showProductCreate= async (req,res)=>{
     const categories = await Category.find({})
@@ -147,12 +174,27 @@ exports.showProductEdit = async (req, res)=>{
 
 exports.updateProduct = async (req, res) => {
     const { id } = req.params
-    const { title, description, mrp,regular, stock, category } = req.body
+    const { title, brand, description, mrp,regular,size,check1, check2, check3, check4, check5, check6,check7, check8, check9, check10, check11, check12, stock, category } = req.body
     try {
+        let size = []
+        if(check1) size.push(check1)
+        if(check2) size.push(check2)
+        if(check3) size.push(check3)
+        if(check4) size.push(check4)
+        if(check5) size.push(check5)
+        if(check6) size.push(check6)
+        if(check7) size.push(check7)
+        if(check8) size.push(check8)
+        if(check9) size.push(check9)
+        if(check10) size.push(check10)
+        if(check11) size.push(check11)
+        if(check12) size.push(check12)
       const product = await Product.findByIdAndUpdate(id, {$set: {
         title,
+        brand,
         description,
         mrp,
+        size,
         stock,
         regularPrice: regular,
         category,
@@ -218,7 +260,9 @@ exports.showUserIndex = catchAsync(async(req,res)=>{
 exports.blockUser = catchAsync(async(req,res)=> {
     const id =req.body.id
     const state = Boolean(req.body.state)
+    console.log(state,id)
     const user =await User.findByIdAndUpdate(id,{$set:{isBlocked:state}},{new:true});
+    req.session.user = null
     res.redirect('/admin/users')
 })
 

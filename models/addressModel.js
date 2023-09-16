@@ -44,6 +44,10 @@ const addressSchema = new mongoose.Schema({
     },
     landMark:{
         type:String
+    },
+    is_deleted:{
+        type:Boolean,
+        default:false
     }
 });
 

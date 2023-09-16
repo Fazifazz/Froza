@@ -10,135 +10,158 @@
 		<div class="breadcrumbs">
 			<div class="container">
 				<div class="row">
-					<div class="col">
-						<p class="bread"><span><a href="index.html">Home</a></span> / <span>Product Details</span></p>
+                    <div class="col">
+                        <p class="bread"><span><a href="index.html">Home</a></span> / <span>Shop</span></p>
+					</div>
+
+                    <% if (success && success.length > 0) { %>
+                        <div class="alert alert-success text-center" id="success-message">
+                          <% success.forEach(function(message) { %>
+                            <p><%= message %></p>
+                          <% }); %>
+                        </div>
+                        <script>
+                            setTimeout(function() {
+                              var successMessage = document.getElementById('success-message');
+                              if (successMessage) {
+                                successMessage.style.display = 'none';
+                              }
+                            }, 2000); 
+                          </script>
+                        <% } %>
+
+				</div>
+			</div>
+		</div>
+
+		<div class="colorlib-product">
+			<div class="container">
+				<div class="row">
+					<div class="col-lg-3 col-xl-3">
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="side border mb-1">
+									<h3>Brand</h3>
+									<!-- Update the links with brand filters -->
+<ul>
+    <% brands.forEach((brand) => { %>
+        <li><a href="/shop?brand=<%= encodeURIComponent(brand) %>"><%= brand.toUpperCase() %></a></li>
+    <% }); %>
+</ul>
+
+								</div>
+							</div>
+                            <div class="col-sm-12">
+                                <div class="side border mb-1">
+                                    <h3>Price Range</h3>
+                                    <form action="/shop" method="get">
+                                        <label for="minPrice">Min Price:</label>
+                                        <input type="text" id="minPrice" name="minPrice">
+                                        <label for="maxPrice">Max Price:</label>
+                                        <input type="text" id="maxPrice" name="maxPrice">
+                                        <button type="submit">Apply</button>
+                                        <button type="submit">Clear Filters</button>
+                                    </form>
+                                </div>
+                            </div>
+<!-- Filter by Category -->
+<div class="col-sm-12">
+    <div class="side border mb-1">
+        <h3>Category</h3>
+        <ul>
+            <% categories.forEach((category) => { %>
+                <li><a href="/shop?category=<%= encodeURIComponent(category) %>"><%= category.toUpperCase() %></a></li>
+            <% }); %>
+        </ul>
+    </div>
+</div>
+
+
+
+							<div class="col-sm-12">
+								<div class="side border mb-1">
+									<h3>Colors</h3>
+									<ul>
+										<li><a href="#">Black</a></li>
+										<li><a href="#">White</a></li>
+										<li><a href="#">Blue</a></li>
+										<li><a href="#">Red</a></li>
+										<li><a href="#">Green</a></li>
+										<li><a href="#">Grey</a></li>
+										<li><a href="#">Orange</a></li>
+										<li><a href="#">Cream</a></li>
+										<li><a href="#">Brown</a></li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-lg-9 col-xl-9">
+                        <!-- Add the conditional code to display the selected brand here -->
+                        <% if (selectedBrand) { %>
+                            <h2>Products by <%= selectedBrand %></h2>
+                        <% } %>
+
+						<% if (selectedCategory) { %>
+							<h2>Products in Category: <%= selectedCategory %></h2>
+						<% } %>
+                        <!-- Your product listing starts here -->
+                        <div class="row row-pb-md">
+                            <% products.forEach((prdct) => { %>
+                                <% if (!prdct.is_deleted) { %>
+                                    <div class="col-lg-3 mb-4 text-center">
+                                        <div class="product-entry border">
+                                            <div class="prod-img">
+                                                <a href="/shop/<%= prdct._id %>">
+                                                    <img src="<%= prdct.images[0] %>" class="img-fluid" alt="<%= prdct.title.toUpperCase()%>">
+                                                </a>
+                                            </div>
+                                            <div class="desc">
+                                                <h2><a href="#"><%= prdct.title.toUpperCase() %></a></h2>
+                                                <h5 class="text-secondary"><%= prdct.brand.toUpperCase() %></h5>
+                                                <span class="price">&#8377;<%= prdct.mrp %></span>
+                                            </div>
+                                            <div class="icons">
+                                                <form action="/cart/<%= prdct._id %>" method="post">
+                                                    <input type="hidden" name="productId" value="<%= prdct._id %>">
+                                                    <button class="btn btn-dark" type="submit">
+                                                        <i class="fa fa-shopping-cart"></i> Add to Cart
+                                                    </button>
+                                                </form>
+                                                <a class="btn btn-success" href="#">
+                                                    <i class="fa fa-shopping-bag"></i> Shop Now
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <% } %>
+                            <% }) %>
+                        </div>
+
+						<!-- Pagination -->
+						<div class="row">
+							<div class="col-md-12 text-center">
+								<div class="block-27">
+									<ul>
+										<% if (currentPage > 1) { %>
+											<li><a href="?page=<%= currentPage - 1 %>"><i class="ion-ios-arrow-back"></i></a></li>
+										<% } %>
+										
+										<% for (let i = 1; i <= totalPages; i++) { %>
+											<li <% if (i === currentPage) { %>class="active"<% } %>><a href="?page=<%= i %>"><span><%= i %></span></a></li>
+										<% } %>
+
+										<% if (currentPage < totalPages) { %>
+											<li><a href="?page=<%= currentPage + 1 %>"><i class="ion-ios-arrow-forward"></i></a></li>
+										<% } %>
+									</ul>
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-        <% if (typeof success !== 'undefined') { %>
-            <div class="alert alert-success">
-              <%= success %>
-            </div>
-          <% } %>
-<div class="colorlib-product">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-3 col-xl-3">
-                <div class="row">
-                    <div class="col-sm-12">
-                        <div class="side border mb-1">
-                            <h3>Brand</h3>
-                            <ul>
-                                <li><a href="#">Nike</a></li>
-                                <li><a href="#">Adidas</a></li>
-                                <li><a href="#">Merrel</a></li>
-                                <li><a href="#">Gucci</a></li>
-                                <li><a href="#">Skechers</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-sm-12">
-                        <div class="side border mb-1">
-                            <h3>Size</h3>
-                            <div class="block-26 mb-2">
-                                <h4>Size</h4>
-                           <ul>
-                              <li><a href="#">7</a></li>
-                              <li><a href="#">8</a></li>
-                              <li><a href="#">9</a></li>
-                              <li><a href="#">10</a></li>
-                              <li><a href="#">11</a></li>
-                              <li><a href="#">12</a></li>
-                           
-                           </ul>
-                        </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-12">
-                        <div class="side border mb-1">
-                            <h3>Category</h3>
-                            <ul>
-                                <li><a href="#">Slip Ons</a></li>
-                                <li><a href="#">Boots</a></li>
-                                <li><a href="#">Sandals</a></li>
-                                <li><a href="#">Lace Ups</a></li>
-                                <li><a href="#">Oxfords</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-sm-12">
-                        <div class="side border mb-1">
-                            <h3>Colors</h3>
-                            <ul>
-                                <li><a href="#">Black</a></li>
-                                <li><a href="#">White</a></li>
-                                <li><a href="#">Blue</a></li>
-                                <li><a href="#">Red</a></li>
-                                <li><a href="#">Green</a></li>
-                                <li><a href="#">Grey</a></li>
-                                <li><a href="#">Orange</a></li>
-                                <li><a href="#">Cream</a></li>
-                                <li><a href="#">Brown</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
-
-            <div class="col-lg-9 col-xl-9">
-                <div class="row row-pb-md">
-                    <div class="row row-pb-md">
-						<% products.forEach((prdct) => { %>
-							<% if (!prdct.is_deleted) { %>
-								<div class="col-lg-3 mb-4 text-center">
-                                    <div class="product-entry border">
-                                        <div class="prod-img">
-                                            <a href="/shop/<%= prdct._id %>">
-                                                <img src="<%= prdct.images[0] %>" class="img-fluid" alt="<%= prdct.title %>">
-                                            </a>
-                                        </div>
-                                        <div class="desc">
-                                            <h2><a href="#"><%= prdct.title %></a></h2>
-                                            <span class="price">&#8377;<%= prdct.mrp %></span>
-                                        </div>
-                                        <div class="icons">
-                                            <form action="/cart/<%= prdct._id %>" method="post">
-                                                <input type="hidden" name="productId" value="<%= prdct._id %>">
-                                                <button class="btn btn-dark" type="submit">
-                                                    <i class="fa fa-shopping-cart"></i> Add to Cart
-                                                </button>
-                                            </form>
-                                            <a class="btn btn-success" href="#">
-                                                <i class="fa fa-shopping-bag"></i> Shop  Now
-                                            </a>
-                                        </div>
-                                    </div>
-                                    
-								</div>
-							<% } %>
-						<% }) %>
-					</div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12 text-center">
-                        <div class="block-27">
-                       <ul>
-                           <li><a href="#"><i class="ion-ios-arrow-back"></i></a></li>
-                          <li class="active"><span>1</span></li>
-                          <li><a href="#">2</a></li>
-                          <li><a href="#">3</a></li>
-                          <li><a href="#">4</a></li>
-                          <li><a href="#">5</a></li>
-                          <li><a href="#"><i class="ion-ios-arrow-forward"></i></a></li>
-                       </ul>
-                    </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<%- include('../layouts/footer') %>
+		<%- include('../layouts/footer') %>

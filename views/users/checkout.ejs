@@ -19,6 +19,25 @@
         <div class="row">
             <!-- Address Details (Left Column) -->
             <div class="col-lg-8">
+                
+                <% if (error && error.length > 0) { %>
+                    <div class="alert alert-danger text-center" id="error-message">
+                      <% error.forEach(function(message) { %>
+                        <p><%= message %></p>
+                      <% }); %>
+                    </div>
+                    <script>
+                        // Add a timeout to hide the error message after 3 seconds (adjust as needed)
+                        setTimeout(function() {
+                          var errorMessage = document.getElementById('error-message');
+                          if (errorMessage) {
+                            errorMessage.style.display = 'none';
+                          }
+                        }, 2000); // 3000 milliseconds (3 seconds)
+                      </script>
+                    <% } %>
+
+
                 <!-- Default Address Table -->
                 <div class="table-responsive">
                     <table class="table">
@@ -44,7 +63,7 @@
                             <% }); %>
                         </tbody>
                     </table>
-                    <a href="/profile/addAddress">Ship to a new Address?</a>
+                    <a href="/profile/addAddress">+Add new Address</a>
                 </div>
 
                 <!-- Payment Method -->
@@ -55,7 +74,7 @@
                             <div class="form-group">
                                 <div class="col-md-12">
                                     <div class="radio">
-                                       <label><input type="radio" name="paymentOptions" value="bank"> Direct Bank Transfer</label>
+                                       <label><input type="radio" name="paymentOptions" value="wallet">Wallet</label>
                                     </div>
                                 </div>
                             </div>
@@ -69,7 +88,7 @@
                             <div class="form-group">
                                 <div class="col-md-12">
                                     <div class="radio">
-                                       <label><input type="radio" name="paymentOptions" value="paypal"> Paypal</label>
+                                       <label><input type="radio" name="paymentOptions" value="razorpay"> razorPay</label>
                                     </div>
                                 </div>
                             </div>
@@ -77,9 +96,31 @@
                     </div>
                     <div class="row">
                         <div class="col-md-12 text-left">
-                            <button type="submit" class="btn btn-dark">Place Order</button>
+                            <button class="btn btn-dark" data-toggle="modal" data-target="#orderModal" type="button">Place Order</button>
                         </div>
                     </div>
+
+                    <!-- Modal -->
+<div class="modal fade" id="orderModal" tabindex="-1" role="dialog" aria-labelledby="orderModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="orderModalLabel">Confirm Order</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to place your order?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-success">Place Order</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
                 </form>
             </div>
 
@@ -111,6 +152,8 @@
             </div>
         </div>
     </div>
+
+   
 
     <!-- Include Bootstrap JS and jQuery -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

@@ -1,69 +1,74 @@
-const router = require('express').Router()
-const { isUserLoggedIn,isUserLoggedOut } = require('../middlewares/auth')
-const
-    {   
-        index,
-        showLogin,
-        showSignup,
-        insertUser,
-        validLogin,
-        showVerifyOtp,
-        varifyOtp,
-        getProductDetails,
-        showshopIndex,
-        addTocart,
-        userLogout,
-        showAddToCart,
-        destroyCartItem,
-        updateCartQauntity,
-        showCheckout,
-    } = require('../controllers/userController')
+const router = require('express').Router();
+const { isUserLoggedIn, isUserLoggedOut } = require('../middlewares/auth');
 
-    const accountController = require('../controllers/accountController')
-    const orderController = require('../controllers/orderController')
+// Import controllers
+const {
+    index,
+    showLogin,
+    showSignup,
+    insertUser,
+    validLogin,
+    showVerifyOtp,
+    varifyOtp,
+    forgetVerifyOtp,
+    showVerifyEmail,
+    verifyEmail,
+    showEditPassword,
+    updatePassword,
+    getProductDetails,
+    showshopIndex,
+    addTocart,
+    userLogout,
+    showAddToCart,
+    destroyCartItem,
+    updateCartQauntity,
+    resendOtp,
+} = require('../controllers/userController');
 
+const accountController = require('../controllers/accountController');
+const orderController = require('../controllers/orderController');
+const profileImages = require('../middlewares/uploadImages')
 
-router.get('/', index)
-router.get('/login',isUserLoggedOut, showLogin)
-router.post('/login',isUserLoggedOut, validLogin)
-router.get('/logout',userLogout)
+// Public routes
+router
+    .get('/', index)
+    .get('/login', isUserLoggedOut, showLogin)
+    .post('/login', isUserLoggedOut, validLogin)
+    .get('/signup', showSignup)
+    .post('/signup', insertUser)
+    .get('/verifyOtp', showVerifyOtp)
+    .get('/verifyOtp/:id', showVerifyOtp)
+    .post('/verifyOtp', varifyOtp)
+    .get('/forgetPassword',showVerifyEmail)
+    .post('/verifyEmail',verifyEmail)
+    .get('/editPassword',showEditPassword)
+    .post('/forgetVerifyOtp',forgetVerifyOtp)
+    .post('/reset-password',updatePassword)
+    .patch('/resendOtp', resendOtp)
+    .get('/productDetails/:id', getProductDetails)
+    .get('/shop', showshopIndex)
+    .get('/shop/:id', getProductDetails);
 
-router.get('/signup', showSignup)
-router.post('/signup', insertUser)
+// Protected routes
 
-router.get('/verifyOtp', showVerifyOtp)
-router.post('/verifyOtp', varifyOtp)
+router
+    .get('/logout',isUserLoggedIn, userLogout)
+    .get('/cart', isUserLoggedIn,showAddToCart)
+    .post('/cart/:id',isUserLoggedIn, addTocart)
+    .get('/cart/:id',isUserLoggedIn, destroyCartItem)
+    .post('/update-cart-item-quantity',isUserLoggedIn, updateCartQauntity)
+    .get('/checkout',isUserLoggedIn, orderController.showCheckout)
+    .get('/profile',isUserLoggedIn,profileImages.uploadProfileImage,profileImages.resizeProfileImage, accountController.showProfile)
+    .get('/profile/address',isUserLoggedIn, accountController.showAddress)
+    .get('/profile/addAddress',isUserLoggedIn, accountController.showAddaddress)
+    .post('/profile/addAddress',isUserLoggedIn, accountController.addAddress)
+    .get('/profile/editAddress/:id',isUserLoggedIn, accountController.showEditaddress)
+    .put('/profile/editAddress/:id', isUserLoggedIn,accountController.editAddress)
+    .get('/profile/deleteAddress/:id',isUserLoggedIn, accountController.deleteAddress)
+    .post('/profile/setDefaultAddress',isUserLoggedIn, accountController.setDefaultAddress)
+    .get('/showOrders',isUserLoggedIn, orderController.showOrdersIndex)
+    .post('/showOrders',isUserLoggedIn, orderController.verifyCheckOut)
+    .post('/showOrders/orderDetails',isUserLoggedIn, orderController.orderDetails)
+    .post('/showOrders/cancelOrder',isUserLoggedIn, orderController.destroyOrder);
 
-router.get('/productDetails/:id',getProductDetails)
-
-router.get('/shop',showshopIndex)
-router.get('/shop/:id',getProductDetails)
-
-router.get('/cart',isUserLoggedIn,showAddToCart)
-router.post('/cart/:id',isUserLoggedIn, addTocart);
-
-router.get('/cart/:id',isUserLoggedIn, destroyCartItem);
-
-router.post('/update-cart-item-quantity',isUserLoggedIn,updateCartQauntity)
-
-router.get('/checkout',isUserLoggedIn,orderController.showCheckout)
-// router.get('/forgotPassword',)
-
-router.get('/profile',isUserLoggedIn,accountController.showProfile)
-router.get('/profile/address',isUserLoggedIn,accountController.showAddress)
-router.get('/profile/addAddress',isUserLoggedIn,accountController.showAddaddress)
-router.post('/profile/addAddress',isUserLoggedIn,accountController.addAddress)
-router.get('/profile/editAddress/:id',isUserLoggedIn,accountController.showEditaddress)
-router.put('/profile/editAddress/:id',isUserLoggedIn,accountController.editAddress)
-router.get('/profile/deleteAddress/:id',isUserLoggedIn,accountController.deleteAddress)
-router.post('/profile/setDefaultAddress',isUserLoggedIn,accountController.setDefaultAddress)
-
-
-//orders
-
-router.get('/showOrders',isUserLoggedIn,orderController.showOrdersIndex)
-router.post('/showOrders',isUserLoggedIn,orderController.verifyCheckOut)
-router.post('/showOrders/orderDetails',isUserLoggedIn,orderController.orderDetails)
-router.post('/showOrders/cancelOrder',isUserLoggedIn,orderController.destroyOrder)
-
-module.exports = router
+module.exports = router;

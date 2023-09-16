@@ -10,25 +10,39 @@
 
     <div class="breadcrumbs">
       <div class="container">
-          <div class="row">
-              <div class="col">
-                  <p class="bread"><span><a href="index.html">Home</a></span> / <span>Cart</span></p>
-              </div>
+        <div class="row">
+          <div class="col">
+            <div id="flash-message" class="alert alert-danger" style="display: none;"></div>
+            <p class="bread"><span><a href="index.html">Home</a></span> / <span>Cart</span></p>
+          </div>
+
+          <% if (success && success.length > 0) { %>
+            <div class="alert alert-success text-center" id="success-message">
+              <% success.forEach(function(message) { %>
+                <p><%= message %></p>
+              <% }); %>
+            </div>
+            <script>
+                setTimeout(function() {
+                  var successMessage = document.getElementById('success-message');
+                  if (successMessage) {
+                    successMessage.style.display = 'none';
+                  }
+                }, 2000); 
+              </script>
+            <% } %>
+
           </div>
       </div>
   </div>
 
-
-    <div class="colorlib-product">
-      <div class="container">
-        <% if (messages.success) { %>
-          <div class="alert alert-success">
-            <%= messages.success %>
-          </div>
-        <% } %>
+  
+    
         <% if(cart.length){ %>
         <div class="row row-pb-lg">
           <div class="col-md-12">
+            <div class="colorlib-product">
+              <div class="container">
             <div class="table-responsive">
               <table class="table">
                 <thead>
@@ -77,6 +91,7 @@
                         <input
                           class="input-number"
                           type="text"
+                          readonly
                           value="<%= cartprdt.quantity %>"
                           min="0"
                           max="10"
@@ -253,7 +268,11 @@
             success: function (response) {
               // window.location.reload()
               if (response) {
-                
+                if(response.stock){
+                  displayFlashMessage(response.error);
+                  currentValue = response.stock;
+                  return  inputElement.value = currentValue;
+                }
                 const newTotal = response.total;
                 const cartTotal = document.querySelector(`#cartTotal_${cartItemId}`);
                 cartTotal.textContent = newTotal;
@@ -277,12 +296,23 @@
             error: function () {
               // Handle the AJAX error
             },
+
+            
           });
         }
       }
 
 
 
+      function displayFlashMessage(message) {
+  const flashMessageElement = document.getElementById('flash-message');
+  flashMessageElement.textContent = message;
+  flashMessageElement.style.display = 'block'; // Show the flash message
+
+  setTimeout(() => {
+    flashMessageElement.style.display = 'none'; // Hide the flash message after 3 seconds (adjust as needed)
+  }, 2000);
+}
 
       
     </script>

@@ -16,16 +16,7 @@
                         <div class="main-panel">
 
                             <!-- error/success messages -->
-                            <%if(successMessage[0]){%>
-                                <div id="error-message" class="alert alert-info col-8" role="alert">
-                                    <%=successMessage[0]%>
-                                </div>
-                                <%}else if(errorMessage[0]){%>
-                                    <div id="error-message" class="alert alert-danger col-8" role="alert">
-                                        <%=errorMessage[0]%>
-                                    </div>
-                                    <%}%>
-
+                            
 
                                         <div class="content-wrapper">
                                             <div class="row">
@@ -41,6 +32,12 @@
                                                                 <div class="form-group">
                                                                     <label for="exampleInputName1">Product title</label>
                                                                     <input type="text" class="form-control" name="title"
+                                                                        id="exampleInputName1" required/>
+                                                                </div>
+                                                                
+                                                                <div class="form-group">
+                                                                    <label for="exampleInputName1">Brand</label>
+                                                                    <input type="text" class="form-control" name="brand"
                                                                         id="exampleInputName1" required/>
                                                                 </div>
 
@@ -65,6 +62,62 @@
                                                                     <input type="number" class="form-control" 
                                                                         name="regular" id="exampleInputName1" required />
                                                                 </div>
+                                                                <div class="form-group">
+                                                                <div class="row input-group form-check">
+                                                                    <label class="form-check-label">Size :&nbsp;</label>
+                                                                
+                                                                    <!-- XS -->
+                                                                    <input class="form-check-input" type="checkbox" value="XS" id="check1" name="check1" onclick="handleCheckboxChange1()">
+                                                                    <label class="form-check-label" for="check1">XS</label>
+                                                                
+                                                                    <!-- S -->
+                                                                    <input class="form-check-input" type="checkbox" value="S" id="check2" name="check2" onclick="handleCheckboxChange1()">
+                                                                    <label class="form-check-label" for="check2">S</label>
+                                                                
+                                                                    <!-- M -->
+                                                                    <input class="form-check-input" type="checkbox" value="M" id="check3" name="check3" onclick="handleCheckboxChange1()">
+                                                                    <label class="form-check-label" for="check3">M</label>
+                                                                
+                                                                    <!-- L -->
+                                                                    <input class="form-check-input" type="checkbox" value="L" id="check4" name="check4" onclick="handleCheckboxChange1()">
+                                                                    <label class="form-check-label" for="check4">L</label>
+                                                                
+                                                                    <!-- XL -->
+                                                                    <input class="form-check-input" type="checkbox" value="XL" id="check5" name="check5" onclick="handleCheckboxChange1()">
+                                                                    <label class="form-check-label" for="check5">XL</label>
+                                                                
+                                                                    <!-- XXL -->
+                                                                    <input class="form-check-input" type="checkbox" value="XXL" id="check6" name="check6" onclick="handleCheckboxChange1()">
+                                                                    <label class="form-check-label" for="check6">XXL</label>
+                                                                
+                                                                    <!-- 5 -->
+                                                                    <input class="form-check-input" type="checkbox" value="5" id="check7" name="check7" onclick="handleCheckboxChange()">
+                                                                    <label class="form-check-label" for="check7">5</label>
+                                                                
+                                                                    <!-- 6 -->
+                                                                    <input class="form-check-input" type="checkbox" value="6" id="check8" name="check8" onclick="handleCheckboxChange()">
+                                                                    <label class="form-check-label" for="check8">6</label>
+                                                                
+                                                                    <!-- 7 -->
+                                                                    <input class="form-check-input" type="checkbox" value="7" id="check9" name="check9" onclick="handleCheckboxChange()">
+                                                                    <label class="form-check-label" for="check9">7</label>
+                                                                
+                                                                    <!-- 8 -->
+                                                                    <input class="form-check-input" type="checkbox" value="8" id="check10" name="check10" onclick="handleCheckboxChange()">
+                                                                    <label class="form-check-label" for="check10">8</label>
+                                                                
+                                                                    <!-- 9 -->
+                                                                    <input class="form-check-input" type="checkbox" value="9" id="check11" name="check11" onclick="handleCheckboxChange()">
+                                                                    <label class="form-check-label" for="check11">9</label>
+                                                                
+                                                                    <!-- 10 -->
+                                                                    <input class="form-check-input" type="checkbox" value="10" id="check12" name="check12" onclick="handleCheckboxChange()">
+                                                                    <label class="form-check-label" for="check12">10</label>
+                                                                </div>
+                                                                </div>
+                                                                
+                                                                
+                                                                
 
                                                                 <div class="form-group">
                                                                     <label for="exampleInputName1">Stock</label>

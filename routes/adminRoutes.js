@@ -1,18 +1,17 @@
-const router = require('express').Router()
-const middleware = require('../middlewares/middleware')
-const { isAdminLoggedIn,isAdminLoggedOut  } = require('../middlewares/auth')
-const bannerCtrl = require('../controllers/bannerController')
-const upload = require('../middlewares/middleware');
-const { 
-    dashboard, 
-    loadLogin, 
-    verifyAdminLogin, 
-    getCategories, 
-    editCategory, 
-    destroyCategory, 
-    updateCategory, 
-    showCreateCategory, 
-    createCategory, 
+const router = require('express').Router();
+const uploadImages = require('../middlewares/uploadImages');
+const { isAdminLoggedIn, isAdminLoggedOut } = require('../middlewares/auth');
+const bannerCtrl = require('../controllers/bannerController');
+const {
+    dashboard,
+    loadLogin,
+    verifyAdminLogin,
+    getCategories,
+    editCategory,
+    destroyCategory,
+    updateCategory,
+    showCreateCategory,
+    createCategory,
     showProductCreate,
     createProduct,
     showProductsIndex,
@@ -24,57 +23,60 @@ const {
     showUserIndex,
     blockUser,
     adminLogout,
-} = require('../controllers/adminController')
-const orderController = require('../controllers/orderController')
+} = require('../controllers/adminController');
+const orderController = require('../controllers/orderController');
 
-router.get('/login',isAdminLoggedOut, loadLogin)
-router.post('/login',isAdminLoggedOut, verifyAdminLogin)
+// Admin Login Routes
+router
+    .get('/login', isAdminLoggedOut, loadLogin)
+    .post('/login', isAdminLoggedOut, verifyAdminLogin);
 
-
-
-//dashboard
-router.get('/dashboard', isAdminLoggedIn,dashboard)
+// Dashboard
+router.get('/dashboard', isAdminLoggedIn, dashboard);
 
 // Categories Routes
-router.get('/Category', isAdminLoggedIn, getCategories)
-router.get('/categories/create', isAdminLoggedIn, showCreateCategory)
-router.post('/categories',  isAdminLoggedIn,middleware.uploadCategoryImage, middleware.resizeCategoryImage, createCategory)
-router.get('/categories/:id/edit', isAdminLoggedIn, editCategory)
-router.delete('/categories/:id', isAdminLoggedIn, destroyCategory)
-router.patch('/categories/:id', isAdminLoggedIn, middleware.uploadCategoryImage, middleware.resizeCategoryImage, updateCategory)
+router
+    .get('/Category', isAdminLoggedIn, getCategories)
+    .get('/categories/create', isAdminLoggedIn, showCreateCategory)
+    .post('/categories', isAdminLoggedIn, uploadImages.uploadCategoryImage, uploadImages.resizeCategoryImage, createCategory)
+    .get('/categories/:id/edit', isAdminLoggedIn, editCategory)
+    .post('/categories/destroy', isAdminLoggedIn, destroyCategory)
+    .patch('/categories/:id', isAdminLoggedIn, uploadImages.uploadCategoryImage, uploadImages.resizeCategoryImage, updateCategory);
 
 // Products Routes
+router
+    .get('/products', isAdminLoggedIn, showProductsIndex)
+    .get('/products/create', isAdminLoggedIn, showProductCreate)
+    .post('/products', isAdminLoggedIn, uploadImages.uploadProductImages, uploadImages.resizeProductImages, createProduct)
+    .get('/products/:id/edit', isAdminLoggedIn, showProductEdit)
+    .post('/products/destroy', isAdminLoggedIn, softDeleteProduct)
+    .patch('/products/:id', isAdminLoggedIn, updateProduct)
+    .delete('/products/:id/img/delete', isAdminLoggedIn, destroyProductImage)
+    .patch('/products/:id/img/add', isAdminLoggedIn, uploadImages.uploadProductImages, uploadImages.resizeProductImages, updateProductImages);
 
-router.get('/products', isAdminLoggedIn, showProductsIndex)
-router.get('/products/create', isAdminLoggedIn, showProductCreate)
-router.post('/products' , isAdminLoggedIn,middleware.uploadProductImages,middleware.resizeProductImages,createProduct)
-router.get('/products/:id/edit', isAdminLoggedIn, showProductEdit)
-// router.patch('/products/:id', isAdminLoggedIn,middleware.uploadProductImages,middleware.resizeProductImages, updateProduct)
-router.post('/products/destroy', isAdminLoggedIn,softDeleteProduct)
-router.patch('/products/:id', isAdminLoggedIn, updateProduct)
-router.delete('/products/:id/img/delete', isAdminLoggedIn, destroyProductImage)
-router.patch('/products/:id/img/add', isAdminLoggedIn, middleware.uploadProductImages, middleware.resizeProductImages, updateProductImages)
+// User Routes
+router
+    .get('/users', isAdminLoggedIn, showUserIndex)
+    .post('/users/destroy', isAdminLoggedIn, blockUser);
 
+// Banner Routes
+router
+    .get('/banners', isAdminLoggedIn, bannerCtrl.showBannerIndex)
+    .get('/banners/create', isAdminLoggedIn, bannerCtrl.showBannerCreate)
+    .post('/banners', isAdminLoggedIn, uploadImages.uploadBannerImages, uploadImages.resizeBannerImages, bannerCtrl.createBanner)
+    .get('/banners/:id/edit', isAdminLoggedIn, bannerCtrl.showEditBanners)
+    .post('/banners/destroy', isAdminLoggedIn, bannerCtrl.deleteBanner)
+    .patch('/banners/:id', isAdminLoggedIn, bannerCtrl.updateBanner)
+    .delete('/banners/:id/img/delete', isAdminLoggedIn, bannerCtrl.destroyBannerImage)
+    .patch('/banners/:id/img/add', isAdminLoggedIn, uploadImages.uploadBannerImages, uploadImages.resizeBannerImages, bannerCtrl.updateBannerImages);
 
-//user routes
-router.get('/users', isAdminLoggedIn,showUserIndex)
-router.post('/users/destroy',  isAdminLoggedIn,blockUser)
+// Order Routes
+router
+    .get('/orders', isAdminLoggedIn, orderController.getOrderList)
+    .get('/orders/:id', isAdminLoggedIn, orderController.orderDetails)
+    .patch('/orders', isAdminLoggedIn, orderController.updateOrderStatus);
 
-//banner
-router.get('/banners', isAdminLoggedIn, bannerCtrl.showBannerIndex)
-router.get('/banners/create', isAdminLoggedIn, bannerCtrl.showBannerCreate)
-router.post('/banners' , isAdminLoggedIn,middleware.uploadBannerImages,middleware.resizeBannerImages,bannerCtrl.createBanner)
-router.get('/banners/:id/edit', isAdminLoggedIn, bannerCtrl.showEditBanners)
-router.post('/banners/destroy', isAdminLoggedIn,bannerCtrl.deleteBanner)
-router.patch('/banners/:id', isAdminLoggedIn, bannerCtrl.updateBanner)
-router.delete('/banners/:id/img/delete', isAdminLoggedIn, bannerCtrl.destroyBannerImage)
-router.patch('/banners/:id/img/add', isAdminLoggedIn,middleware.uploadBannerImages,middleware.resizeBannerImages, bannerCtrl.updateBannerImages)
+// Logout Route
+router.get('/logout', isAdminLoggedIn, adminLogout);
 
-//orders
-router.get('/orders',isAdminLoggedIn,orderController.getOrderList)
-router.get('/orders/:id',isAdminLoggedIn,orderController.orderDetails)
-router.patch('/orders',isAdminLoggedIn,orderController.updateOrderStatus)
-
-router.get('/logout',  isAdminLoggedIn,adminLogout)
-
-module.exports = router
+module.exports = router;

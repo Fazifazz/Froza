@@ -8,6 +8,7 @@ const Category = require('../models/categoryModel');
 const path = require('path')
 const Address = require('../models/addressModel')
 const Banner = require('../models/bannerModel');
+const { log } = require('console');
 require('dotenv').config()
 
 const securePassword = async (password) => {
@@ -21,11 +22,13 @@ const securePassword = async (password) => {
 
 }
 
-
+const ITEMS_per_PAGE = 4;
 exports.index = catchAsync(async (req, res) => {
-  const products = await Product.find()
+  const page = parseInt(req.query.page) || 1;
+  const skip = (page - 1) * ITEMS_per_PAGE;
+  const products = await Product.find().skip(skip).limit(ITEMS_per_PAGE);
   const banners = await Banner.find()
-  res.render('users/index', { products,banners })
+  res.render('users/index', { products,banners,})
 })
 
 exports.showLogin = (req, res) => {
@@ -67,9 +70,15 @@ exports.insertUser = async (req, res) => {
       const options = {
         from: process.env.EMAIL,
         to: req.body.email,
-        subject: 'Froza verification OTP',
-        html: `<center> <h2>Varify Your Email </h2> <br> <h5>OTP :${otp}</h5><br><p>This otp is only valid for 5 minutes only</p></center>`
+        subject: 'Froza shoe hub verification OTP',
+        html: `<center> <h2>Varify Your Email </h2> <br> <h5>OTP :${otp}</h5><br><p>This otp is only valid for 2 minutes only</p></center>`
       }
+      //set cookie to get userid where no session available
+      res.cookie('userId',String(user._id),{
+        maxAge: 60000 * 60 * 24 * 7,
+        httpOnly:true
+      })
+      req.session.user=user._id
       await email.sendMail(options);
       return res.redirect('/verifyOtp')
 
@@ -106,14 +115,17 @@ exports.validLogin = async (req, res) => {
 }
 
 exports.showVerifyOtp = (req, res) => {
-  res.render('users/validateOtp')
+  if(req.params.id){
+    return res.render('users/validateOtp',{ userId:req.params.id,error:req.flash('error') })
+  }
+    res.render('users/validateOtp',{userId:null,error:req.flash('error')})
 }
 
 exports.varifyOtp = catchAsync(async (req, res) => {
-  const { otp } = req.body;
+  const  otp  = req.body.otp;
   const user = await User.findOne({ otp })
   if (!user) {
-    req.flash('error', 'invalid')
+    req.flash('error', 'invalid otp')
     res.redirect('/verifyOtp')
   } else {
     const isVarified = await User.findOneAndUpdate({ _id: user._id }, { $set: { verified: true } }, { new: true });
@@ -123,22 +135,184 @@ exports.varifyOtp = catchAsync(async (req, res) => {
       res.redirect('/')
     } else {
 
-      res.redirect('/varifyOtp')
+      res.redirect('/verifyOtp')
     }
   }
+})
+
+exports.forgetVerifyOtp=async (req,res)=>{
+  const otp =req.body.otp
+  try {
+      const user = await User.findOne({otp})
+      
+      if(!user){
+          const userId=req.cookies.userId
+          req.flash('error','invalid Otp');
+          res.redirect(`/verifyOtp/${userId}`)
+      }
+      else{
+          const isVerified=await User.findOneAndUpdate({_id:user._id},{$set:{verified:true}},{new:true})
+          if(isVerified.verified){
+              res.redirect('/editPassword')
+          }
+          else{
+              const userId=user._id
+              req.flash('error', 'not verified');
+              res.redirect(`/verifyOtp/${userId}`)
+          }
+      }
+  } catch (error) {
+      console.log(error.message)
+  }
+}
+
+exports.showEditPassword = catchAsync( async (req,res) =>{
+  res.render('users/editPassword',{error:req.flash('error')})
+})
+
+exports.updatePassword = catchAsync( async (req,res) => {
+  const {password,Cpassword } = req.body
+  if(password!==Cpassword){
+    req.flash('error','password and confirm password are not match!')
+    res.redirect('/editPassword')
+  }else{
+    const userId = req.cookies.userId
+    const user = await User.findById(userId)
+    const secPassword = await securePassword(password)
+    user.password=secPassword;
+    await user.save();
+    //reset password
+    if(req.session.user){
+      req.flash('success','password updated successfully')
+      res.redirect('/profile')
+  }
+  //forgot password
+  else{
+      res.redirect('/login')
+  } 
+  }
+})
+
+exports.showVerifyEmail = catchAsync( async (req,res) => {
+  res.render('users/verifyEmail',{error:req.flash('error')})
+})
+
+exports.verifyEmail = catchAsync(async (req,res) => {
+const user = await User.findOne({email:req.body.email})
+if(!user){
+  return res.render('users/login',{error:'Email not found'})
+}
+  const newOtp = randomString.generate({
+    length: 4,
+    charset: 'numeric',
+  })
+  const options = {
+    from:process.env.EMAIL,
+    to:req.body.email,
+    subject:'Froza shoe hub verification otp',
+    html:`<center> <h2>Verify Your Email </h2> <br> <h5>OTP :${newOtp}</h5><br><p>This otp is only valid for 2 minutes only</p></center>`
+  }
+  res.cookie('userId',String(user._id),{
+    maxAge: 60000 * 60 * 24 * 7,
+    httpOnly:true
+  })
+  user.otp = newOtp
+  await user.save();
+  await email.sendMail(options);
+
+  let userId = user._id
+  return res.redirect(`/verifyOtp/${userId}`)
+
+})
+
+
+
+
+exports.resendOtp = catchAsync(async (req,res) => {
+  const userid = req.session.user || req.cookies.userId;
+  const newOtp =randomString.generate({
+    length:4,
+    charset:'numeric'
+})
+const user = await User.findByIdAndUpdate(userid,{otp:newOtp});
+const options = {
+  from: process.env.EMAIL,
+  to: user.email, // Use the user's email stored in the database
+  subject: 'Froza shoe hub verification otp',
+  html: `<center> <h2>Verify Your Email</h2> <br> <h5>OTP :${newOtp} </h5><br><p>This OTP is only valid for 2 minute</p></center>`
+}
+await email.sendMail(options)
+if(req.session.user){
+  res.redirect('/verifyOtp')
+}
+else{
+  const userId=user._id
+  res.redirect(`/verifyOtp/${userId}`)
+}
+
 })
 
 exports.getProductDetails = catchAsync(async (req, res) => {
   const product = await Product.findOne({ _id: req.params.id })
   const category = await Category.findOne({ _id: product.category })
-  res.render('users/productDetails', { product, category })
+  res.render('users/productDetails', { product, category,success:req.flash('success') })
 })
 
 
+const ITEMS_PER_PAGE = 8;
+
 exports.showshopIndex = async (req, res) => {
-  const products = await Product.find()
-  res.render('users/shop', { products })
-}
+  const page = parseInt(req.query.page) || 1;
+  const skip = (page - 1) * ITEMS_PER_PAGE;
+
+  const filters = {}; // Initialize an empty filter object
+  
+  // Check for category filter
+  if (req.query.category) {
+    filters.category = req.query.category;
+  }
+
+  // Check for brand filter
+  if (req.query.brand) {
+    filters.brand = req.query.brand;
+  }
+console.log(req.query.brand);
+  // Check for color filter
+  if (req.query.color) {
+    filters.color = req.query.color;
+  }
+  
+
+  // Check for price range filter
+  if (req.query.minPrice && req.query.maxPrice) {
+    filters.mrp = {
+      $gte: parseFloat(req.query.minPrice),
+      $lte: parseFloat(req.query.maxPrice),
+    };
+  }
+  const selectedCategory = req.query.category || 'All Categories';
+  try {
+    const totalProducts = await Product.countDocuments(filters);
+    const products = await Product.find(filters).skip(skip).limit(ITEMS_PER_PAGE)
+    const totalPages = Math.ceil(totalProducts / ITEMS_PER_PAGE);
+    const categories = await Category.distinct('name')
+    const brands = await Product.distinct('brand')
+
+    res.render('users/shop', {
+      products,
+      success: req.flash('success'),
+      currentPage: page,
+      totalPages,
+      categories,
+      brands,
+      selectedBrand: req.query.brand,
+      selectedCategory: req.query.category,
+    });
+  } catch (error) {
+    console.error('Error fetching products:', error);
+    res.status(500).send('Internal Server Error');
+  }
+};
 
 
 
@@ -148,7 +322,7 @@ exports.showAddToCart=async (req,res)=>{
       const user=await User.findById(req.session.user).populate('cart.product')  
       const cart=user.cart
       const totalCartAmount=user.totalCartAmount   
-      res.render('users/cart',{success:req.flash('success'), error:req.flash('error'), cart,totalCartAmount})       
+      res.render('users/cart',{ cart,totalCartAmount,success:req.flash('success')})       
   } catch (error) {
       console.log(error.message)
       res.status(500).send('Internal Server Error');
@@ -179,7 +353,9 @@ exports.addTocart=async (req,res)=>{
       }
      await user.save()
      req.flash('success','product added to cart successfully')
-     res.redirect(req.header.referrer)
+     const referer = req.headers.referer;
+     const originalPage = referer || '/';
+     res.redirect(originalPage)
   }catch (error) {
       console.log(error.message)
       res.status(500).send('Internal Server Error');
@@ -198,6 +374,10 @@ exports.updateCartQauntity = catchAsync ( async (req,res) => {
         }
         // Calculate the new total based on the product's price and new quantity
         const product = await Product.findById(cartItem.product);
+        if(newQuantity>product.stock){
+          req.flash('error','stock limit exceeded!')
+          return res.json({stock:product.stock,error:req.flash('error')})
+        }
         const newTotal = newQuantity * product.regularPrice;
         // Update cart item properties
         cartItem.quantity = newQuantity;
@@ -209,6 +389,7 @@ exports.updateCartQauntity = catchAsync ( async (req,res) => {
         });
         user.totalCartAmount = totalCartAmount;
         await user.save();
+        
         res.json({ message: 'Cart item quantity updated successfully',totalCartAmount, total: newTotal });
 })
 
@@ -222,7 +403,8 @@ exports.destroyCartItem = catchAsync(async (req, res) => {
     user.totalCartAmount = user.totalCartAmount - user.cart[cartIndex].total;
     user.cart.splice(cartIndex, 1);
     await user.save();
-    req.flash('success', 'Item removed from the cart.'); // Flash a success message
+    req.flash('success', 'Item removed from the cart.'); 
+    res.redirect('/cart')// Flash a success message
   } else {
     req.flash('error', 'Item not found in the cart.'); // Flash an error message
   }

@@ -47,7 +47,7 @@
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label for="fname">Name</label>
-                                <input type="text" id="fname" name="name" class="form-control" placeholder="Your fullname" required>
+                                <input type="text" id="fname" name="name" minlength="3"  class="form-control" placeholder="Your fullname" required>
                             </div>
                         </div>
                         
@@ -55,7 +55,7 @@
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="phone">phone</label>
-                            <input type="number" id="phone" name="phone" class="form-control" placeholder="Enter Your phone" required>
+                            <input type="number" id="phone" name="phone" minlength="10" maxlength="10" class="form-control" placeholder="Enter Your phone" required>
                       </div>
                     </div>
                       
@@ -63,7 +63,7 @@
                    <div class="col-md-12">
                             <div class="form-group">
                                 <label for="pincode">pincode</label>
-                            <input type="number" id="pincode" name="pincode" class="form-control" placeholder="Enter your pincode" required>
+                            <input type="number" id="pincode" name="pincode" minlength="6" maxlength=6 class="form-control" placeholder="Enter your pincode" required>
                       </div>
                    </div>
                 
@@ -97,7 +97,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="number">phone</label>
-                                <input type="number" id="phone" name="altNo" class="form-control" placeholder="(optional)">
+                                <input type="number" id="phone" name="altNo" minlength="10" maxlength="10" class="form-control" placeholder="(optional)">
                           </div>
                         </div>
                         

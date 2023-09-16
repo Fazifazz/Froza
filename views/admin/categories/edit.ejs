@@ -185,15 +185,7 @@
       <div class="main-panel"> 
 
         <!-- error/success messages -->
-        <%if(successMessage[0]){%>
-          <div id="error-message" class="alert alert-info col-8" role="alert">
-              <%=successMessage[0]%>
-          </div>
-        <%}else if(errorMessage[0]){%>
-          <div id="error-message" class="alert alert-danger col-8" role="alert">
-              <%=errorMessage[0]%>
-          </div>
-        <%}%>  
+      
         
         
         <div class="content-wrapper">
@@ -214,7 +206,7 @@
                     <div class="form-group">
                       <label>Image upload</label>
                       <div class="input-group col-xs-12">
-                          <input type="file" accept="image/*" name="photo" class="form-control" placeholder="Upload Image" id="img-input" required />
+                          <input type="file" accept="image/*" name="photo" class="form-control" placeholder="Upload Image" id="img-input" />
                         </div>
                     </div>
                     

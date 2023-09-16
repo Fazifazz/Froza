@@ -15,21 +15,18 @@
         <!-- partial -->
       <div class="main-panel"> 
 
-        <!-- error/success messages -->
-        <%if(successMessage[0]){%>
-          <div id="error-message" class="alert alert-info col-8" role="alert">
-              <%=successMessage[0]%>
-          </div>
-        <%}else if(errorMessage[0]){%>
-          <div id="error-message" class="alert alert-danger col-8" role="alert">
-              <%=errorMessage[0]%>
-          </div>
-        <%}%>  
+       
         
         
         <div class="content-wrapper">
           <div class="row">
-        
+            <% if (error && error.length > 0) { %>
+              <div class="alert alert-danger">
+                <% error.forEach(function(message) { %>
+                  <p><%= message %></p>
+                <% }); %>
+              </div>
+        <%}%>
             
             <div class="col-12 grid-margin stretch-card">
               <div class="card">
