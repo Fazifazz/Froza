@@ -1,119 +1,149 @@
-<%- include('../../layouts/header') %>
-   
+<%- include('../../layouts/header')  %>>
+    <!-- Navbar -->
+    <%- include('../../layouts/userNav') -%>
 
-
-
-
-    
-
-<body>
-    <%- include('../../layouts/userNav') %><!-- Navbar -->
     <div class="container-fluid">
         <div class="row">
             
-            <!-- Sidebar -->
-            
-        <%- include('../../layouts/profile_sidebar') %>
+            <%- include('../../layouts/profile_sidebar') -%>
             <!-- Main Content -->
-            
-            
-<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-    <div class="col-md-9">
-        <section style="background-color: #eee;">
-            <div class="container py-5">
-              <% if (success && success.length > 0) { %>
-                <div class="alert alert-success text-center" id="success-message">
-                  <% success.forEach(function(message) { %>
-                    <p><%= message %></p>
-                  <% }); %>
-                </div>
-                <script>
-                    setTimeout(function() {
-                      var successMessage = document.getElementById('success-message');
-                      if (successMessage) {
-                        successMessage.style.display = 'none';
-                      }
-                    }, 2000); 
-                  </script>
-                <% } %>
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
 
-            <% if(orders.length){ %>
-          <div class="row justify-content-center mb-3">
-            <div class="col-md-12 col-xl-10">
-              <div class="card shadow-0 border rounded-3">
-                <div class="card-body">
-                    <% orders.forEach((order)=>{ %>
-                  <div class="row">
-                    <div class="col-md-12 col-lg-3 col-xl-3 mb-4 mb-lg-0">
-                      <div class="bg-image hover-zoom ripple rounded ripple-surface">
-                        <!-- <img src="https://mdbcdn.b-cdn.net/img/Photos/Horizontal/E-commerce/Products/img%20(4).webp"
-                          class="w-100" /> -->
-                          <p><b>orderId:</b></p> <span><%=order.orderId%></span>
-                        <a href="#!">
-                          <div class="hover-overlay">
-                            <div class="mask" style="background-color: rgba(253, 253, 253, 0.15);"></div>
-                          </div>
-                        </a>
-                      </div>
-                    </div>
-                    <div class="col-md-6 col-lg-6 col-xl-6">
-                        <span><b>ordered on:</b><%= order.orderDate.toDateString()%></span>
-                      <h6 class="text-secondary">items:</h6>
-                      <% order.products.product.forEach((prdt)=>{ %>
-                      <div class="d-flex flex-row">
-                        <div class="text" style="font-size:medium;font-weight:500px; line-height:0;">
-                          <p>*<%= prdt.title %></p>
-                        </div>
-                      </div>
-                      <% }) %>
-                      <!-- <div class="mb-2 text-muted small">
-                        
-                      </div> -->
-                    </div>
-                    <div class="col-md-6 col-lg-3 col-xl-3 border-sm-start-none border-start">
-                      <div class="d-flex flex-row align-items-center mb-1">
-                        <h4 class="mb-1 me-1">&#8377;<%= order.totalPrice%>/-</h4>
-                      </div>
-                      <span class="text-success"><b><%= order.status%></b></span>
-                      <div class="d-flex flex-column mt-4">
-                        <form action="showOrders/orderDetails"  method="post">
-                            <input type="hidden" name="orderId" value="<%= order.orderId %>">
-                            <button class="btn btn-primary btn-sm" type="submit">Details</button>
-                        </form>
-                        <form action="/showOrders/cancelOrder" method="post" onsubmit="return confirm('Are you sure you want to cancel this order?')">
-  <input type="hidden" name="orderId" value="<%= order.orderId%>">
-  <button class="btn btn-outline-primary btn-sm mt-2" type="submit">
-    Cancel Order
-  </button>
-</form>
 
-                      </div>
-                    </div>
-                  </div>
-                  <% }) %>
-                </div>
-              </div>
-            </div>
-          </div>
-         
-          <% }else{ %>
-            <h6><center>No Orders</center></h6>
-            <% } %>
-        </div>
-      </section>
+                
+            <% if (orders.length) { %>
+              <section style="background-color: #f9f9f9;">
+                <div class="container py-5">
+                  <div class="row justify-content-center mb-3">
+                   <% orders.forEach((order)=> { %>
+
+                    <div class="col-md-12 col-xl-10">
+                      <div class="card shadow-0 border rounded-3">
+                        <div class="card-body">
+                          <div class="row">
+                            <div class="col-md-12 col-lg-3 col-xl-3 mb-4 mb-lg-0">
+                              <h6>Order Id</h6>
+                              <p><%= order.orderId  %></p>
+                              <h6 class="text-truncate mb-4 mb-md-0">
+                                Ordered at:<p> <%= order.orderDate.toDateString()  %> </p>
+                              </h6>
+                            </div>
+                          
+                            <div class="col-md-6 col-lg-6 col-xl-6">
+                              <% order.products.product.forEach((prdt)=> { %>
+
+                                <p>• <%= prdt.title  %></p>
+ 
+                              <% }) %>
+                              <p class="text-secondary"><b>Payment Method:</b><%= order.paymentMethod.toUpperCase() %></p>
+                           </div>
+                           
+                           <div class="col-md-6 col-lg-3 col-xl-3 border-sm-start-none border-start">
+                             <div class="d-flex flex-row align-items-center mb-1">
+                               <h5>Total :</h5>
+                               <span><h3 class="mb-1 me-1">&#8377;<%= order.totalPrice  %></h3></span>
+                               <!-- <span class="text-danger"><s>$20.99</s></span> -->
+                             </div>
+                             <% if( order.status==='Cancelled'&& order.paymentMethod==='Razorpay'){ %>
+                              <h6 class="text-danger"><%= order.status  %></h6>
+                              <form action="/showOrders/refundOrder" method="post" novalidate="novalidate">
+                                <input type="hidden" name="orderId" value="<%= order.orderId %>">
+                                <button class="btn btn-dark btn-sm mt-2" type="submit">
+                                  Refund Order
+                                </button>
+                              </form>
+                             <% }else if(order.status==='Cancelled'){  %>
+                                 <h6 class="text-danger"><%= order.status  %></h6>
+                             <% } else { %>
+                                 <h6 class="text-success"><%= order.status  %></h6>
+                                 <div class="d-flex flex-column mt-4">
+                                  <form action="/showOrders/orderDetails" method="post">
+                                    <input type="hidden" name="orderId" value="<%= order.orderId %>">
+                                    <button  class="btn btn-primary btn-sm" type="submit">Details</button>
+                                  </form> 
+                                  <form action="/showOrders/cancelOrder" method="post" novalidate="novalidate">
+                                    <input type="hidden" name="orderId" value="<%= order.orderId %>">
+                                    <button class="btn btn-outline-primary btn-sm mt-2" data-toggle="modal" data-target="#orderModal<%=order.orderId  %>"  type="button">
+                                      cancel Order
+                                    </button>
+<!-- Modal -->
+<div class="modal fade" id="orderModal<%= order.orderId%>" tabindex="-1" role="dialog" aria-labelledby="orderModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="orderModalLabel">Confirm Order</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Are you sure to cancel the Order?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+        <button type="submit" class="btn btn-primary">Yes</button>
+      </div>
     </div>
-    </main>
-
-
-
-</div>
+  </div>
 </div>
 
 
-    <!-- Include Bootstrap JS and jQuery -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    
+
+                                  </form>
+                                </div>   
+                             <% } %>
+                              
+                             
+                           </div>
+                           
+                         </div>
+                       </div>
+                     </div>
+                   </div>
+                   <% }) %>
+                 </div>
+                
+               </div>
+             </section>
+
+             <% } else { %>
+
+              <h6><center>no orders</center></h6>
+
+            <% } %>
+                              
+                              
+                              
+                              
+
+
+
+
+            </main>
+        </div>
+    </div>
+
+<!-- Include Bootstrap JS and jQuery -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    function confirmReset() {
+        // Display a confirmation dialog
+        if (confirm("If you press ok,your old password will be deleted,Are you sure to reset your password")) {
+            return true
+        }
+        else{
+          event.preventDefault()
+          return false
+        }
+    }
+
+    function back() {
+      window.history.back()
+    }
+</script>
+
+
 </body>
-</html>
+</html> 

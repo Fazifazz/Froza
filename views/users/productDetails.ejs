@@ -44,7 +44,7 @@
 											<div class="carousel-item <%= (imgIndex === index) ? 'active' : '' %>"
 												data-interval="10000">
 												<a href="<%= img %>" class="popup-image" data-mfp-src="<%= img %>">
-													<img src="<%= img %>" class="d-block w-100"
+													<img src="<%= img %>" class="d-block w-100 zoom-effect"
 														alt="Image <%= imgIndex + 1 %>" id="<%= img %>"  onclick="imgClick(this.id)">
 												</a>
 											</div>
@@ -66,6 +66,15 @@
 					</div>
 
 
+
+					<style>
+						/* Add zoom styles to images */
+.carousel-inner .carousel-item:hover img {
+    transform: scale(1.1);
+    transition: transform 0.3s ease;
+}
+
+					</style>
 
 					<div class="col-sm-4">
 						<div class="product-desc">
@@ -118,16 +127,25 @@
 								</span>
 							</div> -->
 							<div class="row">
-								<div class="col-sm-12 text-center">
-									<form action="/cart/<%= product._id %>" method="post">
-										<input type="hidden" name="productId" value="<%= product._id %>">
-										<button class="btn btn-dark" type="submit">
-											<i class="fa fa-shopping-cart"></i> Add to Cart
-										</button>
-									</form>
-									<p class="addtocart"><a href="cart.html" class="btn btn-secondary btn-shopnow"></i>
-											Shop Now</a></p>
-								</div>
+								<% if(product.stock===0){ %>
+									<h4 class="btn btn-danger"><b>Out of Stock!</b></h4>
+									<% }else{ %>
+										<div class="col-sm-12 text-center">
+											<div class="icons">
+												<form action="/cart/<%= product._id %>" method="post">
+													<input type="hidden" name="productId" value="<%= product._id %>">
+													<button class="btn btn-dark" type="submit" style="width: 200px; display: flex; align-items: center; justify-content: center;">
+														<i class="fa fa-shopping-cart" style="color: white; margin-right: 5px;"></i>
+														Add to Cart
+													</button>
+												</form>
+												<a class="btn btn-success" href="#" style="width: 200px; display: flex; align-items: center; justify-content: center;">
+													<i class="fa fa-shopping-bag" style="color: white;  margin-right: 5px;"></i>
+													Shop Now
+												</a>
+											</div>
+										</div>
+								<% } %>
 							</div>
 						</div>
 					</div>
@@ -366,6 +384,11 @@
 		<script src="/js/jquery.stellar.min.js"></script>
 		<!-- Main -->
 		<script src="/js/main.js"></script>
+		<!-- Add this script block to your EJS template -->
+
+
+<!-- Rest of your HTML content here -->
+
 
 
 

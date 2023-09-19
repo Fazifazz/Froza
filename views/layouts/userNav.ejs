@@ -1,39 +1,47 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container">
         <a class="navbar-brand" href="/" style="font-size: large;color: dark;">FROZA</a>
+        <!-- Global Search (Centered) -->
+        <div class="d-flex align-items-center justify-content-center flex-grow-1">
+            <form action="/shop" method="post" class="search-wrap">
+                <div class="input-group">
+                    <input type="search" class="form-control search" placeholder="Search Products" name="searchItem">
+                    <div class="input-group-append">
+                        <button class="btn submit-search btn-secondary" type="submit" style="background-color:#88c8bc;border: none">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
+
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
+                <!-- Menu Items (Right-aligned) -->
                 <li class="nav-item active">
                     <a class="nav-link" href="/">Home</a>
                 </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="menDropdown" role="button" data-toggle="dropdown"
-                        aria-haspopup="true" aria-expanded="false">Men</a>
-                    <div class="dropdown-menu" aria-labelledby="menDropdown">
-                        <a class="dropdown-item" href="product-detail.html">Product Detail</a>
-                        <a class="dropdown-item" href="cart.html">Shopping Cart</a>
-                        <a class="dropdown-item" href="checkout.html">Checkout</a>
-                        <a class="dropdown-item" href="order-complete.html">Order Complete</a>
-                        <a class="dropdown-item" href="add-to-wishlist.html">Wishlist</a>
-                    </div>
+                <li class="nav-item">
+                    <a class="nav-link" href="/shop">Men</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="women.html">Women</a>
+                    <a class="nav-link" href="/shop">Women</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/shop">Shop</a>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="aboutDropdown" role="button" data-toggle="dropdown"
-                        aria-haspopup="true" aria-expanded="false">About</a>
-                    <div class="dropdown-menu" aria-labelledby="aboutDropdown">
-                        <a class="dropdown-item" href="company-details.html">Company Details</a>
-                        <a class="dropdown-item" href="contact-us.html">Contact Us</a>
-                    </div>
+                    aria-haspopup="true" aria-expanded="false">About</a>
+                <div class="dropdown-menu" aria-labelledby="aboutDropdown">
+                    <a class="dropdown-item" href="company-details.html">Company Details</a>
+                    <a class="dropdown-item" href="contact-us.html">Contact Us</a>
+                </div>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="wishlist.html"><i class="fas fa-heart"></i>+</a>
@@ -56,6 +64,7 @@
     </div>
 </nav>
 
+
 <!-- Add the secondary navbar here -->
 <nav class="navbar navbar-expand-lg" style="background-color: #88c8bc;">
     <div class="container">
@@ -63,3 +72,18 @@
         <!-- For example, you can add links or other content -->
     </div>
 </nav>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  

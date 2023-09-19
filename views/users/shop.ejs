@@ -30,12 +30,33 @@
                           </script>
                         <% } %>
 
+                       
+                    <% if (error && error.length > 0) { %>
+                        <div class="alert alert-danger text-center" id="error-message">
+                          <% error.forEach(function(message) { %>
+                            <p><%= message %></p>
+                          <% }); %>
+                        </div>
+                        <script>
+                            setTimeout(function() {
+                              var errorMessage = document.getElementById('error-message');
+                              if (errorMessage) {
+                                errorMessage.style.display = 'none';
+                              }
+                            }, 2000); 
+                          </script>
+                        <% } %>
+                        
 				</div>
 			</div>
 		</div>
 
 		<div class="colorlib-product">
 			<div class="container">
+                <form action="/shop">
+                    <button type="submit">Clear All Filters</button>
+                </form>
+
 				<div class="row">
 					<div class="col-lg-3 col-xl-3">
 						<div class="row">
@@ -43,24 +64,25 @@
 								<div class="side border mb-1">
 									<h3>Brand</h3>
 									<!-- Update the links with brand filters -->
-<ul>
-    <% brands.forEach((brand) => { %>
-        <li><a href="/shop?brand=<%= encodeURIComponent(brand) %>"><%= brand.toUpperCase() %></a></li>
-    <% }); %>
-</ul>
+                                    <ul>
+                                        <% brands.forEach((brand) => { %>
+                                            <li><a href="/shop?brand=<%= encodeURIComponent(brand) %>"><%= brand.toUpperCase() %></a></li>
+                                        <% }); %>
+                                    </ul>
+                                    
+                                    
 
 								</div>
 							</div>
                             <div class="col-sm-12">
                                 <div class="side border mb-1">
                                     <h3>Price Range</h3>
-                                    <form action="/shop" method="get">
+                                    <form action="/shop" method="post">
                                         <label for="minPrice">Min Price:</label>
-                                        <input type="text" id="minPrice" name="minPrice">
+                                        <input type="text" id="minPrice" name="min">
                                         <label for="maxPrice">Max Price:</label>
-                                        <input type="text" id="maxPrice" name="maxPrice">
-                                        <button type="submit">Apply</button>
-                                        <button type="submit">Clear Filters</button>
+                                        <input type="text" id="maxPrice" name="max">
+                                        <center><button type="submit">Apply</button></center>
                                     </form>
                                 </div>
                             </div>
@@ -70,7 +92,7 @@
         <h3>Category</h3>
         <ul>
             <% categories.forEach((category) => { %>
-                <li><a href="/shop?category=<%= encodeURIComponent(category) %>"><%= category.toUpperCase() %></a></li>
+                <li><a href="/shop?category=<%= encodeURIComponent(category.name) %>"><%= category.name.toUpperCase() %></a></li>
             <% }); %>
         </ul>
     </div>
@@ -99,13 +121,7 @@
 
 					<div class="col-lg-9 col-xl-9">
                         <!-- Add the conditional code to display the selected brand here -->
-                        <% if (selectedBrand) { %>
-                            <h2>Products by <%= selectedBrand %></h2>
-                        <% } %>
 
-						<% if (selectedCategory) { %>
-							<h2>Products in Category: <%= selectedCategory %></h2>
-						<% } %>
                         <!-- Your product listing starts here -->
                         <div class="row row-pb-md">
                             <% products.forEach((prdct) => { %>
@@ -120,8 +136,11 @@
                                             <div class="desc">
                                                 <h2><a href="#"><%= prdct.title.toUpperCase() %></a></h2>
                                                 <h5 class="text-secondary"><%= prdct.brand.toUpperCase() %></h5>
-                                                <span class="price">&#8377;<%= prdct.mrp %></span>
+                                                <span class="price">&#8377;<%= prdct.regularPrice %></span>
                                             </div>
+                                            <% if(prdct.stock===0){ %>
+                                                <p class="text-danger">Out of Stock!</p>
+                                                <% }else{ %>
                                             <div class="icons">
                                                 <form action="/cart/<%= prdct._id %>" method="post">
                                                     <input type="hidden" name="productId" value="<%= prdct._id %>">
@@ -133,6 +152,7 @@
                                                     <i class="fa fa-shopping-bag"></i> Shop Now
                                                 </a>
                                             </div>
+                                            <% } %>
                                         </div>
                                     </div>
                                 <% } %>
@@ -140,28 +160,40 @@
                         </div>
 
 						<!-- Pagination -->
-						<div class="row">
-							<div class="col-md-12 text-center">
-								<div class="block-27">
-									<ul>
-										<% if (currentPage > 1) { %>
-											<li><a href="?page=<%= currentPage - 1 %>"><i class="ion-ios-arrow-back"></i></a></li>
-										<% } %>
-										
-										<% for (let i = 1; i <= totalPages; i++) { %>
-											<li <% if (i === currentPage) { %>class="active"<% } %>><a href="?page=<%= i %>"><span><%= i %></span></a></li>
-										<% } %>
+					   <div class="pageination">
+                            <nav aria-label="Page navigation example">
+                                <ul class="pagination justify-content-center">
+                                    <!-- <li class="page-item">
+                                        <a class="page-link" href="#" aria-label="Previous">
+                                            <i class="ti-angle-double-left"></i>
+                                        </a>
+                                    </li> -->
+                        
+                                    <% for (let page = 1; page <= totalPages; page++) { %>
+                                        <li class="page-item">
+                                            <form action="/shop" method="post">
+                                                <input type="hidden" name="pageNumber" value="<%= page-1 %>">
+                                                <button class="page-link" type="submit"><%= page  %></button>
+                                            </form>
+                                        </li>
+                                    <% } %>
+                        
+                                    <!-- <li class="page-item">
+                                        <a class="page-link" href="#" aria-label="Next">
+                                            <i class="ti-angle-double-right"></i>
+                                        </a>
+                                    </li> -->
+                                </ul>
+                            </nav>
+                        </div>
 
-										<% if (currentPage < totalPages) { %>
-											<li><a href="?page=<%= currentPage + 1 %>"><i class="ion-ios-arrow-forward"></i></a></li>
-										<% } %>
-									</ul>
-								</div>
-							</div>
-						</div>
+              
+
 					</div>
 				</div>
 			</div>
 		</div>
+
+  
 
 		<%- include('../layouts/footer') %>

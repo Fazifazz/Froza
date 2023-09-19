@@ -56,7 +56,7 @@
                         <% products.forEach(pdt => { %>
                           <tr>
                             <td class="py-1">
-                              <p><%= pdt.title %></p>
+                              <p><%= pdt.title.toUpperCase() %></p>
                             </td>
                             <td>
                               <% pdt.images.forEach(img => { %>

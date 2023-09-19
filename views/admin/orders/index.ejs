@@ -53,10 +53,10 @@
                                                             <p><%= order.deliveryAddress[0].locality %></p>
                                                         </td>
                                                         <td>
-                                                            <% if(order.status != 'Cancel'){ %>
+                                                            <% if(order.status != 'Cancelled'){ %>
                                                                 <form action="/admin/orders?_method=PATCH" method="POST">
                                                                     <select name="status" class="status_order <%= order.status %>" id="floatingSelectGrid">
-                                                                        <% for (const option of ['Pending', 'Processing','Shipped', 'Delivered']) { %>
+                                                                        <% for (const option of ['Pending', 'Processing','Shipped', 'Delivered','Cancelled']) { %>
                                                                             <option value="<%= option %>" <% if(option == order.status) { %> selected <% } %>>
                                                                                 <%= option %> 
                                                                             </option>

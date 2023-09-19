@@ -119,7 +119,7 @@ exports.showProductsIndex = catchAsync(async (req, res) => {
 
 
 exports.createProduct = async (req, res) => {
-    const { title, brand, description, mrp, regular, check1, check2, check3, check4, check5, check6, images, stock, category } = req.body;
+    const { title, brand, description, mrp, regular, check1, check2, check3, check4, check5, check6,check7,check8,check9,check10,check11,check12, images, stock, category } = req.body;
     const imagesWithPath = images.map(img => '/products/' + img);
 
     try {
@@ -161,20 +161,23 @@ exports.showProductCreate= async (req,res)=>{
     res.render('admin/products/new',{categories})
 }
 
-exports.showProductEdit = async (req, res)=>{
-    const { id }= req.params
+exports.showProductEdit = async (req, res) => {
+    const { id } = req.params;
     try {
-        const product = await Product.findById(id)
-        const category = await Category.find({})
-        res.render('admin/products/edit',{ product, category })
+      const product = await Product.findById(id);
+      const category = await Category.find({});
+      // Determine the selected category ID based on the product's category field
+      const selectedCategory = product.category; // Assuming 'category' is a field in the product object
+      res.render('admin/products/edit', { product, category, selectedCategory });
     } catch (error) {
-        console.log(error.message)
+      console.log(error.message);
     }
   }
+  
 
 exports.updateProduct = async (req, res) => {
     const { id } = req.params
-    const { title, brand, description, mrp,regular,size,check1, check2, check3, check4, check5, check6,check7, check8, check9, check10, check11, check12, stock, category } = req.body
+    const { title, brand, description, mrp,regular,check1, check2, check3, check4, check5, check6,check7, check8, check9, check10, check11, check12, stock, category } = req.body
     try {
         let size = []
         if(check1) size.push(check1)

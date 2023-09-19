@@ -1,111 +1,199 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Product</title>
-    <!-- Add your CSS and JavaScript links here -->
-</head>
+<%- include('../layouts/header') %>
 
 <body>
-    <aside>
-        <!-- Include your adminAside content here -->
-    </aside>
 
-    <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg">
-        <header>
-            <!-- Include your adminNavbar content here -->
-        </header>
+	<div class="colorlib-loader"></div>
 
-        <div class="container-fluid py-4">
-            <div class="row">
-                <div class="col-12">
-                    <div class="card my-4">
-                        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-                            <div class="bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 d-flex justify-content-between">
-                                <h6 class="text-white text-capitalize ps-3">Add Product</h6>
-                            </div>
+	<div id="page">
+		<%- include('../layouts/userNav') %>
+
+		<div class="breadcrumbs">
+			<div class="container">
+				<div class="row">
+                    <div class="col">
+                        <p class="bread"><span><a href="index.html">Home</a></span> / <span>Shop</span></p>
+					</div>
+
+                    <% if (success && success.length > 0) { %>
+                        <div class="alert alert-success text-center" id="success-message">
+                          <% success.forEach(function(message) { %>
+                            <p><%= message %></p>
+                          <% }); %>
                         </div>
-                        <div class="card-body px-0 pb-2">
-                            <div class="table-responsive p-0">
-                                <form class="p-4" action="/admin/products/addProduct" method="post" enctype="multipart/form-data">
-                                    <div class="row input-group input-group-outline mb-3">
-                                        <div class="form-group col-md-4">
-                                            <label for="brand">Brand</label>
-                                            <input type="brand" class="form-control" name="brand" id="brand" placeholder="Brand">
-                                            <small id="brandErr" class="error"></small>
-                                        </div>
-                                        <div class="form-group col-md-8">
-                                            <label for="name">Product Name</label>
-                                            <input type="name" class="form-control" name="productName" id="name" placeholder="Product name">
-                                            <small id="nameErr" class="error"></small>
-                                        </div>
-                                    </div>
-                                    <div class="row input-group input-group-outline mb-3">
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label for="category">Category</label>
-                                                <select id="category" name="category" class="form-control">
-                                                    <!-- Add your category options here -->
-                                                </select>
-                                            </div>
+                        <script>
+                            setTimeout(function() {
+                              var successMessage = document.getElementById('success-message');
+                              if (successMessage) {
+                                successMessage.style.display = 'none';
+                              }
+                            }, 2000); 
+                          </script>
+                        <% } %>
 
-                                            <div class="row input-group form-check">
-                                                <!-- Add your size checkboxes here -->
-                                            </div>
-                                        </div>
-                                        <div class="form-group col-md-8">
-                                            <label for="inputAddress">Description</label>
-                                            <textarea type="text" rows="4" class="form-control" name="description" id="description" placeholder="Enter Product Description"></textarea>
-                                            <small id="descriptionErr" class="error"></small>
-                                        </div>
-                                    </div>
-                                    <div class="row input-group input-group-outline mb-3">
-                                        <div class="form-group col-md-4">
-                                            <label for="quantity">Quantity</label>
-                                            <input type="Number" name="quantity" class="form-control" id="quantity" placeholder="Quantity">
-                                            <small id="quantityErr" class="error"></small>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <label for="price">Price</label>
-                                            <input type="number" name="price" id="price" class="form-control" placeholder="price">
-                                            <small id="priceErr" class="error"></small>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <label for="dprice">Discount Price</label>
-                                            <input type="number" name="dprice" id="dprice" class="form-control" placeholder="Discount price">
-                                            <small id="dpriceErr" class="error"></small>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Choose product images</label>
-                                    </div>
-                                    <div class="d-flex justify-content-around">
-                                        <input type="file" class="form-control-file" name="images" id="image" multiple accept="image/*" required>
-                                        <small id="imageErr" class="error"></small>
-                                    </div>
-                                    <br>
-                                    <div class="d-flex justify-content-end">
-                                        <button type="submit" class="btn btn-primary">Add Product</button>
-                                    </div>
-                                </form>
+				</div>
+			</div>
+		</div>
+
+		<div class="colorlib-product">
+			<div class="container">
+                <form action="/shop">
+                    <button type="submit">Clear All Filters</button>
+                </form>
+
+				<div class="row">
+					<div class="col-lg-3 col-xl-3">
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="side border mb-1">
+									<h3>Brand</h3>
+									<!-- Update the links with brand filters -->
+<ul>
+    <% brands.forEach((brand) => { %>
+        <li><a href="/shop?brand=<%= encodeURIComponent(brand) %>"><%= brand.toUpperCase() %></a></li>
+    <% }); %>
+</ul>
+
+								</div>
+							</div>
+                            <div class="col-sm-12">
+                                <div class="side border mb-1">
+                                    <h3>Price Range</h3>
+                                    <form action="/shop" method="get">
+                                        <label for="minPrice">Min Price:</label>
+                                        <input type="text" id="minPrice" name="minPrice">
+                                        <label for="maxPrice">Max Price:</label>
+                                        <input type="text" id="maxPrice" name="maxPrice">
+                                        <center><button type="submit">Apply</button></center>
+                                    </form>
+                                </div>
                             </div>
+<!-- Filter by Category -->
+<div class="col-sm-12">
+    <div class="side border mb-1">
+        <h3>Category</h3>
+        <ul>
+            <% categories.forEach((category) => { %>
+                <li><a href="/shop?category=<%= encodeURIComponent(category) %>"><%= category.toUpperCase() %></a></li>
+            <% }); %>
+        </ul>
+    </div>
+</div>
+
+
+
+							<div class="col-sm-12">
+								<div class="side border mb-1">
+									<h3>Colors</h3>
+									<ul>
+										<li><a href="#">Black</a></li>
+										<li><a href="#">White</a></li>
+										<li><a href="#">Blue</a></li>
+										<li><a href="#">Red</a></li>
+										<li><a href="#">Green</a></li>
+										<li><a href="#">Grey</a></li>
+										<li><a href="#">Orange</a></li>
+										<li><a href="#">Cream</a></li>
+										<li><a href="#">Brown</a></li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-lg-9 col-xl-9">
+                        <!-- Add the conditional code to display the selected brand here -->
+                        <% if (selectedBrand) { %>
+                            <h2>Products by <%= selectedBrand %></h2>
+                        <% } %>
+
+						<% if (selectedCategory) { %>
+							<h2>Products in Category: <%= selectedCategory %></h2>
+						<% }%>
+                            
+                        <!-- Your product listing starts here -->
+                        <div class="row row-pb-md">
+                            <% products.forEach((prdct) => { %>
+                                <% if (!prdct.is_deleted) { %>
+                                    <div class="col-lg-3 mb-4 text-center">
+                                        <div class="product-entry border">
+                                            <div class="prod-img">
+                                                <a href="/shop/<%= prdct._id %>">
+                                                    <img src="<%= prdct.images[0] %>" class="img-fluid" alt="<%= prdct.title.toUpperCase()%>">
+                                                </a>
+                                            </div>
+                                            <div class="desc">
+                                                <h2><a href="#"><%= prdct.title.toUpperCase() %></a></h2>
+                                                <h5 class="text-secondary"><%= prdct.brand.toUpperCase() %></h5>
+                                                <span class="price">&#8377;<%= prdct.regularPrice %></span>
+                                            </div>
+                                            <% if(prdct.stock===0){ %>
+                                                <p class="text-danger">Out of Stock!</p>
+                                                <% }else{ %>
+                                            <div class="icons">
+                                                <form action="/cart/<%= prdct._id %>" method="post">
+                                                    <input type="hidden" name="productId" value="<%= prdct._id %>">
+                                                    <button class="btn btn-dark" type="submit">
+                                                        <i class="fa fa-shopping-cart"></i> Add to Cart
+                                                    </button>
+                                                </form>
+                                                <a class="btn btn-success" href="#">
+                                                    <i class="fa fa-shopping-bag"></i> Shop Now
+                                                </a>
+                                            </div>
+                                            <% } %>
+                                        </div>
+                                    </div>
+                                <% } %>
+                            <% }) %>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+						<!-- Pagination -->
+						<div class="row">
+							<div class="col-md-12 text-center">
+								<div class="block-27">
+									<ul>
+										<% if (currentPage > 1) { %>
+											<li><a href="?page=<%= currentPage - 1 %>"><i class="ion-ios-arrow-back"></i></a></li>
+										<% } %>
+										
+										<% for (let i = 1; i <= totalPages; i++) { %>
+											<li <% if (i === currentPage) { %>class="active"<% } %>><a href="?page=<%= i %>"><span><%= i %></span></a></li>
+										<% } %>
 
-        <footer>
-            <!-- Include your adminFooter content here -->
-        </footer>
-    </main>
+										<% if (currentPage < totalPages) { %>
+											<li><a href="?page=<%= currentPage + 1 %>"><i class="ion-ios-arrow-forward"></i></a></li>
+										<% } %>
+									</ul>
+								</div>
+							</div>
+						</div>
 
-    <!-- Add your JavaScript code here -->
-    <script>
-        // Your JavaScript code for handling checkboxes can be added here
-    </script>
-</body>
+					</div>
+				</div>
+			</div>
+		</div>
 
-</html>
+		<%- include('../layouts/footer') %>
+
+
+
+
+
+        const ITEMS_PER_PAGE = 8;  // Adjust the number of items per page as needed
+
+exports.showshopIndex = async (req, res) => {
+  const page = parseInt(req.query.page) || 1; // Get the requested page number, default to 1
+  const skip = (page - 1) * ITEMS_PER_PAGE;
+
+  
+
+  try {
+    const totalProducts = await Product.countDocuments(); // Get the total number of products
+    const products = await Product.find().skip(skip).limit(ITEMS_PER_PAGE); // Get products for the current page
+    const totalPages = Math.ceil(totalProducts / ITEMS_PER_PAGE); // Calculate total pages
+
+    res.render('users/shop', { products, success: req.flash('success'), currentPage: page, totalPages });
+  } catch (error) {
+    console.error('Error fetching products:', error);
+    res.status(500).send('Internal Server Error');
+  }
+};

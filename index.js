@@ -9,7 +9,6 @@ const nocache = require('nocache')
 const morgan = require('morgan');
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
-const paymentRoutes = require('./routes/payment')
 const app = express()
 
 app.set('view engine', 'ejs')
@@ -29,13 +28,6 @@ app.use(methodOverride('_method'))
 app.use(flash())
 
 config.dbConnect()
-
-// app.use(function(req, res, next){
-//   res.locals.success = req.flash('success');
-//   res.locals.error = req.flash('error');
-//   res.locals.userData = req.flash('data');
-//   next();
-// });
 
 app.use('/', require('./routes/userRoutes'))
 app.use('/admin', require('./routes/adminRoutes'))

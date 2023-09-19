@@ -1,7 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout</title>
+    <!-- Include your CSS files here -->
+
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
     <%- include('../layouts/header') %>
     <!-- Navbar -->
     <!-- ... (Your navigation content) ... -->
-	<%-  include('../layouts/userNav')  %>
+    <%- include('../layouts/userNav') %>
+    
     <!-- Breadcrumbs -->
     <div class="breadcrumbs">
         <div class="container">
@@ -13,30 +26,27 @@
         </div>
     </div>
 
-	
     <!-- Checkout Content -->
     <div class="container">
         <div class="row">
             <!-- Address Details (Left Column) -->
-            <div class="col-lg-8">
-                
+            <div class="col-lg-6">
                 <% if (error && error.length > 0) { %>
                     <div class="alert alert-danger text-center" id="error-message">
-                      <% error.forEach(function(message) { %>
-                        <p><%= message %></p>
-                      <% }); %>
+                        <% error.forEach(function(message) { %>
+                            <p><%= message %></p>
+                        <% }); %>
                     </div>
                     <script>
                         // Add a timeout to hide the error message after 3 seconds (adjust as needed)
                         setTimeout(function() {
-                          var errorMessage = document.getElementById('error-message');
-                          if (errorMessage) {
-                            errorMessage.style.display = 'none';
-                          }
+                            var errorMessage = document.getElementById('error-message');
+                            if (errorMessage) {
+                                errorMessage.style.display = 'none';
+                            }
                         }, 2000); // 3000 milliseconds (3 seconds)
-                      </script>
-                    <% } %>
-
+                    </script>
+                <% } %>
 
                 <!-- Default Address Table -->
                 <div class="table-responsive">
@@ -48,18 +58,16 @@
                         </thead>
                         <tbody>
                             <% addresses.forEach(function(address, index) { %>
-                            <tr>
-                            <% if(address.defaultAddress){ %>
-                                <td>
-                                    <!-- Address Details -->
-                                    <span><%= address.phone %></span><br>
-                                    <span><%= address.address %>, <%= address.landMark %>, <%= address.locality %>,
-                                        <%= address.district %> District, <%= address.state %>, <%= address.pincode %>.</span>
-                                    <span>
-                                    </span>
-                                </td>
-                                <% } %>
-                            </tr>
+                                <tr>
+                                    <% if(address.defaultAddress){ %>
+                                        <td>
+                                            <!-- Address Details -->
+                                            <span><%= address.phone %></span><br>
+                                            <span><%= address.address %>, <%= address.landMark %>, <%= address.locality %>,
+                                                <%= address.district %> District, <%= address.state %>, <%= address.pincode %>.</span>
+                                        </td>
+                                    <% } %>
+                                </tr>
                             <% }); %>
                         </tbody>
                     </table>
@@ -68,70 +76,62 @@
 
                 <!-- Payment Method -->
                 <form action="/showOrders" method="post">
-                    <div class="col-md-12">
+                    <div class="col-md-8  mt-5">
                         <div class="cart-detail">
                             <h2>Payment Method</h2>
                             <div class="form-group">
                                 <div class="col-md-12">
                                     <div class="radio">
-                                       <label><input type="radio" name="paymentOptions" value="wallet">Wallet</label>
+                                        <label><input type="radio" name="paymentOptions" value="cod"> Cash on Delivery</label>
                                     </div>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <div class="col-md-12">
                                     <div class="radio">
-                                       <label><input type="radio" name="paymentOptions" value="cod"> Cash on Delivery</label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-md-12">
-                                    <div class="radio">
-                                       <label><input type="radio" name="paymentOptions" value="razorpay"> razorPay</label>
+                                        <label><input type="radio" name="paymentOptions" value="razorpay"> Razorpay</label>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12 text-left">
-                            <button class="btn btn-dark" data-toggle="modal" data-target="#orderModal" type="button">Place Order</button>
+                        <div class="row">
+                            <div class="col-md-12 text-left">
+                                <button class="btn btn-dark" data-toggle="modal" data-target="#orderModal" type="button">Place Order</button>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Modal -->
-<div class="modal fade" id="orderModal" tabindex="-1" role="dialog" aria-labelledby="orderModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="orderModalLabel">Confirm Order</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          Are you sure you want to place your order?
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-success">Place Order</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
+                    <div class="modal fade" id="orderModal" tabindex="-1" role="dialog" aria-labelledby="orderModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="orderModalLabel">Confirm Order</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    Are you sure you want to place your order?
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+                                    <button type="submit" class="btn btn-success">Place Order</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </form>
             </div>
 
             <!-- Cart Total (Right Column) -->
-            <div class="col-lg-4">
-                <div class="col-md-12">
+            <div class="col-lg-6">
+                <div class="col-md-8">
                     <div class="cart-detail">
                         <h2>Cart Total</h2>
                         <ul>
                             <% cart.forEach((cartItem)=>{ %>
-                            <li><span><%=cartItem.quantity%> x <%- cartItem.product.title  %></span> <span>&#8377;<%-cartItem.total %></span></li>
+                                <li><span><%=cartItem.quantity%> x <%- cartItem.product.title  %></span> <span>&#8377;<%-cartItem.total %></span></li>
                             <% }); %>
                         </ul>
                         <ul>
@@ -147,19 +147,15 @@
                         </ul>
                     </div>
                 </div>
-
-                <div class="w-100"></div>
             </div>
         </div>
     </div>
-
-   
 
     <!-- Include Bootstrap JS and jQuery -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    
+
     <!-- ... (Your other scripts) ... -->
 </body>
 </html>

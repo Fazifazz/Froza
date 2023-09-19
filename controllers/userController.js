@@ -261,58 +261,87 @@ exports.getProductDetails = catchAsync(async (req, res) => {
 
 const ITEMS_PER_PAGE = 8;
 
-exports.showshopIndex = async (req, res) => {
-  const page = parseInt(req.query.page) || 1;
-  const skip = (page - 1) * ITEMS_PER_PAGE;
+//products 
 
-  const filters = {}; // Initialize an empty filter object
-  
-  // Check for category filter
-  if (req.query.category) {
-    filters.category = req.query.category;
-  }
+exports.showshopIndex=async (req,res)=>{
+    try {
+        
+        const categories= await Category.find({is_deleted:false})
+        const brands = await Product.distinct('brand')
+        const pageNumber = req.body.pageNumber || 0;
+        const productsPerPage = 8;
+        let neededFilter;
+        let noMatchesFound = false;
 
-  // Check for brand filter
-  if (req.query.brand) {
-    filters.brand = req.query.brand;
-  }
-console.log(req.query.brand);
-  // Check for color filter
-  if (req.query.color) {
-    filters.color = req.query.color;
-  }
-  
+        if(req.query.category){  
+          console.log(req.query.category)
+          neededFilter={ 'category.is_deleted':false, 'category.name':req.query.category}
+        }else if(req.body.min && req.body.max){
+            let min=parseInt(req.body.min) || 0
+            let max=parseInt(req.body.max) || Number.MAX_SAFE_INTEGER
+            neededFilter={ 'category.is_deleted':false, regularPrice:{ $gte:min,$lte:max } }
+        }else if(req.body.searchItem){
+            const searched=req.body.searchItem
+            neededFilter={'category.is_deleted':false, title:{ $regex: ".*" +searched+ ".*", $options:'i'}  }  
+        }else if(req.query.brand){
+          neededFilter = {'category.is_deleted':false,'brand':req.query.brand}
+        }
+        else{
+            neededFilter={'category.is_deleted':false}
+        }
 
-  // Check for price range filter
-  if (req.query.minPrice && req.query.maxPrice) {
-    filters.mrp = {
-      $gte: parseFloat(req.query.minPrice),
-      $lte: parseFloat(req.query.maxPrice),
-    };
-  }
-  const selectedCategory = req.query.category || 'All Categories';
-  try {
-    const totalProducts = await Product.countDocuments(filters);
-    const products = await Product.find(filters).skip(skip).limit(ITEMS_PER_PAGE)
-    const totalPages = Math.ceil(totalProducts / ITEMS_PER_PAGE);
-    const categories = await Category.distinct('name')
-    const brands = await Product.distinct('brand')
+      
+        const aggragationPipeline =[
+            {
+                $lookup:{
+                    from:'categories',
+                    localField:'category',
+                    foreignField:'_id',
+                    as:'category'
+                }
+            },
+            {
+                $unwind:'$category'
+            },
+            {
+                $match:neededFilter
+            },
+            {
+                $facet:{
+                  products:[
+                    {
+                        $skip:pageNumber*productsPerPage
+                    },
+                    {
+                        $limit:productsPerPage
+                    }
+                  ],
+                  totalPages:[
+                    {
+                        $count:'total'
+                    }
+                  ]
+                }
+            }
+        ]
 
-    res.render('users/shop', {
-      products,
-      success: req.flash('success'),
-      currentPage: page,
-      totalPages,
-      categories,
-      brands,
-      selectedBrand: req.query.brand,
-      selectedCategory: req.query.category,
-    });
-  } catch (error) {
-    console.error('Error fetching products:', error);
-    res.status(500).send('Internal Server Error');
-  }
-};
+        const prdt = await Product.aggregate(aggragationPipeline);
+        let totalPages = prdt[0].totalPages[0].total;
+        totalPages = Math.ceil(totalPages/productsPerPage)
+        const products = prdt[0].products;
+
+           // Check if no products match the filter criteria
+           if (products.length === 0) {
+            req.flash('error','No matches found')
+            noMatchesFound = true;
+        }
+        res.render('users/shop', {success:req.flash('success'),error:req.flash('error'),products, totalPages, categories,brands,noMatchesFound});
+                
+    } catch (error) {
+        console.log(error.message)
+    }
+}
+      
 
 
 
@@ -326,7 +355,7 @@ exports.showAddToCart=async (req,res)=>{
   } catch (error) {
       console.log(error.message)
       res.status(500).send('Internal Server Error');
-    }
+   }
 }
 
 exports.addTocart=async (req,res)=>{

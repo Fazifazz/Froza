@@ -47,6 +47,7 @@ router
     .patch('/resendOtp', resendOtp)
     .get('/productDetails/:id', getProductDetails)
     .get('/shop', showshopIndex)
+    .post('/shop',showshopIndex)
     .get('/shop/:id', getProductDetails);
 
 // Protected routes
@@ -67,8 +68,9 @@ router
     .get('/profile/deleteAddress/:id',isUserLoggedIn, accountController.deleteAddress)
     .post('/profile/setDefaultAddress',isUserLoggedIn, accountController.setDefaultAddress)
     .get('/showOrders',isUserLoggedIn, orderController.showOrdersIndex)
-    .post('/showOrders',isUserLoggedIn, orderController.verifyCheckOut)
+    .post('/showOrders',isUserLoggedIn, orderController.placeOrder)
     .post('/showOrders/orderDetails',isUserLoggedIn, orderController.orderDetails)
-    .post('/showOrders/cancelOrder',isUserLoggedIn, orderController.destroyOrder);
-
+    .post('/showOrders/cancelOrder',isUserLoggedIn, orderController.destroyOrder)
+    .get('/profile/wallet',isUserLoggedIn,accountController.showWalletIndex)
+   
 module.exports = router;

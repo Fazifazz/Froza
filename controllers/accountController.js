@@ -1,5 +1,15 @@
 const User =require('../models/userModel')
 const Address=require('../models/addressModel')
+const catchAsync = require('../utils/catchAsync')
+const crypto = require('crypto')
+const Razorpay = require('razorpay')
+
+
+var razorpay = new Razorpay({
+  key_id:process.env.KEY_ID,
+  key_secret: process.env.KEY_SECRET,
+});
+
 
 //profile
 exports.showProfile=async (req,res)=>{
@@ -123,5 +133,12 @@ exports.deleteAddress=async (req,res)=>{
         res.status(500).send('Internal Server Error');
     }
 }
+
+
+exports.showWalletIndex  = catchAsync(async (req,res) => {
+    const userId = req.session.user
+    const user = await User.findById({_id:userId})
+    res.render('users/account/myWallet',{user,error:req.flash('error'),success:req.flash('success'), key_id : process.env.KEY_ID})
+  })
 
 
