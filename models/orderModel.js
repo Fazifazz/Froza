@@ -29,6 +29,9 @@ const orderSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
+    deliveredOn: {
+        type:Date,
+    },
     status: {
         type: String,
         enum: ['Pending', 'Processing','Shipped', 'Delivered', 'Cancelled'],
@@ -37,6 +40,10 @@ const orderSchema = new mongoose.Schema({
     totalPrice: {
         type: Number,
         required:true
+    },
+    isRefunded: {
+        type:Boolean,
+        default:false
     },
     deliveryAddress:{
         type:mongoose.Schema.Types.ObjectId,

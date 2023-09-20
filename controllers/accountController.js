@@ -14,8 +14,11 @@ var razorpay = new Razorpay({
 //profile
 exports.showProfile=async (req,res)=>{
     try {
-        const user=await User.findById(req.session.user)
-        res.render('users/account/profile',{user})
+      const userExist = Boolean(req.session.user)
+      if(userExist){
+        var user = await User.findById({_id:req.session.user})  
+      }
+        res.render('users/account/profile',{userExist,user})
     } catch (error) {
         console.log(error.message)
         res.status(500).send('Internal Server Error');
@@ -24,9 +27,12 @@ exports.showProfile=async (req,res)=>{
 
 exports.showAddress=async (req,res)=>{
     try {
-        const user=await User.findById(req.session.user)
+      const userExist = Boolean(req.session.user)
+      if(userExist){
+        var user = await User.findById({_id:req.session.user})  
+      }
         const addresses=await Address.find({userId:req.session.user})
-        res.render('users/account/address',{addresses,user})
+        res.render('users/account/address',{addresses,user,userExist})
     } catch (error) {
         console.log(error.message)
         res.status(500).send('Internal Server Error');
@@ -36,8 +42,11 @@ exports.showAddress=async (req,res)=>{
 
 exports.showAddaddress=async (req,res)=>{
     try {
-        const user=await User.findById(req.session.user) 
-        res.render('users/account/addAddress',{user})
+      const userExist = Boolean(req.session.user)
+      if(userExist){
+        var user = await User.findById({_id:req.session.user})  
+      }
+        res.render('users/account/addAddress',{userExist,user})
     } catch (error) {
         console.log(error.message)
         res.status(500).send('Internal Server Error');
@@ -71,9 +80,12 @@ exports.addAddress=async (req,res)=>{
 
 exports.showEditaddress=async (req,res)=>{
     try {
-        const user=await User.findById(req.session.user)
+      const userExist = Boolean(req.session.user)
+      if(userExist){
+        var user = await User.findById({_id:req.session.user})  
+      }
         const address=await Address.findById(req.params.id)
-        res.render('users/account/editAddress',{address,user})
+        res.render('users/account/editAddress',{address,userExist,user})
     } catch (error) {
         console.log(error.message)
         res.status(500).send('Internal Server Error');
@@ -137,8 +149,80 @@ exports.deleteAddress=async (req,res)=>{
 
 exports.showWalletIndex  = catchAsync(async (req,res) => {
     const userId = req.session.user
-    const user = await User.findById({_id:userId})
-    res.render('users/account/myWallet',{user,error:req.flash('error'),success:req.flash('success'), key_id : process.env.KEY_ID})
+    const userExist = Boolean(req.session.user)
+      if(userExist){
+        var user = await User.findById({_id:userId})  
+      }
+    const walletHistory = user.walletHistory
+    res.render('users/account/myWallet',{userExist,user,walletHistory,error:req.flash('error'),success:req.flash('success'), key_id : process.env.KEY_ID})
   })
 
 
+  exports.addMoneyToWallet = async (req, res, next) => {
+    try {
+      console.log("adding money to wallet");
+      const { amount } = req.body;
+      console.log(amount);
+      const id = crypto.randomBytes(8).toString("hex");
+  
+      var options = {
+        amount: amount * 100,
+        currency: "INR",
+        receipt: "hello" + id,
+      };
+  
+      razorpay.orders.create(options, (err, order) => {
+        if (err) {
+          res.json({ status: false });
+        } else {
+          res.json({ status: true, payment: order ,key_id:process.env.KEY_ID});
+        }
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+
+  exports.verifyWalletPayment = async (req, res, next) => {
+    try {
+      const userId = req.session.user;
+      const details = req.body;
+      const amount = parseInt(details["order[amount]"]) / 100;
+      let hmac = crypto.createHmac("sha256", process.env.KEY_SECRET);
+  
+      hmac.update(
+        details["response[razorpay_order_id]"] +
+          "|" +
+          details["response[razorpay_payment_id]"]
+      );
+      hmac = hmac.digest("hex");
+      if (hmac === details["response[razorpay_signature]"]) {
+        console.log("order verified updating wallet");
+  
+        const walletHistory = {
+          date: new Date(),
+          amount,
+          message: "Deposited via Razorpay",
+        };
+  
+        await User.findByIdAndUpdate(
+          { _id: userId },
+          {
+            $inc: {
+              wallet: amount,
+            },
+            $push: {
+              walletHistory,
+            },
+          }
+        );
+  
+        res.json({ status: true });
+      } else {
+        res.json({ status: false });
+      }
+    } catch (error) {
+      next(next);
+    }
+  };

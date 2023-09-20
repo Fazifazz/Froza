@@ -11,12 +11,25 @@
     <link rel="stylesheet" href="/css/bootstrap.min.css">
     <!-- animate CSS -->
     <link rel="stylesheet" href="/css/animate.css">
+    <link rel="stylesheet" href="/css/ionicons.min.css">
+    <link rel="stylesheet" href="/css/flexslider.css">
+    <link rel="stylesheet" href="/css/owl.theme.default.min.css">
+    <link rel="stylesheet" href="/css/bootstrap-datepicker.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+<!-- Theme style  -->
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/admin/vendors/feather/feather.css">
+<link rel="stylesheet" href="/admin/vendors/ti-icons/css/themify-icons.css">
+<link rel="stylesheet" href="/admin/vendors/css/vendor.bundle.base.css">
+
+
     <!-- owl carousel CSS -->
     <link rel="stylesheet" href="/css/owl.carousel.min.css">
     <!-- font awesome CSS -->
     <link rel="stylesheet" href="/css/all.css">
     <!-- flaticon CSS -->
-    <link rel="stylesheet" href="/css/flaticon.css">
+	<link rel="stylesheet" href="/fonts/flaticon/font/flaticon.css">
     <link rel="stylesheet" href="/css/themify-icons.css">
     <!-- font awesome CSS -->
     <link rel="stylesheet" href="/css/magnific-popup.css">
@@ -32,7 +45,6 @@
             margin:0 100px;
             background-color: #f9f9f9;
         }
-            
 
         /* Style for the user details */
         .user-details {
@@ -42,6 +54,7 @@
         .card {
             width: 600px;
         }
+
         /* Add responsiveness for smaller screens */
         @media (max-width: 768px) {
             .readonly-box {
@@ -49,140 +62,99 @@
             }
         }
     </style>
-
-
-
-    
-
+</head>
 <body>
     <!-- Navbar -->
-    <%- include('../../layouts/userNav') -%>
+    <%- include('../../layouts/userNav') %>
 
     <!-- Sidebar -->
     <div class="container-fluid">
         <div class="row">
-            
-            <%- include('../../layouts/profile_sidebar') -%>
+            <%- include('../../layouts/profile_sidebar') %>
             <div class="centered-container">
-            <div class="main-panel">
-                <div class="content-wrapper">
-                  <div class="row">
-                    <div class="col-lg-6 grid-margin stretch-card">
-                      <div class="card">
-                        <div class="card-body">
-
-                            <div class="table-responsive">
-                                <table class="table">
-                                  <thead>
+                <div class="main-panel">
+                    <div class="content-wrapper">
+                        <div class="col-lg-6 grid-margin stretch-card">
+                            <div class="card">
+                                <div class="card-body">
+                                    <!-- Add address button -->
+                                    <a href="/profile/addAddress" class="btn btn-outline-primary">Add Address</a>
                                     
-                                  </thead>
-                                  <tbody>
+                                    <!-- Default Address Table -->
+                                    <div class="table-responsive">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Default Address</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <% addresses.forEach(function(address, index) { %>
+                                                    <% if (address.defaultAddress) { %>
+                                                        <tr>
+                                                            <td>
+                                                                <span><%= address.phone %></span><br>
+                                                                <span><%= address.address %>, <%= address.landMark %>,
+                                                                    <%= address.locality %>, <%= address.district %> District,
+                                                                    <%= address.state %>, <%= address.pincode %>.
+                                                                </span>
+                                                            </td>
+                                                            <td><a href="/profile/editAddress/<%= address._id %>" class="btn btn-secondary">Edit</a></td>
+                                                        </tr>
+                                                    <% } %>
+                                                <% }); %>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                     
-                                    <a href="/profile/addAddress" class="btn btn-outline-primary">Add address</a>
-                            
-                                  </tbody>
-                                </table>
+                                    <!-- Address List Table -->
+                                    <div class="table-responsive">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>No.</th>
+                                                    <th>Secondary Address</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <% addresses.forEach(function(address, index) { %>
+                                                    <% if (!address.is_deleted && !address.defaultAddress) { %>
+                                                        <tr>
+                                                            <td><%= index + 1 %></td>
+                                                            <td>
+                                                                <span><%= address.phone %></span><br>
+                                                                <span><%= address.address %>, <%= address.landMark %>,
+                                                                    <%= address.locality %>, <%= address.district %> District,
+                                                                    <%= address.state %>, <%= address.pincode %>.
+                                                                </span>
+                                                            </td>
+                                                            <td>
+                                                                <a href="/profile/editAddress/<%= address._id %>" class="text-primary">Edit</a>
+                                                                <a href="/profile/deleteAddress/<%= address._id %>" class="text-danger">Remove</a>
+                                                                <form action="/profile/setDefaultAddress" method="post">
+                                                                    <input type="hidden" name="id" value="<%= address._id %>">
+                                                                    <button type="submit" class="btn btn-sm btn-secondary mt-2">Set as Default</button>
+                                                                </form>
+                                                            </td>
+                                                        </tr>
+                                                    <% } %>
+                                                <% }); %>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
                             </div>
-
-
-                            <div class="table-responsive">
-                                <table class="table">
-                                  <thead>
-                                    <tr>
-                                      <th>Default Address</th>
-                                    </tr>
-                                  </thead>
-                                  <tbody>
-                                    <% addresses.forEach(function(address, index) { %>
-                                    <tr>
-                                    <% if(address.defaultAddress){ %>
-                                        <td>
-                                            <span><%= address.phone %></span><br>
-                                            <span><%= address.address %>,<%= address.landMark  %>,<%= address.locality %>,
-                                                <%= address.district  %> District,<%= address.state  %>,<%= address.pincode %>.
-                                            </span>
-                                        </td>
-                                        <td><a href="/profile/editAddress/<%= address._id %>" class="">edit</a></td>
-                                    <% } %>
-                                   </tr>
-                                   <% }); %>
-                        
-                              </tbody>
-                            </table>
                         </div>
-                                       
-                            
-
-                         
-                          
-<!-- addressList.ejs -->
-<div class="table-responsive">
-<table class="table">
-    <thead>
-        <tr>
-            <th>no.</th>
-            <th>secondary address</th>
-            <th>actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        <% addresses.forEach(function(address, index) { %>
-        <% if(!address.is_deleted){ %>
-        <% if(!address.defaultAddress){ %>     
-            <tr>
-                 
-                <td><%= index + 1 %></td>
-                
-
-                <td>
-                    <span><%= address.phone %></span><br>
-                    <span><%= address.address %>,<%= address.landMark  %>,<%= address.locality %>,
-                        <%= address.district  %> District,<%= address.state  %>,<%= address.pincode %>.
-                    </span>
-                </td>
-                <td>
-                  
-                    <a href="/profile/editAddress/<%= address._id %>" class="">edit</a>
-                    <a href="/profile/deleteAddress/<%=address._id%>" class="">remove</a>
-                        
-
-                    <form action="/profile/setDefaultAddress" method="post">
-                        <input type="hidden" name="id" value="<%= address._id  %>">
-                        <button type="submit" class="btn btn-sm btn-secondary mt-2">Set as default</button>
-                    </form>
-                 
-                </td>
-                  
-                 
-            </tr>
-        <% } %>  
-        <% } %> 
-        <% }); %>
-    </tbody>
-</table>
-</div>
-
-
-                        </div>
-                      </div>
                     </div>
-
-
-
-
-
-
-
-
+                </div>
+            </div>
         </div>
     </div>
-</div>
-
 
     <!-- Include Bootstrap JS and jQuery -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    
 </body>
 </html>

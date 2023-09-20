@@ -53,7 +53,7 @@
                                                             <p><%= order.deliveryAddress[0].locality %></p>
                                                         </td>
                                                         <td>
-                                                            <% if(order.status != 'Cancelled'){ %>
+                                                            <% if(order.status != 'Cancelled'&&order.status!='Delivered'){ %>
                                                                 <form action="/admin/orders?_method=PATCH" method="POST">
                                                                     <select name="status" class="status_order <%= order.status %>" id="floatingSelectGrid">
                                                                         <% for (const option of ['Pending', 'Processing','Shipped', 'Delivered','Cancelled']) { %>
@@ -62,12 +62,14 @@
                                                                             </option>
                                                                         <% } %>
                                                                     </select>
-                                                                    <input type="hidden" name="orderId" value="<%= order.orderId %>">
+                                                                    <input type="hidden" name="orderId" value="<%= order._id %>">
                                                                     <button type="submit" class="status_update btn btn-outline-primary">Update</button>
                                                                 </form>
-                                                            <% } else { %>
-                                                                <p class="Cancel">Order Cancelled</p>
-                                                            <% } %>
+                                                            <% } else if(order.status==='Cancelled') { %>
+                                                                <p class="Cancel text-danger" >Order Cancelled</p>
+                                                            <% }else{ %>
+                                                                <p class="Cancel text-success">Order Delivered on <%= order.deliveredOn.toDateString()%></p> 
+                                                                <% } %>
                                                         </td>
                                                         <td>
                                                             <p><%= order.paymentMethod %></p>

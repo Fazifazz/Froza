@@ -22,13 +22,19 @@ const securePassword = async (password) => {
 
 }
 
+
+
 const ITEMS_per_PAGE = 4;
 exports.index = catchAsync(async (req, res) => {
+  const userExist = Boolean(req.session.user)
+  if(userExist){
+    var user = await User.findById({_id:req.session.user})
+  }
   const page = parseInt(req.query.page) || 1;
   const skip = (page - 1) * ITEMS_per_PAGE;
   const products = await Product.find().skip(skip).limit(ITEMS_per_PAGE);
   const banners = await Banner.find()
-  res.render('users/index', { products,banners,})
+  res.render('users/index', {products,banners,userExist,user})
 })
 
 exports.showLogin = (req, res) => {
@@ -253,9 +259,13 @@ else{
 })
 
 exports.getProductDetails = catchAsync(async (req, res) => {
+  const userExist = Boolean(req.session.user)
+  if(userExist){
+    var user = await User.findById({_id:req.session.user})
+  }
   const product = await Product.findOne({ _id: req.params.id })
   const category = await Category.findOne({ _id: product.category })
-  res.render('users/productDetails', { product, category,success:req.flash('success') })
+  res.render('users/productDetails', {user, product, category,success:req.flash('success') ,userExist})
 })
 
 
@@ -265,29 +275,54 @@ const ITEMS_PER_PAGE = 8;
 
 exports.showshopIndex=async (req,res)=>{
     try {
-        
+        // const user = await User.findById({_id:req.session.user})
+        const userExist = Boolean(req.session.user)
+        if(userExist){
+          var user = await User.findById({_id:req.session.user})
+        }
         const categories= await Category.find({is_deleted:false})
         const brands = await Product.distinct('brand')
         const pageNumber = req.body.pageNumber || 0;
         const productsPerPage = 8;
         let neededFilter;
-        let noMatchesFound = false;
+        let filterName;
 
         if(req.query.category){  
           console.log(req.query.category)
-          neededFilter={ 'category.is_deleted':false, 'category.name':req.query.category}
+          neededFilter={ is_deleted:false,'category.is_deleted':false, 'category.name':req.query.category}
+          filterName=req.query.category 
         }else if(req.body.min && req.body.max){
             let min=parseInt(req.body.min) || 0
             let max=parseInt(req.body.max) || Number.MAX_SAFE_INTEGER
-            neededFilter={ 'category.is_deleted':false, regularPrice:{ $gte:min,$lte:max } }
+            neededFilter={ is_deleted:false,'category.is_deleted':false, regularPrice:{ $gte:min,$lte:max } }
+            filterName= `price: less than ${req.body.max},greater than ${req.body.min}`
         }else if(req.body.searchItem){
             const searched=req.body.searchItem
-            neededFilter={'category.is_deleted':false, title:{ $regex: ".*" +searched+ ".*", $options:'i'}  }  
+            console.log(searched);
+
+           //check availibility in advance to avoid error from aggregation
+            const categoryIds = categories.map((category) => category._id);
+            const result = await Product.find({
+                is_deleted: false,
+                category:{$in:categoryIds},
+                title: { $regex: '.*' + searched + '.*', $options:'i' }
+            })
+            console.log(result)
+            if(result.length===0){
+                req.flash('error','matching product not found, search another..')
+                return res.redirect('/shop')
+            }else{
+                neededFilter={ is_deleted:false,'category.is_deleted':false, name:{ $regex: ".*" +searched+ ".*",  $options:'i'}  }
+                filterName=` ${searched}` 
+            }
+           
         }else if(req.query.brand){
-          neededFilter = {'category.is_deleted':false,'brand':req.query.brand}
+          neededFilter = {is_deleted:false,'category.is_deleted':false,'brand':req.query.brand}
+          filterName=req.query.brand
         }
         else{
-            neededFilter={'category.is_deleted':false}
+            neededFilter={is_deleted:false,'category.is_deleted':false}
+            filterName=``
         }
 
       
@@ -326,16 +361,11 @@ exports.showshopIndex=async (req,res)=>{
         ]
 
         const prdt = await Product.aggregate(aggragationPipeline);
-        let totalPages = prdt[0].totalPages[0].total;
-        totalPages = Math.ceil(totalPages/productsPerPage)
+        let totalItems = prdt[0].totalPages[0].total;
+        let totalPages = Math.ceil(totalItems/8)
         const products = prdt[0].products;
-
-           // Check if no products match the filter criteria
-           if (products.length === 0) {
-            req.flash('error','No matches found')
-            noMatchesFound = true;
-        }
-        res.render('users/shop', {success:req.flash('success'),error:req.flash('error'),products, totalPages, categories,brands,noMatchesFound});
+          
+        res.render('users/shop', {userExist,user,success:req.flash('success'),error:req.flash('error'),products, totalPages, categories,brands,totalItems,filterName});
                 
     } catch (error) {
         console.log(error.message)
@@ -348,10 +378,14 @@ exports.showshopIndex=async (req,res)=>{
 
 exports.showAddToCart=async (req,res)=>{
   try {
-      const user=await User.findById(req.session.user).populate('cart.product')  
+      // const user=await User.findById(req.session.user).populate('cart.product')  
+      const userExist = Boolean(req.session.user)
+      if(userExist){
+        var user = await User.findById({_id:req.session.user}).populate('cart.product')  
+      }
       const cart=user.cart
       const totalCartAmount=user.totalCartAmount   
-      res.render('users/cart',{ cart,totalCartAmount,success:req.flash('success')})       
+      res.render('users/cart',{userExist,user, cart,totalCartAmount,success:req.flash('success')})       
   } catch (error) {
       console.log(error.message)
       res.status(500).send('Internal Server Error');

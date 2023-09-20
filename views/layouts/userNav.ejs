@@ -57,7 +57,9 @@
                     </div>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/cart"><i class="icon-shopping-cart"></i> Cart[0]</a>
+                    <% if(userExist){ %>
+                        <a class="nav-link" href="/cart"><i class="icon-shopping-cart"></i> Cart[<span class="text-danger"><%= user.cart.length %></span>]</a>
+                    <% } %>
                 </li>
             </ul>
         </div>

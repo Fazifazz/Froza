@@ -19,11 +19,14 @@
             description: "Order Payment",
             order_id: "<%= order.id %>", // Order ID from the server
             handler: function (response) {
+                var TransactionId = response.razorpay_payment_id; // Retrieve the payment ID
+                var orderId = response.razorpay_order_id; // Retrieve the order ID
+                var signature = response.razorpay_signature; // Retrieve the signature
+                console.log(TransactionId)
                 // Handle successful payment
                 console.log(response);
                 console.log('success')
-                window.location.href = "/showOrders";
-                // Redirect to a thank you page or handle order confirmation
+                window.location.href = "/razorpay/CreateOrder?orderId=<%= order.id %>&transactionId="+TransactionId;                // Redirect to a thank you page or handle order confirmation
             },
             prefill: {
                 name: "<%= user.name %>",
@@ -31,7 +34,7 @@
                 contact: "<%= user.mobile %>"
             },
             theme: {
-                color: "#F37254"
+                color: "#ECFDFF"
             }
         };
 

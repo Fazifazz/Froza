@@ -59,6 +59,14 @@ router
     .get('/cart/:id',isUserLoggedIn, destroyCartItem)
     .post('/update-cart-item-quantity',isUserLoggedIn, updateCartQauntity)
     .get('/checkout',isUserLoggedIn, orderController.showCheckout)
+    .post('/checkout',isUserLoggedIn, orderController.placeOrder)
+    
+    .get('/showOrders',isUserLoggedIn, orderController.showOrdersIndex)
+    .get('/razorpay/CreateOrder',isUserLoggedIn,orderController.createOrder)
+    .post('/showOrders/orderDetails',isUserLoggedIn, orderController.orderDetails)
+    .post('/showOrders/cancelOrder',isUserLoggedIn, orderController.destroyOrder)
+    .post('/showOrders/refundOrder',isUserLoggedIn,orderController.refundOrder)
+    //address
     .get('/profile',isUserLoggedIn,profileImages.uploadProfileImage,profileImages.resizeProfileImage, accountController.showProfile)
     .get('/profile/address',isUserLoggedIn, accountController.showAddress)
     .get('/profile/addAddress',isUserLoggedIn, accountController.showAddaddress)
@@ -67,10 +75,9 @@ router
     .put('/profile/editAddress/:id', isUserLoggedIn,accountController.editAddress)
     .get('/profile/deleteAddress/:id',isUserLoggedIn, accountController.deleteAddress)
     .post('/profile/setDefaultAddress',isUserLoggedIn, accountController.setDefaultAddress)
-    .get('/showOrders',isUserLoggedIn, orderController.showOrdersIndex)
-    .post('/showOrders',isUserLoggedIn, orderController.placeOrder)
-    .post('/showOrders/orderDetails',isUserLoggedIn, orderController.orderDetails)
-    .post('/showOrders/cancelOrder',isUserLoggedIn, orderController.destroyOrder)
+
     .get('/profile/wallet',isUserLoggedIn,accountController.showWalletIndex)
+    .post('/profile/addMoneyToWallet/',isUserLoggedIn,accountController.addMoneyToWallet)
+    .post('/verifyWalletPayment',isUserLoggedIn,accountController.verifyWalletPayment)
    
 module.exports = router;

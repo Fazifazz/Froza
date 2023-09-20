@@ -121,7 +121,9 @@
 
 					<div class="col-lg-9 col-xl-9">
                         <!-- Add the conditional code to display the selected brand here -->
-
+                        <p><span><%= totalItems %> </span> Products Found</p>
+                        <span><h5><b>filtered by :</b>
+                            <%= filterName %></h5></span>
                         <!-- Your product listing starts here -->
                         <div class="row row-pb-md">
                             <% products.forEach((prdct) => { %>

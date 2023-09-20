@@ -75,10 +75,17 @@
                 </div>
 
                 <!-- Payment Method -->
-                <form action="/showOrders" method="post">
+                <form action="/checkout" method="post">
                     <div class="col-md-8  mt-5">
                         <div class="cart-detail">
                             <h2>Payment Method</h2>
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <div class="radio">
+                                        <label><input type="radio" name="paymentOptions" value="wallet">My Wallet <p class="text-success">(Availabe:&#8377;<%=user.wallet%>/-)</p></label>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="form-group">
                                 <div class="col-md-12">
                                     <div class="radio">
