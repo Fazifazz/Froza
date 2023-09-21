@@ -67,7 +67,7 @@ router
     .post('/showOrders/cancelOrder',isUserLoggedIn, orderController.destroyOrder)
     .post('/showOrders/refundOrder',isUserLoggedIn,orderController.refundOrder)
     //address
-    .get('/profile',isUserLoggedIn,profileImages.uploadProfileImage,profileImages.resizeProfileImage, accountController.showProfile)
+    .get('/profile',isUserLoggedIn,accountController.showProfile)
     .get('/profile/address',isUserLoggedIn, accountController.showAddress)
     .get('/profile/addAddress',isUserLoggedIn, accountController.showAddaddress)
     .post('/profile/addAddress',isUserLoggedIn, accountController.addAddress)

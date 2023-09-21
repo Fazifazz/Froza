@@ -344,10 +344,39 @@ exports.destroyOrder = async (req, res) => {
   try {
     // Find the order by orderId and update its status to 'Cancelled'
     await Order.findOneAndUpdate({ orderId: req.body.orderId }, { $set: { status: 'Cancelled' } });
+    const orderDetails = await Order.aggregate([
+      {
+          $match:{
+            orderId:req.body.orderId
+          }
+      },
+      {
+          $unwind:'$products'
+      },
+      {
+        $lookup: {
+          from: "products", 
+          localField: "products.product", 
+          foreignField: "_id", 
+          as: "products.product" 
+        }
+      },
+      
+    ]);
+      
+      
+ for(let i=0;i<orderDetails.length;i++){
+   let productId=orderDetails[i].products.product[0]._id
+   let orderQuantity = orderDetails[i].products.quantity
+   let product = await Product.findById(productId)
+   let stock=product.stock
+   let newStock = stock + orderQuantity
+   await Product.updateOne({_id:productId}, {$set:{stock:newStock}})
+ }
 
     const user = await User.findById({ _id: req.session.user });
     const order = await Order.findOne({ orderId: req.body.orderId }); // Use findOne with orderId
-
+         //for wallet payment
     if (order.paymentMethod === 'wallet') {
       const wallet = user.wallet;
       const refundWallet = order.totalPrice;
@@ -395,7 +424,7 @@ exports.updateOrderStatus = catchAsync(async(req,res) => {
   const orderId = req.body.orderId
   if(status==='Delivered'){
     await Order.findOneAndUpdate({_id:orderId},{$set:{status:status,deliveredOn:Date.now()}});
-    return redirect('/admin/orders')
+    return res.redirect('/admin/orders')
   }
   await Order.findOneAndUpdate({_id:orderId},{$set:{status:status}});
   res.redirect('/admin/orders');
