@@ -83,6 +83,15 @@ const userSchema = new mongoose.Schema({
         type:Number,
         createdAt:{type:Date,expires:'2m',default:Date.now}
     },
+    referralCode:{
+        type: String,
+        required : true,
+        unique : true
+    },
+    referredBy:{
+        type: String,
+        readOnly: true
+    }
 },
 {
     timestamps:true,

@@ -1,0 +1,131 @@
+<%- include('../layouts/header') %>
+
+<body>
+
+
+  <div class="colorlib-loader"></div>
+
+  <div id="page">
+  <%- include('../layouts/userNav') %>
+    <div class="breadcrumbs">
+      <div class="container">
+        <div class="row">
+          <div class="col">
+              <p class="bread"><span><a href="/">Home</a></span> / <span>Wishlist</span></p>
+              <div id="flash-message" class="alert alert-success" style="display: none;"></div>
+            </div>
+            
+            
+            
+        </div>
+    </div>
+</div> 
+
+
+
+<div class="row row-pb-lg">
+    <div class="col-md-12">
+             
+            <div class="colorlib-product">
+              <div class="container">
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Product Details</th>
+                    <th class="text-center">Price</th>
+                    <th class="text-center">Remove</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    <% if(!noWishlist){ %> 
+                 <% wishlistDetails.forEach((wishItem,index)=>{  %> 
+                  <tr>
+                    <td>
+                      <div class="product-cart d-md-flex">
+                        <div class="one-forth">
+                          <div
+                            class="product-img"
+                            style="
+                              background-image: url(<%=wishItem.wishlist[0].images[0]%>);
+                            "
+                          ></div>
+                          <div class="display-tc">
+                            <h3><%= wishItem.wishlist[0].title %></h3>
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="text-center">
+                      <div class="display-tc">
+                        <span class="price"
+                          >&#8377;<%= wishItem.wishlist[0].regularPrice %></span
+                        >
+                      </div>
+                    </td>
+                    
+                    <td class="text-center">
+                      <div class="display-tc">
+                        <a href="#"  data-product-id="<%=wishItem.wishlist[0]._id%>" class="deleteWishlist">
+                          <i class="fa fa-trash" aria-hidden="true"></i>
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+                  <% }) %>
+                </tbody>
+            </table>
+            <% }else{ %> 
+              <h6><center>no items</center></h6>
+              <% } %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        $(".deleteWishlist").on("click", function(event) {
+            event.preventDefault();
+            
+            const wishlistId = $(this).data("product-id");
+            const rowToRemove = $(this).closest("tr"); // Get the row to remove
+
+            // Make an Ajax request to remove the product from the wishlist
+            $.ajax({
+                url: "/remove-from-wishlist", // Update this URL to the actual endpoint in your server
+                type: "POST", // You can use GET or POST as per your server route
+                data: { wishlistId: wishlistId },
+                success: function(response) {
+                    if(response.success){
+                        // Remove the row from the table
+                        rowToRemove.remove();
+                        displayFlashMessage(response.success);
+                    }
+                    console.log('success');
+                },
+                error: function(error) {
+                    // Handle errors here if needed
+                    alert("Error removing product from wishlist.");
+                }
+            });
+        });
+    });
+
+    function displayFlashMessage(message) {
+        const flashMessageElement = document.getElementById('flash-message');
+        flashMessageElement.textContent = message;
+        flashMessageElement.style.display = 'block'; // Show the flash message
+
+        setTimeout(() => {
+            flashMessageElement.style.display = 'none'; // Hide the flash message after 3 seconds (adjust as needed)
+        }, 2000);
+    }
+</script>
+
+
+<%- include('../layouts/footer')  %>
+

@@ -21,12 +21,21 @@
         <div class="content-wrapper">
           <div class="row">
             <% if (error && error.length > 0) { %>
-              <div class="alert alert-danger">
-                <% error.forEach(function(message) { %>
-                  <p><%= message %></p>
-                <% }); %>
+              <div class="alert alert-danger text-center" id="error-message">
+                  <% error.forEach(function(message) { %>
+                      <p><%= message %></p>
+                  <% }); %>
               </div>
-        <%}%>
+              <script>
+                  // Add a timeout to hide the error message after 3 seconds (adjust as needed)
+                  setTimeout(function() {
+                      var errorMessage = document.getElementById('error-message');
+                      if (errorMessage) {
+                          errorMessage.style.display = 'none';
+                      }
+                  }, 2000); // 3000 milliseconds (3 seconds)
+              </script>
+          <% } %>
             
             <div class="col-12 grid-margin stretch-card">
               <div class="card">
@@ -43,7 +52,7 @@
                       <label>Image upload</label>
                       <!-- <input type="file" name="photo" class="file-upload-default"> -->
                       <div class="input-group col-xs-12">
-                        <input type="file" accept="image/*" name="photo" class="form-control file-upload-info" placeholder="Upload Image" id="preview-input" required/>
+                        <input type="file" accept="image/*" name="photo" class="form-control file-upload-info" placeholder="Upload Image" id="preview-input" required />
                       </div>
                     </div>
 

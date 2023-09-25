@@ -11,11 +11,12 @@
 			<div class="container">
 				<div class="row">
                     <div class="col">
+                        <div id="flash-message" class="alert text-white text-center" style="display: none;position:fixed;z-index: 100;top: 50%;left: 50%;background:#23923D;"></div>
                         <p class="bread"><span><a href="index.html">Home</a></span> / <span>Shop</span></p>
 					</div>
 
                     <% if (success && success.length > 0) { %>
-                        <div class="alert alert-success text-center" id="success-message">
+                        <div class="alert  text-white text-center" id="success-message" style="position: fixed; z-index: 100; top: 50%;left: 50%; background-color: #23923D;">
                           <% success.forEach(function(message) { %>
                             <p><%= message %></p>
                           <% }); %>
@@ -131,35 +132,48 @@
                                     <div class="col-lg-3 mb-4 text-center">
                                         <div class="product-entry border">
                                             <div class="prod-img">
+                                                <a class="WishlistBtn" style="position: absolute; top: 0; z-index: 2; background-color: white;" href="#" data-product-id="<%= prdct._id %>">
+                                                    <i class="far fa-heart"></i>
+                                                </a>                                              
                                                 <a href="/shop/<%= prdct._id %>">
                                                     <img src="<%= prdct.images[0] %>" class="img-fluid" alt="<%= prdct.title.toUpperCase()%>">
                                                 </a>
                                             </div>
                                             <div class="desc">
-                                                <h2><a href="#"><%= prdct.title.toUpperCase() %></a></h2>
-                                                <h5 class="text-secondary"><%= prdct.brand.toUpperCase() %></h5>
-                                                <span class="price">&#8377;<%= prdct.regularPrice %></span>
+                                                <p class="text-secondary"><%= prdct.category.name%></p>
+                                                <h2><%= prdct.title.toUpperCase() %></h2>
+                                               
+                                                <h4 class="text-secondary"><%= prdct.brand.toUpperCase() %></h4>
+                                                <span class="price">&#8377;<%= prdct.regularPrice %> </span>
+                        
+                                                <!-- Add to Wishlist icon -->
+                                                <!-- <span
+                                                 class="far fa-heart">+
+                                                </span> -->
+                                                <!-- <span 
+                                                class="fas fa-heart">
+                                                </span> -->
                                             </div>
                                             <% if(prdct.stock===0){ %>
                                                 <p class="text-danger">Out of Stock!</p>
-                                                <% }else{ %>
-                                            <div class="icons">
-                                                <form action="/cart/<%= prdct._id %>" method="post">
-                                                    <input type="hidden" name="productId" value="<%= prdct._id %>">
-                                                    <button class="btn btn-dark" type="submit">
-                                                        <i class="fa fa-shopping-cart"></i> Add to Cart
-                                                    </button>
-                                                </form>
-                                                <a class="btn btn-success" href="#">
-                                                    <i class="fa fa-shopping-bag"></i> Shop Now
-                                                </a>
-                                            </div>
+                                            <% } else { %>
+                                                <div class="icons">
+                                                    <form action="/cart/<%= prdct._id %>" method="post">
+                                                        <input type="hidden" name="productId" value="<%= prdct._id %>">
+                                                        <button class="btn btn-dark" type="submit" onclick="storeScrollPosition();">
+                                                            <i class="fa fa-shopping-cart"></i> Add to Cart
+                                                    </form>
+                                                    <!-- <a class="btn btn-success" href="#">
+                                                        <i class="fa fa-shopping-bag"></i> Shop Now
+                                                    </a> -->
+                                                </div>
                                             <% } %>
                                         </div>
                                     </div>
                                 <% } %>
                             <% }) %>
                         </div>
+                        
 
 						<!-- Pagination -->
 					   <div class="pageination">
@@ -195,7 +209,67 @@
 				</div>
 			</div>
 		</div>
-
+            
   
 
 		<%- include('../layouts/footer') %>
+
+<script>
+    // JavaScript for preserving scroll position
+    function storeScrollPosition() {
+        const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+        localStorage.setItem('scrollPosition', scrollPosition);
+    }
+
+    window.addEventListener('load', function() {
+        const storedScrollPosition = localStorage.getItem('scrollPosition');
+        if (storedScrollPosition) {
+            window.scrollTo(0, storedScrollPosition);
+            localStorage.removeItem('scrollPosition');
+        }
+    });
+</script>
+ <!-- Include jQuery -->
+<script>
+    $(document).ready(function() {
+        // Listen for clicks on the "Add to Wishlist" icons
+        $(".WishlistBtn").on("click", function(event) {
+            event.preventDefault();
+            
+            const productId = $(this).data("product-id");
+
+            // Make an Ajax request to add the product to the wishlist
+            $.ajax({
+                url: "/add-to-wishlist", // Update this URL to the actual endpoint in your server
+                type: "POST", // You can use GET or POST as per your server route
+                data: { productId: productId },
+                success: function(response) {
+                    if(response){
+                        displayFlashMessage(response.success)
+                        document.getElementById('wish').textContent = response.wishlength
+                        document.getElementById('wishIcon').textContent = response.wishlength
+                    }
+                    // Handle the success response here if needed
+                   console.log(response.success);
+                },
+                error: function(error) {
+                    // Handle errors here if needed
+                    alert("Error adding product to wishlist.");
+                }
+            });
+        });
+    });
+
+    function displayFlashMessage(message) {
+  const flashMessageElement = document.getElementById('flash-message');
+  flashMessageElement.textContent = message;
+  flashMessageElement.style.display = 'block'; // Show the flash message
+
+  setTimeout(() => {
+    flashMessageElement.style.display = 'none'; // Hide the flash message after 3 seconds (adjust as needed)
+  }, 2000);
+}
+</script>
+
+
+</body>

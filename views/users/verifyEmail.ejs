@@ -31,7 +31,18 @@
 </head>
 <body>
     <div class="container">
-   
+        <% if (typeof error !== "undefined") { %>
+            <div class="alert alert-danger mb-2" id="error-message"><%= error %></div>
+            <script>
+                // Add a timeout to hide the error message after 3 seconds (adjust as needed)
+                setTimeout(function() {
+                    var errorMessage = document.getElementById('error-message');
+                    if (errorMessage) {
+                        errorMessage.style.display = 'none';
+                    }
+                }, 2000);
+            </script>
+        <% } %>
         <form action="/verifyEmail" method="POST">
             <div class="form-group">
                 <label for="email">Email</label>

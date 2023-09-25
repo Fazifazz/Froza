@@ -31,31 +31,37 @@
                 <form class="forms-sample" action="/admin/products/<%= product._id %>?_method=PATCH" method="post">
                     <div class="form-group">
                       <label for="name">Product Name</label>
-                      <input type="text" class="form-control" name="title" id="name" value="<%= product.title %>" placeholder="Name" >
+                      <input type="text" class="form-control" name="title" id="title" value="<%= product.title %>" placeholder="Name" >
+                      <small id="nameErr" class="text-danger"></small>
                     </div>
                     
                     <div class="form-group">
                       <label for="exampleInputName1">Product description</label>
-                      <input type="text" class="form-control" name="description" id="exampleInputName1" value="<%= product.description %>" placeholder="description">
+                      <input type="text" class="form-control" name="description" id="description" value="<%= product.description %>" placeholder="description">
+                      <small id="descriptionErr" class="text-danger"></small>
                     </div>
 
                     <div class="form-group">
                       <label for="exampleInputName1">Brand</label>
-                      <input type="text" class="form-control" name="brand" id="exampleInputName1" value="<%= product.brand %>" placeholder="description">
+                      <input type="text" class="form-control" name="brand" id="brand" value="<%= product.brand %>" placeholder="brand">
+                      <small id="brandErr" class="text-danger"></small>
                     </div>
                     
                     <div class="form-group">
                       <label for="exampleInputName1">MRP price</label>
-                      <input type="number" class="form-control" name="mrp" id="exampleInputName1" value="<%= product.mrp %>" placeholder="price">
+                      <input type="number" class="form-control" name="mrp" id="mrp" value="<%= product.mrp %>" placeholder="MRP price">
+                      <small id="priceErr" class="text-danger"></small>
                     </div>
                     <div class="form-group">
                       <label for="exampleInputName1">Regular price</label>
-                      <input type="number" class="form-control" name="regular" id="exampleInputName1" value="<%= product.regularPrice %>" placeholder="price">
+                      <input type="number" class="form-control" name="regular" id="regular" value="<%= product.regularPrice %>" placeholder=" Regular price">
+                      <small id="priceErr2" class="text-danger"></small>
                     </div>
                     
                     <div class="form-group">
                       <label for="exampleInputName1">Product stock</label>
-                      <input type="number" class="form-control" name="stock" id="exampleInputName1" value="<%= product.stock %>" placeholder="stock">
+                      <input type="number" class="form-control" name="stock" id="stock" value="<%= product.stock %>" placeholder="stock">
+                      <small id="stockErr" class="text-danger"></small>
                     </div>
 
                     <div class="row input-group form-check">
@@ -113,16 +119,16 @@
                   <div class="form-group">
                     <label for="cat">Product category</label>
                     <select name="category" id="cat" class="form-control">
-                      <%for(const option of category){%>
-                        <option value="<%= option._id %>" <% if(option._id === product.category) {%> selected <%}  %>>
-                          <%= option.name %>
-                        </option>
-                      <% } %>
+                      <% category.forEach(cat => { %>
+                        <option value="<%= cat._id %>" 
+                           <% if (cat._id.toString() === product.category.toString()) { %>selected<% } %> > 
+                              <%= cat.name %></option>
+                    <% }) %>
                     </select>
                   </div>
                   
                   
-                    <button type="submit" class="btn btn-primary mr-2">Update</button>
+                    <button type="submit" class="btn btn-primary mr-2" onclick="return validateProduct()">Update</button>
                     <a href="/admin/products" class="btn btn-light">Cancel</a>
                 </form>
                 <% if (product.images.length) { %>
@@ -180,7 +186,7 @@
     <!-- page-body-wrapper ends -->
   </div>
   <!-- container-scroller -->
-     
+  <script src="/validations/productValidation.js"></script>
   <script>
     function hideErrorMessage() {
       var errorMessageElement = document.getElementById('error-message');

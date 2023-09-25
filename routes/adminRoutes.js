@@ -25,6 +25,7 @@ const {
     adminLogout,
 } = require('../controllers/adminController');
 const orderController = require('../controllers/orderController');
+const couponController = require('../controllers/couponController')
 
 // Admin Login Routes
 router
@@ -41,7 +42,8 @@ router
     .post('/categories', isAdminLoggedIn, uploadImages.uploadCategoryImage, uploadImages.resizeCategoryImage, createCategory)
     .get('/categories/:id/edit', isAdminLoggedIn, editCategory)
     .post('/categories/destroy', isAdminLoggedIn, destroyCategory)
-    .patch('/categories/:id', isAdminLoggedIn, uploadImages.uploadCategoryImage, uploadImages.resizeCategoryImage, updateCategory);
+    .patch('/categories/:id', isAdminLoggedIn, uploadImages.uploadCategoryImage, uploadImages.resizeCategoryImage, updateCategory)
+   
 
 // Products Routes
 router
@@ -75,6 +77,16 @@ router
     .get('/orders', isAdminLoggedIn, orderController.getOrderList)
     .get('/orders/:id', isAdminLoggedIn, orderController.orderDetails)
     .patch('/orders', isAdminLoggedIn, orderController.updateOrderStatus);
+
+  
+ //coupon routes
+ router
+       .get('/coupons',isAdminLoggedIn,couponController.showCoupons) 
+       .get('/coupon/create',isAdminLoggedIn,couponController.showAddCoupon)   
+       .post('/coupon/addCoupon',isAdminLoggedIn,couponController.addCoupon)
+       .get('/coupons/edit/:id',isAdminLoggedIn,couponController.showEditCoupon)  
+       .post('/coupons/edit/:id',isAdminLoggedIn,couponController.editCoupon)
+       .post('/coupons/destroy',isAdminLoggedIn,couponController.destroyCoupon) 
 
 // Logout Route
 router.get('/logout', isAdminLoggedIn, adminLogout);

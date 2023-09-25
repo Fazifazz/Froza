@@ -3,6 +3,7 @@ const catchAsync = require('../utils/catchAsync')
 const User = require('../models/userModel')
 const Address = require('../models/addressModel')
 const Product = require('../models/productModel')
+const Coupon = require('../models/couponModel')
 const crypto = require('crypto')
 const Razorpay = require('razorpay')
 
@@ -14,18 +15,36 @@ var razorpay = new Razorpay({
 
 
 exports.placeOrder = async (req,res)=>{
+  const user = await User.findById(req.session.user)
   if(!req.body.paymentOptions){
     req.flash('error','Please choose a payment method');
     return res.redirect('/checkout')
  }
-  
+
+ if(!user.defaultAddress){
+  req.flash('error','Please add an address');
+  return res.redirect('/checkout')
+ }
+ 
+ if(req.body.orderTotal>0){
+  const coupon = await Coupon.findOne({code:req.session.couponCode}) 
+      const usedUser = coupon.usedUsers.find((item) => item.usedUser.toString() === user._id.toString() );
+      if(usedUser){
+        usedUser.usedCount += 1;
+        await coupon.save();
+      } else {
+        coupon.usedUsers.push({ usedUser: user._id, usedCount: 1 });
+        await coupon.save();
+      }
+
+      user.totalCartAmount = req.body.orderTotal
+      await user.save()
+ }
+
+
  const paymentMethod= req.body.paymentOptions
   if(paymentMethod === 'wallet'){
-    const user = await User.findById(req.session.user)
-    if(!user.defaultAddress){
-      req.flash('error','Please add an address');
-      return res.redirect('/checkout')
-     }
+
      const orderId = crypto.randomUUID();
      const order = await Order.create({
         orderId,
@@ -77,14 +96,9 @@ exports.placeOrder = async (req,res)=>{
           }
   
       req.flash('success','order placed Successfully')
-      res.redirect('/showOrders')  
+      res.redirect('/orderSuccess')  
   }
   if(paymentMethod === 'cod'){
-    const user = await User.findById(req.session.user)
-     if(!user.defaultAddress){
-      req.flash('error','Please add an address');
-      return res.redirect('/checkout')
-     }
      const orderId = crypto.randomUUID();
      const order = await Order.create({
         orderId,
@@ -125,12 +139,11 @@ exports.placeOrder = async (req,res)=>{
         }
 
     req.flash('success','order placed Successfully')
-    res.redirect('/showOrders')
+    res.redirect('/orderSuccess')
   }
 
   if(paymentMethod === 'razorpay'){
     try {
-      const user = await User.findById(req.session.user)
       const totalCartAmount = user.totalCartAmount * 100
 
       const options = {
@@ -195,7 +208,7 @@ const orderDetails = await Order.aggregate([
       await Product.updateOne({_id:productId},{$set:{stock:newStock}})
     }
   await User.updateOne({_id:user._id},{$set:{cart:[],totalCartAmount:0}})
-  res.redirect('/showOrders')
+  res.redirect('/orderSuccess')
 })
 
 
@@ -209,7 +222,8 @@ exports.showCheckout = catchAsync(async (req,res) => {
         const addresses=await Address.find({userId:req.session.user})
         const cart = user.cart;
         const totalCartAmount=user.totalCartAmount
-        res.render('users/checkout',{userExist,user,cart,totalCartAmount,addresses,error:req.flash('error')})
+        const coupons = await Coupon.find({})
+        res.render('users/checkout',{userExist,user,cart,totalCartAmount,addresses,error:req.flash('error'),coupons})
     }else{
         res.redirect('/cart')
     }
@@ -456,6 +470,11 @@ exports.refundOrder = catchAsync (async (req,res) =>{
   await Order.findOneAndUpdate({orderId:orderId},{$set:{isRefunded:true}})
   req.flash('success',` ${refundPrice}/-rupees is refunded to your Wallet`)
   res.redirect('/showOrders')
+})
+
+
+exports.showOrderSuccess  = catchAsync(async (req,res) => {
+  res.render('users/orderSuccess')
 })
 
 

@@ -126,13 +126,14 @@
 											</a>
 										</div>
 										<div class="desc">
-											<h2><a href="#"><%= prdct.title %></a></h2>
+											<h2><%= prdct.title %></h2>
+																							
 											<span class="price">&#8377;<%= prdct.mrp %></span>
 										</div>
 										<div class="icons">
                                             <form action="/cart/<%= prdct._id %>" method="post">
                                                 <input type="hidden" name="productId" value="<%= prdct._id %>">
-                                                <button class="btn btn-dark" type="submit">
+                                                <button class="btn btn-dark" type="submit" onclick="storeScrollPosition();">
                                                     <i class="fa fa-shopping-cart"></i> Add to Cart
                                                 </button>
                                             </form>
@@ -192,6 +193,22 @@
 			</div>
 		</div>
 	</div>
+
+	<script>
+		// JavaScript for preserving scroll position
+		function storeScrollPosition() {
+			const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+			localStorage.setItem('scrollPosition', scrollPosition);
+		}
+	
+		window.addEventListener('load', function() {
+			const storedScrollPosition = localStorage.getItem('scrollPosition');
+			if (storedScrollPosition) {
+				window.scrollTo(0, storedScrollPosition);
+				localStorage.removeItem('scrollPosition');
+			}
+		});
+	</script>
 
 
 	<%- include('../layouts/footer') %>

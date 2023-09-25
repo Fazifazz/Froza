@@ -99,7 +99,7 @@
 							<p>
 								<%= product.description %>
 							</p>
-							<div class="size-wrap">
+							<!-- <div class="size-wrap">
 								<div class="block-26 mb-2">
 									<h4>Size</h4>
 									<ul>
@@ -109,27 +109,27 @@
 									</ul>
 								</div>
 								
-							</div>
-							<!-- <div class="input-group mb-4">
-								<span class="input-group-btn">
-									<button type="button" class="quantity-left-minus btn" data-type="minus"
-										data-field="">
-										<i class="icon-minus2"></i>
-									</button>
-								</span>
-								<input type="text" id="quantity" name="quantity" class="form-control input-number"
-									value="1" min="1" max="100">
-								<span class="input-group-btn ml-1">
-									<button type="button" class="quantity-right-plus btn" data-type="plus"
-										data-field="">
-										<i class="icon-plus2"></i>
-									</button>
-								</span>
 							</div> -->
 							<div class="row">
 								<% if(product.stock===0){ %>
 									<h4 class="btn btn-danger"><b>Out of Stock!</b></h4>
 									<% }else{ %>
+										<div class="input-group mb-4">
+											<span class="input-group-btn">
+												<button type="button" class="quantity-left-minus btn" data-type="minus"
+													data-field="">
+													<i class="icon-minus2"></i>
+												</button>
+											</span>
+											<input type="text" id="quantity" name="quantity" class="form-control input-number"
+												value="1" min="1" max="100">
+											<span class="input-group-btn ml-1">
+												<button type="button" class="quantity-right-plus btn" data-type="plus"
+													data-field="">
+													<i class="icon-plus2"></i>
+												</button>
+											</span>
+										</div>
 										<div class="col-sm-12 text-center">
 											<div class="icons">
 												<form action="/cart/<%= product._id %>" method="post">
@@ -139,10 +139,10 @@
 														Add to Cart
 													</button>
 												</form>
-												<a class="btn btn-success" href="#" style="width: 200px; display: flex; align-items: center; justify-content: center;">
+												<!-- <a class="btn btn-success" href="#" style="width: 200px; display: flex; align-items: center; justify-content: center;">
 													<i class="fa fa-shopping-bag" style="color: white;  margin-right: 5px;"></i>
 													Shop Now
-												</a>
+												</a> -->
 											</div>
 										</div>
 								<% } %>

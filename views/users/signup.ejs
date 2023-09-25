@@ -18,42 +18,51 @@
                             </div>
                             <form action="/signup" method="post" onsubmit="return validateForm()">
                                 <% if (typeof error !== "undefined") { %>
-                                    <div class="alert alert-danger mb-2"><%= error %></div>
+                                    <div class="alert alert-danger mb-2" id="error-message"><%= error %></div>
+                                    <script>
+                                        // Add a timeout to hide the error message after 3 seconds (adjust as needed)
+                                        setTimeout(function() {
+                                            var errorMessage = document.getElementById('error-message');
+                                            if (errorMessage) {
+                                                errorMessage.style.display = 'none';
+                                            }
+                                        }, 2000);
+                                    </script>
                                 <% } %>
                             
                                 <div class="form-outline mb-3">
                                     <label class="form-label" for="name">Full Name</label>
                                     <input type="text" id="name" class="form-control form-control-md rounded-0"
                                         placeholder="Enter the Full name" name="name" required />
-                                    <small id="nameErr" class="error"></small>
+                                    <small id="nameErr" class="text-danger"></small>
                                 </div>
                             
                                 <div class="form-outline mb-3">
                                     <label class="form-label" for="mobile">Mobile</label>
                                     <input type="number" id="mobile" class="form-control form-control-md rounded-0"
-                                        placeholder="Enter Mobile No." name="mobile" required pattern="[0-9]{10}" required />
-                                    <small id="mobileErr" class="error"></small>
+                                        placeholder="Enter Mobile No." name="mobile" required />
+                                    <small id="mobileErr" class="text-danger"></small>
                                 </div>
                             
                                 <div class="form-outline mb-3">
                                     <label class="form-label" for="email">Email</label>
                                     <input type="email" id="email" class="form-control form-control-md rounded-0"
                                         placeholder="Enter email" name="email" required />
-                                    <small id="emailErr" class="error"></small>
+                                    <small id="emailErr" class="text-danger"></small>
                                 </div>
                             
                                 <div class="form-outline mb-3">
                                     <label class="form-label" for="password">Password</label>
                                     <input type="password" id="password"
                                         class="form-control form-control-md rounded-0" placeholder="Enter your password" name="password" required />
-                                    <small id="passwordErr" class="error"></small>
+                                    <small id="passwordErr" class="text-danger"></small>
                                 </div>
                             
                                 <div class="form-outline mb-3">
                                     <label class="form-label" for="confirmPassword">Confirm Password</label>
                                     <input type="password" id="confirmPassword"
                                         class="form-control form-control-md rounded-0" placeholder="Confirm Password" name="confirmPassword" required />
-                                    <small id="confirmPasswordErr" class="error"></small>
+                                    <small id="confirmPasswordErr" class="text-danger"></small>
                                 </div>
                                 <!-- Add Referral Code field here if needed -->
                                 
@@ -72,79 +81,6 @@
         </div>
     </section>
 
-    <script src="/validations/signupValidation.js"></script>
-    <script>
-        function validateForm() {
-            // Get form input values
-            var name = document.getElementById("name").value;
-            var mobile = document.getElementById("mobile").value;
-            var email = document.getElementById("email").value;
-            var password = document.getElementById("password").value;
-            var confirmPassword = document.getElementById("confirmPassword").value;
+    <script src="/validations/loginSignup.js"></script>
     
-            // Define regular expressions for validation
-            var mobilePattern = /^[0-9]{10}$/;
-            var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-    
-            // Initialize error messages
-            var errors = [];
-    
-            // Validate name (required)
-            if (name.trim() === "") {
-                errors.push("Full Name is required.");
-                document.getElementById("nameErr").textContent = "Full Name is required.";
-            } else {
-                document.getElementById("nameErr").textContent = "";
-            }
-    
-            // Validate mobile number (required and format)
-            if (mobile.trim() === "") {
-                errors.push("Mobile is required.");
-                document.getElementById("mobileErr").textContent = "Mobile is required.";
-            } else if (!mobile.match(mobilePattern)) {
-                errors.push("Invalid Mobile number format.");
-                document.getElementById("mobileErr").textContent = "Invalid Mobile number format.";
-            } else {
-                document.getElementById("mobileErr").textContent = "";
-            }
-    
-            // Validate email (required and format)
-            if (email.trim() === "") {
-                errors.push("Email is required.");
-                document.getElementById("emailErr").textContent = "Email is required.";
-            } else if (!email.match(emailPattern)) {
-                errors.push("Invalid Email format.");
-                document.getElementById("emailErr").textContent = "Invalid Email format.";
-            } else {
-                document.getElementById("emailErr").textContent = "";
-            }
-    
-            // Validate password (required)
-            if (password.trim() === "") {
-                errors.push("Password is required.");
-                document.getElementById("passwordErr").textContent = "Password is required.";
-            } else {
-                document.getElementById("passwordErr").textContent = "";
-            }
-    
-            // Validate confirm password (required and match with password)
-            if (confirmPassword.trim() === "") {
-                errors.push("Confirm Password is required.");
-                document.getElementById("confirmPasswordErr").textContent = "Confirm Password is required.";
-            } else if (confirmPassword !== password) {
-                errors.push("Passwords do not match.");
-                document.getElementById("confirmPasswordErr").textContent = "Passwords do not match.";
-            } else {
-                document.getElementById("confirmPasswordErr").textContent = "";
-            }
-    
-            // If there are errors, prevent form submission
-            if (errors.length > 0) {
-                return false;
-            }
-    
-            return true; // Form is valid and can be submitted
-        }
-    </script>
-
 <%- include('../layouts/footer') %>

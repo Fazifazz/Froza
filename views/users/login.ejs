@@ -5,22 +5,40 @@
         <div class="col-4">
             <form action="/login" method="POST">
                 <% if (typeof error !== "undefined") { %>
-                    <div class="alert alert-danger mb-2"><%= error %></div>
+                    <div class="alert alert-danger mb-2" id="error-message"><%= error %></div>
+                    <script>
+                        // Add a timeout to hide the error message after 3 seconds (adjust as needed)
+                        setTimeout(function() {
+                            var errorMessage = document.getElementById('error-message');
+                            if (errorMessage) {
+                                errorMessage.style.display = 'none';
+                            }
+                        }, 2000);
+                    </script>
                 <% } %>
+
                 <h1>Login to Froza</h1>
             
                 <div class="mb-3">
-                    <label for="email" class="form-label">Email</label>
-                    <input type="email" id="email" class="form-control" name="email" required />
+                    <label class="form-label" for="email">Email</label>
+                    <input type="email" id="email" class="form-control"
+                        placeholder="Enter email" name="email" required />
+                    <small id="emailErr" class="text-danger"></small>
                 </div>
                 
                 <div class="mb-3">
                     <label for="password" class="form-label">Password</label>
-                    <input type="password" id="password" class="form-control" name="password" required />
+                    <div class="input-group">
+                        <input type="password" id="password" class="form-control" name="password" placeholder="Enter your password" required />
+                        <span class="input-group-text">
+                            <i class="fas fa-eye toggle-password-icon"  id="togglePassword"></i>
+                        </span>                        
+                    </div>
                 </div>
+                
                
                 <div class="text-center">
-                    <button type="submit" class="btn btn-dark rounded-pill w-100">Log In</button>
+                    <button type="submit" onclick="return validateLogin()" class="btn btn-dark rounded-pill w-100">Log In</button>
                     <p><%= locals.message?message:'' %></p>
                     <div class="mt-2">
                     </div>
@@ -35,17 +53,20 @@
     </div>
 </div>
 
-<script src="/validations/signupValidation.js"></script>
+<script src="/validations/loginSignup.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    const togglePassword = document.querySelector('#togglePassword')
-    const passwordInput = document.querySelector('#password')
+    $(document).ready(function () {
+        const passwordInput = $('#password');
+        const togglePassword = $('#togglePassword');
 
-    togglePassword.addEventListener('click',function (){
-        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-        passwordInput.setAttribute('type', type);
-        this.classList.toggle('bi-eye-fill')
-        this.classList.toggle('bi-eye-slash-fill')
+        togglePassword.on('click', function () {
+            const type = passwordInput.attr('type') === 'password' ? 'text' : 'password';
+            passwordInput.attr('type', type);
+            // togglePassword.toggleClass('bi-eye-fill');
+        });
     });
 </script>
+
 
 

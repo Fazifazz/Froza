@@ -200,13 +200,14 @@ exports.updatePassword = catchAsync( async (req,res) => {
 })
 
 exports.showVerifyEmail = catchAsync( async (req,res) => {
-  res.render('users/verifyEmail',{error:req.flash('error')})
+  res.render('users/verifyEmail')
 })
 
 exports.verifyEmail = catchAsync(async (req,res) => {
 const user = await User.findOne({email:req.body.email})
 if(!user){
-  return res.render('users/login',{error:'Email not found'})
+  req.flash('error','Email not found')
+  res.render('users/verifyEmail',{error:req.flash('error')})
 }
   const newOtp = randomString.generate({
     length: 4,
@@ -269,10 +270,6 @@ exports.getProductDetails = catchAsync(async (req, res) => {
 })
 
 
-const ITEMS_PER_PAGE = 8;
-
-//products 
-// Modify your /shop route
 exports.showshopIndex = async (req, res) => {
   try {
       const userExist = Boolean(req.session.user);
@@ -373,7 +370,6 @@ exports.showshopIndex = async (req, res) => {
 
 exports.showAddToCart=async (req,res)=>{
   try {
-      // const user=await User.findById(req.session.user).populate('cart.product')  
       const userExist = Boolean(req.session.user)
       if(userExist){
         var user = await User.findById({_id:req.session.user}).populate('cart.product')  
@@ -469,6 +465,76 @@ exports.destroyCartItem = catchAsync(async (req, res) => {
   
   res.redirect('/cart');
 });
+
+
+exports.showWishlist = catchAsync(async (req, res) => {
+  const userExist = Boolean(req.session.user);
+  if (userExist) {
+    var user = await User.findById({ _id: req.session.user });
+  }
+
+  if (user.wishlist.length === 0) {
+    return res.render('users/wishlist', {user, userExist, noWishlist: true });
+  }
+
+  const wishlistDetails = await User.aggregate([
+    {
+      $match: {
+        _id: user._id,
+      },
+    },
+    {
+      $unwind: '$wishlist',
+    },
+    {
+      $lookup: {
+        from: 'products',
+        localField: 'wishlist',
+        foreignField: '_id',
+        as: 'wishlist',
+      },
+    },
+  ]);
+  res.render('users/wishlist',{user,userExist, wishlistDetails, noWishlist: false });
+});
+
+
+exports.addToWishlist = catchAsync (async (req,res) => {
+  const productid=req.body.productId
+  const product = await Product.findById(productid)
+  const user = await User.findById(req.session.user)
+  const existingItemIndex=await user.wishlist.find(item=> item.equals(product._id))
+  if(existingItemIndex === undefined){
+      user.wishlist.push(product._id)
+  }
+  await user.save()
+  const wishlength = user.wishlist.length
+  //to redirect to origin page
+  const referer = req.headers.referer;
+  const originalPage = referer || '/';
+  req.flash('success',`${product.title} is added to your Wish list`)
+  res.json({success:req.flash('success'),wishlength})
+   res.redirect(originalPage)
+})
+
+
+exports.removeWishlist = catchAsync(async  (req,res) =>{
+  const userId = req.session.user;
+  const user = await User.findById(userId)
+  const wishlistId = req.body.wishlistId
+  console.log(wishlistId);
+  const wishIntex = user.wishlist.findIndex((item)=>item.equals(wishlistId))
+  if(wishIntex!==-1){
+    user.wishlist.splice(wishIntex,1)
+    await user.save()
+  }
+  //to redirect to origin page
+  const referer = req.headers.referer;
+  const originalPage = referer || '/';
+  req.flash('success','item removed')
+  res.json({success:req.flash('success')})
+  res.redirect(originalPage)
+})
 
 
 

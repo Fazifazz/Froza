@@ -1,0 +1,94 @@
+<%- include('../../layouts/headerAdmin') %>
+
+<body>
+  <div class="container-scroller">
+    <%- include('../../layouts/_navbar') -%>
+    <!-- partial -->
+    <div class="container-fluid page-body-wrapper">
+      <!-- partial -->
+      <!-- sidebar partial-->
+      <%- include('../../layouts/_sidebar') -%>
+
+ 
+ <!-- partial -->
+ <div class="main-panel">
+    <div class="content-wrapper">
+      <div class="row">
+
+                      
+
+        <div class="container">
+          <h3 class="mt-4">Edit coupon</h3>
+          <form action="/admin/coupons/edit/<%= coupon._id %>" method="POST">
+              <div class="mb-3">
+                  <label for="code" class="form-label">Coupon Code prefix:</label>
+                  <input type="text" class="form-control" id="code" name="codePrefix" value="<%= coupon.codePrefix %>" required>
+              </div>
+  
+              <div class="mb-3">
+                  <label for="description" class="form-label">Description:</label>
+                  <input type="text" class="form-control" id="description" name="description" value="<%= coupon.description %>" required>
+              </div>
+  
+              <div class="mb-3">
+                  <label for="discountType" class="form-label">Discount Type:</label>
+                  <select class="form-select" id="discountType" name="discountType" value="<%= coupon.discountType %>" required>
+                      <option value="Fixed Amount">Fixed Amount</option>
+                  </select>
+              </div>
+  
+              <div class="mb-3">
+                  <label for="discountAmount" class="form-label">Discount Amount (in Rs):</label>
+                  <input type="number" class="form-control" id="discountAmount" name="discountAmount" value="<%= coupon.discountAmount  %>" required>
+              </div>
+  
+              <div class="mb-3">
+                  <label for="minPurchase" class="form-label">Minimum Purchase Amount (in Rs):</label>
+                  <input type="number" class="form-control" id="minPurchase" name="minPurchase" value="<%= coupon.minPurchase  %>" required>
+              </div>
+  
+              <div class="mb-3">
+                  <label for="usageLimit" class="form-label">Usage Limit:</label>
+                  <input type="number" class="form-control" id="usageLimit" name="usageLimit" value="<%= coupon.usageLimit%>" required>
+              </div>
+  
+              <div class="mb-3">
+                  <label for="expiryDate" class="form-label">Expiry Date:</label>
+                  <input type="date" class="form-control" id="expiryDate" name="expiryDate" value="<%= coupon.expiryDate %>" required>
+              </div>
+  
+              <button type="submit" class="btn btn-primary">update Coupon</button>
+              <button type="button" onclick="return back()" class="btn btn-light">Cancel</button>
+          </form>
+      </div>
+  
+
+
+                    
+        
+        
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+   
+  </div>
+  <!-- main-panel ends -->
+</div>
+<!-- page-body-wrapper ends -->
+</div>
+
+
+
+<script>
+function back() {
+  window.history.back()
+}
+</script>
+<!-- <script src="/validations/couponValidation.js"></script> -->
+</body>
+
+
+
+<%- include('../../layouts/footerAdmin') -%>

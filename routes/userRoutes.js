@@ -22,11 +22,15 @@ const {
     showAddToCart,
     destroyCartItem,
     updateCartQauntity,
+    showWishlist,
     resendOtp,
+    addToWishlist,
+    removeWishlist,
 } = require('../controllers/userController');
 
 const accountController = require('../controllers/accountController');
 const orderController = require('../controllers/orderController');
+const couponController = require('../controllers/couponController')
 const profileImages = require('../middlewares/uploadImages')
 
 // Public routes
@@ -59,7 +63,9 @@ router
     .get('/cart/:id',isUserLoggedIn, destroyCartItem)
     .post('/update-cart-item-quantity',isUserLoggedIn, updateCartQauntity)
     .get('/checkout',isUserLoggedIn, orderController.showCheckout)
+    .post('/applyCoupon',isUserLoggedIn,couponController.applyCoupon)
     .post('/checkout',isUserLoggedIn, orderController.placeOrder)
+    .get('/orderSuccess',isUserLoggedIn,orderController.showOrderSuccess)
     
     .get('/showOrders',isUserLoggedIn, orderController.showOrdersIndex)
     .get('/razorpay/CreateOrder',isUserLoggedIn,orderController.createOrder)
@@ -75,6 +81,10 @@ router
     .put('/profile/editAddress/:id', isUserLoggedIn,accountController.editAddress)
     .get('/profile/deleteAddress/:id',isUserLoggedIn, accountController.deleteAddress)
     .post('/profile/setDefaultAddress',isUserLoggedIn, accountController.setDefaultAddress)
+
+    .get('/wishlist',isUserLoggedIn,showWishlist)
+    .post('/add-to-wishlist',isUserLoggedIn,addToWishlist)
+    .post('/remove-from-wishlist',isUserLoggedIn,removeWishlist)
 
     .get('/profile/wallet',isUserLoggedIn,accountController.showWalletIndex)
     .post('/profile/addMoneyToWallet/',isUserLoggedIn,accountController.addMoneyToWallet)

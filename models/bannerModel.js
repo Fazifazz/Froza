@@ -13,11 +13,6 @@ const bannerSchema =new  mongoose.Schema({
     is_deleted:{
         type:Boolean,
         default:true,
-    },
-    url:{
-        type: String,
-        default: "/shop ",
-        required : true
     }
 });
 

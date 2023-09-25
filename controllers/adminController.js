@@ -46,8 +46,9 @@ exports.getCategories = catchAsync(async (req, res) => {
     res.render('admin/categories/index', { categories,success:req.flash('success') });
 })
 
-exports.showCreateCategory = (req, res) => {
-    res.render('admin/categories/new',{error:req.flash('error')})
+exports.showCreateCategory = async (req, res) => {
+  const category = await Category.findById({_id:req.session.admin})
+    res.render('admin/categories/new',{category,error:req.flash('error')})
 }
 
 
@@ -86,6 +87,18 @@ exports.destroyCategory = catchAsync(async (req, res) => {
     const category = await Category.findByIdAndUpdate(id,{$set:{ is_deleted:state} },{new:true})
         res.redirect('/admin/Category')
 })
+
+// exports.destroyCtegoryImage = catchAsync( async (req,res) => {
+//   const { id } = req.params
+//   const { image } = req.body
+//   let imagesWithPath
+//   if(image.length){
+//     imagesWithPath = '/category/' + image
+//   } 
+//   await Category.findByIdAndUpdate(id,{$push:{image: imagesWithPath}},{new:true})
+//   res.redirect(`/admin/categories/create`)
+//  })
+
 
 exports.updateCategory = catchAsync(async (req, res) => {
     const { id } = req.params
@@ -273,4 +286,6 @@ exports.adminLogout = (req, res) => {
     req.session.admin=null
     res.redirect('/admin/login');
 }
+
+
 

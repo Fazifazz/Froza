@@ -32,13 +32,16 @@
                                                                 <div class="form-group">
                                                                     <label for="exampleInputName1">Product title</label>
                                                                     <input type="text" class="form-control" name="title"
-                                                                        id="exampleInputName1" required/>
+                                                                        id="title" required/>
+                                                                        <small id="nameErr" class="text-danger"></small>
                                                                 </div>
                                                                 
                                                                 <div class="form-group">
                                                                     <label for="exampleInputName1">Brand</label>
                                                                     <input type="text" class="form-control" name="brand"
-                                                                        id="exampleInputName1" required/>
+                                                                        id="brand" required/>
+                                                                        <small id="brandErr" class="text-danger"></small>
+
                                                                 </div>
 
                                                                 <div class="form-group">
@@ -46,21 +49,24 @@
                                                                         description</label>
                                                                     <textarea rows="3" class="form-control"
                                                                         name="description"
-                                                                        id="exampleInputName1" required></textarea>
+                                                                        id="description" required></textarea>
+                                                                        <small id="descriptionErr" class="text-danger"></small>
                                                                 </div>
 
                                                                 <div class="form-group">
                                                                     <label for="exampleInputName1">Product price
                                                                         (MRP)</label>
                                                                     <input type="number" class="form-control" name="mrp"
-                                                                        id="exampleInputName1" required />
+                                                                        id="mrp" required />
+                                                                        <small id="priceErr" class="text-danger"></small>
                                                                 </div>
 
                                                                 <div class="form-group">
                                                                     <label for="exampleInputName1">Product price
                                                                         (Regular)</label>
                                                                     <input type="number" class="form-control" 
-                                                                        name="regular" id="exampleInputName1" required />
+                                                                        name="regular" id="regular" required />
+                                                                        <small id="priceErr2" class="text-danger"></small>
                                                                 </div>
                                                                 <div class="form-group">
                                                                 <div class="row input-group form-check">
@@ -122,7 +128,8 @@
                                                                 <div class="form-group">
                                                                     <label for="exampleInputName1">Stock</label>
                                                                     <input type="number" class="form-control" name="stock"
-                                                                        id="exampleInputName1"   required />
+                                                                        id="stock"   required />
+                                                                        <small id="stockErr" class="text-danger"></small>
                                                                 </div>
 
                                                                 <div class="form-group">
@@ -199,7 +206,7 @@
                                                                 </div>
 
                                                                 <button type="submit"
-                                                                    class="btn btn-primary mr-2">Create</button>
+                                                                    class="btn btn-primary mr-2" onclick="return validateProduct()">Create</button>
                                                                 <button type="button" class="btn btn-light" onclick="goBack()">Back</button>
                                                             </form>
                                                         </div>
@@ -216,6 +223,7 @@
         <!-- page-body-wrapper ends -->
         </div>
         <!-- container-scroller -->
+        <script src="/validations/productValidation.js"></script>
         <script>
             function goBack() {
                 window.history.back()
