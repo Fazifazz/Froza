@@ -23,6 +23,26 @@ const securePassword = async (password) => {
 }
 
 
+const generateReferralCode = async() => {
+  const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let referralCode = '';
+  for (let i = 0; i < 8; i++) {
+      const randomIndex = Math.floor(Math.random() * charset.length);
+      referralCode += charset[randomIndex];
+  }
+  return referralCode;
+}
+
+const getReferralCode = async() => {
+
+  const referralCode = await generateReferralCode()
+  const isreferralExist = await User.findOne({ referralCode})
+  if(isreferralExist) getReferralCode()
+  return referralCode
+
+}
+
+
 
 const ITEMS_per_PAGE = 4;
 exports.index = catchAsync(async (req, res) => {
@@ -42,6 +62,7 @@ exports.showLogin = (req, res) => {
 }
 
 exports.showSignup = (req, res) => {
+  // const referral = req.query.referral
   res.render('users/signup')
 }
 
@@ -63,13 +84,49 @@ exports.insertUser = async (req, res) => {
       length: 4,
       charset: 'numeric',
     })
-    const user = new User({
-      name: req.body.name,
-      mobile: req.body.mobile,
-      email: req.body.email,
-      password: secPassword,
-      otp: otp,
-    })
+    const referralCode = await getReferralCode();
+    const referral = req.body.referral.trim();
+    console.log(referral);
+    if(referral){
+      const isReferrerExist = await User.findOne({ referralCode: referral });
+      if(isReferrerExist){
+        const walletHistoryA = {
+          date: new Date(),
+          amount:100,
+          message: `referal reward via referalcode:'${referral}'`,
+         };
+        let referrerId = isReferrerExist._id;
+        var user = new User({
+          name: req.body.name,
+          mobile: req.body.mobile,
+          email: req.body.email,
+          password: secPassword,
+          referralCode:referralCode,
+          referredBy:referral,
+          wallet:100,
+          walletHistory:walletHistoryA,
+          otp: otp,
+        })
+        const walletHistory = {
+          date: new Date(),
+          amount:100,
+          message: `Referal reward from ${user.name}`,
+         };
+        await User.findByIdAndUpdate(referrerId,{$inc:{ wallet:100 },$push:{walletHistory},})
+      }else{
+        req.flash('error','invalid referral code')
+        return res.render('users/signup',{error:req.flash('error')})
+      }
+    }else{
+        user = new User({
+        name: req.body.name,
+        mobile: req.body.mobile,
+        email: req.body.email,
+        password: secPassword,
+        referralCode:referralCode,
+        otp: otp,
+      })
+    }
 
     const userData = await user.save()
     if (userData) {
@@ -266,7 +323,7 @@ exports.getProductDetails = catchAsync(async (req, res) => {
   }
   const product = await Product.findOne({ _id: req.params.id })
   const category = await Category.findOne({ _id: product.category })
-  res.render('users/productDetails', {user, product, category,success:req.flash('success') ,userExist})
+  res.render('users/productDetails', {user, product, category,success:req.flash('success'),userExist,error:req.flash('error')})
 })
 
 
@@ -387,8 +444,16 @@ exports.addTocart=async (req,res)=>{
     
   try {
       const user=await User.findById(req.session.user)
-      const quantity=1
       const product=await Product.findById(req.body.productId)
+      if(req.body.quantity){
+        var quantity= parseInt(req.body.quantity);
+        if(quantity>product.stock){
+          req.flash('error','stock limit exceeded!')
+          return res.redirect(`/productDetails/${req.body.productId}`)
+        }
+      }else{
+        quantity=1
+      }
       const total=quantity*product.regularPrice
       let totalCartAmount = 0;
       user.cart.forEach(item => {

@@ -12,6 +12,7 @@
 				<div class="row">
 					<div class="col">
 						<p class="bread"><span><a href="index.html">Home</a></span> / <span>Product Details</span></p>
+						<div id="flash-message" class="alert alert-danger" style="display: none;"></div>
 					</div>
 				</div>
 			</div>
@@ -27,6 +28,21 @@
 				var successMessage = document.getElementById('success-message');
 				if (successMessage) {
 				  successMessage.style.display = 'none';
+				}
+			  }, 2000); 
+			</script>
+		  <% } %>
+		<% if (error && error.length > 0) { %>
+			<div class="alert alert-danger" id="error-message">
+			  <% error.forEach(function(message) { %>
+				<p><%= message %></p>
+			  <% }); %>
+			</div>
+			<script>
+			  setTimeout(function() {
+				var errorMessage = document.getElementById('error-message');
+				if (errorMessage) {
+				  errorMessage.style.display = 'none';
 				}
 			  }, 2000); 
 			</script>
@@ -114,26 +130,39 @@
 								<% if(product.stock===0){ %>
 									<h4 class="btn btn-danger"><b>Out of Stock!</b></h4>
 									<% }else{ %>
-										<div class="input-group mb-4">
-											<span class="input-group-btn">
-												<button type="button" class="quantity-left-minus btn" data-type="minus"
-													data-field="">
-													<i class="icon-minus2"></i>
-												</button>
+										<div class="input-group mb-4 product_count">
+											<span class="input-group-btn" style="display: flex; align-items: center;">
+											  <button
+												class="btn input-number-decrement"
+												data-action="decrement"
+												data-cart-item-id="<%= product._id %>"
+											  >
+												-
+											  </button>
+											  <input
+												class="input-number"
+												type="text"
+												readonly
+												value="1"
+												min="1"
+												max="10"
+												style="flex: 1; text-align: center;"
+											  />
+											  <button
+												class="btn input-number-increment"
+												data-action="increment"
+												data-cart-item-id="<%= product._id %>"
+											  >
+												+
+											  </button>
 											</span>
-											<input type="text" id="quantity" name="quantity" class="form-control input-number"
-												value="1" min="1" max="100">
-											<span class="input-group-btn ml-1">
-												<button type="button" class="quantity-right-plus btn" data-type="plus"
-													data-field="">
-													<i class="icon-plus2"></i>
-												</button>
-											</span>
-										</div>
+										  </div>
+										  
 										<div class="col-sm-12 text-center">
 											<div class="icons">
 												<form action="/cart/<%= product._id %>" method="post">
 													<input type="hidden" name="productId" value="<%= product._id %>">
+													<input type="hidden" id="quantityA" name="quantity" value="1">
 													<button class="btn btn-dark" type="submit" style="width: 200px; display: flex; align-items: center; justify-content: center;">
 														<i class="fa fa-shopping-cart" style="color: white; margin-right: 5px;"></i>
 														Add to Cart
@@ -150,216 +179,31 @@
 						</div>
 					</div>
 				</div>
-
-
-				<div class="row">
-					<div class="col-sm-12">
-						<div class="row">
-							<div class="col-md-12 pills">
-								<div class="bd-example bd-example-tabs">
-									<ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
-
-										<li class="nav-item">
-											<a class="nav-link active" id="pills-description-tab" data-toggle="pill"
-												href="#pills-description" role="tab" aria-controls="pills-description"
-												aria-expanded="true">Description</a>
-										</li>
-										<li class="nav-item">
-											<a class="nav-link" id="pills-manufacturer-tab" data-toggle="pill"
-												href="#pills-manufacturer" role="tab" aria-controls="pills-manufacturer"
-												aria-expanded="true">Manufacturer</a>
-										</li>
-										<li class="nav-item">
-											<a class="nav-link" id="pills-review-tab" data-toggle="pill"
-												href="#pills-review" role="tab" aria-controls="pills-review"
-												aria-expanded="true">Review</a>
-										</li>
-									</ul>
-
-									<div class="tab-content" id="pills-tabContent">
-										<div class="tab-pane border fade show active" id="pills-description"
-											role="tabpanel" aria-labelledby="pills-description-tab">
-											<p>Even the all-powerful Pointing has no control about the blind texts it is
-												an almost unorthographic life One day however a small line of blind text
-												by the name of Lorem Ipsum decided to leave for the far World of
-												Grammar.</p>
-											<p>When she reached the first hills of the Italic Mountains, she had a last
-												view back on the skyline of her hometown Bookmarksgrove, the headline of
-												Alphabet Village and the subline of her own road, the Line Lane. Pityful
-												a rethoric question ran over her cheek, then she continued her way.</p>
-											<ul>
-												<li>The Big Oxmox advised her not to do so</li>
-												<li>Because there were thousands of bad Commas</li>
-												<li>Wild Question Marks and devious Semikoli</li>
-												<li>She packed her seven versalia</li>
-												<li>tial into the belt and made herself on the way.</li>
-											</ul>
-										</div>
-
-										<div class="tab-pane border fade" id="pills-manufacturer" role="tabpanel"
-											aria-labelledby="pills-manufacturer-tab">
-											<p>Even the all-powerful Pointing has no control about the blind texts it is
-												an almost unorthographic life One day however a small line of blind text
-												by the name of Lorem Ipsum decided to leave for the far World of
-												Grammar.</p>
-											<p>When she reached the first hills of the Italic Mountains, she had a last
-												view back on the skyline of her hometown Bookmarksgrove, the headline of
-												Alphabet Village and the subline of her own road, the Line Lane. Pityful
-												a rethoric question ran over her cheek, then she continued her way.</p>
-										</div>
-
-										<div class="tab-pane border fade" id="pills-review" role="tabpanel"
-											aria-labelledby="pills-review-tab">
-											<div class="row">
-												<div class="col-md-8">
-													<h3 class="head">23 Reviews</h3>
-													<div class="review">
-														<div class="user-img"
-															style="background-image: url(images/person1.jpg)"></div>
-														<div class="desc">
-															<h4>
-																<span class="text-left">Jacob Webb</span>
-																<span class="text-right">14 March 2018</span>
-															</h4>
-															<p class="star">
-																<span>
-																	<i class="icon-star-full"></i>
-																	<i class="icon-star-full"></i>
-																	<i class="icon-star-full"></i>
-																	<i class="icon-star-half"></i>
-																	<i class="icon-star-empty"></i>
-																</span>
-																<span class="text-right"><a href="#" class="reply"><i
-																			class="icon-reply"></i></a></span>
-															</p>
-															<p>When she reached the first hills of the Italic Mountains,
-																she had a last view back on the skyline of her hometown
-																Bookmarksgrov</p>
-														</div>
-													</div>
-													<div class="review">
-														<div class="user-img"
-															style="background-image: url(images/person2.jpg)"></div>
-														<div class="desc">
-															<h4>
-																<span class="text-left">Jacob Webb</span>
-																<span class="text-right">14 March 2018</span>
-															</h4>
-															<p class="star">
-																<span>
-																	<i class="icon-star-full"></i>
-																	<i class="icon-star-full"></i>
-																	<i class="icon-star-full"></i>
-																	<i class="icon-star-half"></i>
-																	<i class="icon-star-empty"></i>
-																</span>
-																<span class="text-right"><a href="#" class="reply"><i
-																			class="icon-reply"></i></a></span>
-															</p>
-															<p>When she reached the first hills of the Italic Mountains,
-																she had a last view back on the skyline of her hometown
-																Bookmarksgrov</p>
-														</div>
-													</div>
-													<div class="review">
-														<div class="user-img"
-															style="background-image: url(images/person3.jpg)"></div>
-														<div class="desc">
-															<h4>
-																<span class="text-left">Jacob Webb</span>
-																<span class="text-right">14 March 2018</span>
-															</h4>
-															<p class="star">
-																<span>
-																	<i class="icon-star-full"></i>
-																	<i class="icon-star-full"></i>
-																	<i class="icon-star-full"></i>
-																	<i class="icon-star-half"></i>
-																	<i class="icon-star-empty"></i>
-																</span>
-																<span class="text-right"><a href="#" class="reply"><i
-																			class="icon-reply"></i></a></span>
-															</p>
-															<p>When she reached the first hills of the Italic Mountains,
-																she had a last view back on the skyline of her hometown
-																Bookmarksgrov</p>
-														</div>
-													</div>
-												</div>
-												<div class="col-md-4">
-													<div class="rating-wrap">
-														<h3 class="head">Give a Review</h3>
-														<div class="wrap">
-															<p class="star">
-																<span>
-																	<i class="icon-star-full"></i>
-																	<i class="icon-star-full"></i>
-																	<i class="icon-star-full"></i>
-																	<i class="icon-star-full"></i>
-																	<i class="icon-star-full"></i>
-																	(98%)
-																</span>
-																<span>20 Reviews</span>
-															</p>
-															<p class="star">
-																<span>
-																	<i class="icon-star-full"></i>
-																	<i class="icon-star-full"></i>
-																	<i class="icon-star-full"></i>
-																	<i class="icon-star-full"></i>
-																	<i class="icon-star-empty"></i>
-																	(85%)
-																</span>
-																<span>10 Reviews</span>
-															</p>
-															<p class="star">
-																<span>
-																	<i class="icon-star-full"></i>
-																	<i class="icon-star-full"></i>
-																	<i class="icon-star-full"></i>
-																	<i class="icon-star-empty"></i>
-																	<i class="icon-star-empty"></i>
-																	(70%)
-																</span>
-																<span>5 Reviews</span>
-															</p>
-															<p class="star">
-																<span>
-																	<i class="icon-star-full"></i>
-																	<i class="icon-star-full"></i>
-																	<i class="icon-star-empty"></i>
-																	<i class="icon-star-empty"></i>
-																	<i class="icon-star-empty"></i>
-																	(10%)
-																</span>
-																<span>0 Reviews</span>
-															</p>
-															<p class="star">
-																<span>
-																	<i class="icon-star-full"></i>
-																	<i class="icon-star-empty"></i>
-																	<i class="icon-star-empty"></i>
-																	<i class="icon-star-empty"></i>
-																	<i class="icon-star-empty"></i>
-																	(0%)
-																</span>
-																<span>0 Reviews</span>
-															</p>
-														</div>
-													</div>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
 			</div>
 		</div>
 
-
+		<style>
+			.product_count {
+			  display: flex;
+			  align-items: center;
+			  justify-content: space-between;
+			  width: 200px; /* You can adjust the width as needed */
+			  margin: 0 auto; /* Center the whole element */
+			}
+	  
+			.input-number {
+			  text-align: center; /* Center the text */
+			  width: 30px; /* Adjust the width as needed */
+			  border: none; /* Remove the border */
+			}
+	  
+			.input-number-decrement,
+			.input-number-increment {
+			  cursor: pointer;
+			}
+	  
+			/* Add icon styles here (font size, color, etc.) */
+		  </style>
 
 		<!-- jQuery -->
 		<script src="/js/jquery.min.js"></script>
@@ -393,43 +237,66 @@
 
 
 
-		<script>
+
+<script>
+			   // Get all input elements and increment/decrement buttons
+	  const inputNumbers = document.querySelectorAll(".input-number");
+      const incrementButtons = document.querySelectorAll(
+        ".input-number-increment"
+      );
+      const decrementButtons = document.querySelectorAll(
+        ".input-number-decrement"
+      );
+
+	  const hiddenQuantity = document.getElementById('quantityA')
+    
+      // Add click event listeners for all increment and decrement buttons
+      incrementButtons.forEach((button, index) => {
+        button.addEventListener("click", () => {
+            console.log(inputNumbers[index], 'index');
+          updateCartItemQuantity(inputNumbers[index], "increment");
+        });
+      });
+
+      decrementButtons.forEach((button, index) => {
+        button.addEventListener("click", () => {
+          updateCartItemQuantity(inputNumbers[index], "decrement");
+        });
+      });
+
+      function updateCartItemQuantity(inputElement, action) {
+        const cartItemId = inputElement.parentElement
+          .querySelector(".input-number-increment")
+          .getAttribute("data-cart-item-id");
+
+        let currentValue = parseInt(inputElement.value);
+
+        if (!isNaN(currentValue)) {
+          if (action === "increment" && currentValue < 10) {
+            currentValue++;
+			hiddenQuantity.value = currentValue;
+          } else if (action === "decrement" && currentValue > 1) {
+            currentValue--;
+			hiddenQuantity.value = currentValue;
+          }
+
+          // Update the input value
+          inputElement.value = currentValue;
+
+        }
+      }
 
 
-			$(document).ready(function () {
 
-				var quantitiy = 0;
-				$('.quantity-right-plus').click(function (e) {
+      function displayFlashMessage(message) {
+  const flashMessageElement = document.getElementById('flash-message');
+  flashMessageElement.textContent = message;
+  flashMessageElement.style.display = 'block'; // Show the flash message
 
-					// Stop acting like a button
-					e.preventDefault();
-					// Get the field name
-					var quantity = parseInt($('#quantity').val());
-
-					// If is not undefined
-
-					$('#quantity').val(quantity + 1);
-
-
-					// Increment
-
-				});
-
-				$('.quantity-left-minus').click(function (e) {
-					// Stop acting like a button
-					e.preventDefault();
-					// Get the field name
-					var quantity = parseInt($('#quantity').val());
-
-					// If is not undefined
-
-					// Increment
-					if (quantity > 0) {
-						$('#quantity').val(quantity - 1);
-					}
-				});
-
-			});
+  setTimeout(() => {
+    flashMessageElement.style.display = 'none'; // Hide the flash message after 3 seconds (adjust as needed)
+  }, 2000);
+}
 
 			$(document).ready(function () {
 				// Initialize Magnific Popup
@@ -443,53 +310,6 @@
 
 
 		</script>
-
-
-<!-- for effective zooming -->
-<!-- 
-<script>
-
-    const mainImage = document.querySelector('.main-image');
-    const img = document.getElementById('main-img');
-
-    mainImage.addEventListener('mousemove', zoomIn);
-    mainImage.addEventListener('mouseleave', zoomOut);
-
-    function zoomIn(event) {
-        const boundingRect = mainImage.getBoundingClientRect();
-        const mouseX = event.clientX - boundingRect.left;
-        const mouseY = event.clientY - boundingRect.top; 
-
-        const offsetX = (mouseX / boundingRect.width) * 100;
-        const offsetY = (mouseY / boundingRect.height) * 100;
-
-        img.style.transformOrigin = `${offsetX}% ${offsetY}%`;
-        img.style.transform = 'scale(2)'; // Adjust the scale factor as desired
-    }
-
-    function zoomOut() {
-        img.style.transform = 'scale(1)';
-    }
-
-    function imgClick(id) {
-
-        let img = document.getElementById(id).src
-        document.getElementById('main-img').src = img
-
-    }
-
-    function selectLabel(element) {
-        var labels = document.querySelectorAll('.custom-label');
-        for (var i = 0; i < labels.length; i++) {
-            labels[i].classList.remove('selected');
-        }
-
-        element.classList.add('selected');
-    }
-    // 
-    window.addEventListener('resize', slideImage);
-
-</script> -->
 
 </body>
 

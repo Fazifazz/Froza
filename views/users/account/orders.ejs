@@ -71,6 +71,10 @@
                                  <h6 class="text-danger">Order <%= order.status  %></h6> 
                                  <% if(order.isRefunded===true){ %>  
                                   <h6 class="text-success">Amount Refunded to the Wallet</h6>
+                                  <form action="/showOrders/orderDetails" method="post">
+                                    <input type="hidden" name="orderId" value="<%= order.orderId %>">
+                                    <button  class="btn btn-primary btn-sm" type="submit">Details</button>
+                                  </form>
                                   <% } %>
                              <% } else { %>
                                  <h6 class="text-success"><%= order.status  %></h6>

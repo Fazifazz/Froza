@@ -59,7 +59,7 @@ function validateEmail() {
         emailErr.innerHTML = "Email required!";
         return false;
     }
-    if(email.includes("@"&&"gmail.com")){
+    if(email.includes(("@"&&"gmail.com")|| ("@"&&"GMAIL.COM"))){
         emailErr.innerHTML="";
     }else{
         emailErr.innerHTML = "email Must contain @ , .com and gmail"
@@ -75,6 +75,8 @@ function validatePassword() {
     }else if(password.length < 8){
         passwordErr.innerHTML = 'Password must contain 8 characters'
         return false
+    }else{
+        passwordErr.innerHTML = ''
     }
 
     if (!password.match(passwordRegex)) {

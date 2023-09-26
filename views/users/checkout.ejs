@@ -57,22 +57,52 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <% addresses.forEach(function(address, index) { %>
                                 <tr>
-                                    <% if(address.defaultAddress){ %>
+                                    <% if(defAddress){ %>
                                         <td>
                                             <!-- Address Details -->
-                                            <span><%= address.phone %></span><br>
-                                            <span><%= address.address %>, <%= address.landMark %>, <%= address.locality %>,
-                                                <%= address.district %> District, <%= address.state %>, <%= address.pincode %>.</span>
+                                            <span><%= defAddress.phone %></span><br>
+                                            <span><%= defAddress.address %>, <%= defAddress.landMark %>, <%= defAddress.locality %>,
+                                                <%= defAddress.district %> District, <%= defAddress.state %>, <%= defAddress.pincode %>.</span>
                                         </td>
+                                    <% }else if(defAddress===null){ %>
+                                    <a href="/profile/addAddress">+Add new Address</a>
                                     <% } %>
                                 </tr>
-                            <% }); %>
                         </tbody>
                     </table>
-                    <a href="/profile/addAddress">+Add new Address</a>
                 </div>
+                <div class="table-responsive">
+                <div class="creat_account">
+                    
+                  
+                    <label for="f-option3">Ship to a different address?</label>
+                  
+                    <form action="/profile/setDefaultAddress" method="post" id="setDefaultForm"> 
+                      <select class="form-select" aria-label="Default select example" id="selectAddress">
+                        <option selected>Choose an address</option>
+                        <% addresses.forEach(function(address, index) { %>
+                          <option value="<%= address._id %>">
+                            <span><%= address.phone %></span><br>
+                            <span><%= address.address %>, <%= address.landMark %>, <%= address.locality %>,
+                              <%= address.district %> District, <%= address.state %>, <%= address.pincode %>.
+                            </span>
+                          </option>
+                        <% }) %>
+                      </select>
+                      <input type="hidden" name="checkoutId" id="addresId">
+                    </form>
+                    
+                     
+                    
+                    
+                  
+                   
+                    <p><a href="/profile/addAddress"><i class="fas fa-plus">Add New</i></a></p>
+                    
+                  </div>
+                  </div>
+
                 <!-- coupon section -->
                 <% if(coupons.length){ %>
                     <div class="cart-detail mt-5" id="couponArea" >
@@ -137,7 +167,7 @@
                             <p><b>Discount: <span class="discountAmount"></span></b></p>
                             <p><b>New order Total: <span id="orderTotal">0</span></b> </p>
                             
-                            <button class="btn btn-secondary cancel-coupon-btn">Cancel</button>
+                            <button class="btn btn-secondary cancel-coupon-btn">Cancel coupon</button>
                         </div> 
                     </div>
 
@@ -240,6 +270,13 @@ $('#couponForm').submit(function (e) {
         }
     });
 });
+
+$('#selectAddress').on('change', function() {
+          const selectedAddressId = $(this).val();
+          console.log(selectedAddressId)
+          $('#addresId').val(selectedAddressId)
+          $('#setDefaultForm').submit();
+        })
 
   
             // Cancel coupon button

@@ -219,11 +219,17 @@ exports.showCheckout = catchAsync(async (req,res) => {
       var user = await User.findById({_id:userId}).populate('cart.product') 
     }                     
     if(user.cart.length){
-        const addresses=await Address.find({userId:req.session.user})
+      const defAddress=await Address.findById(user.defaultAddress)
+      const addresses = await Address.find({userId:req.session.user, defaultAddress:false, softDeleted:false})
         const cart = user.cart;
         const totalCartAmount=user.totalCartAmount
-        const coupons = await Coupon.find({})
-        res.render('users/checkout',{userExist,user,cart,totalCartAmount,addresses,error:req.flash('error'),coupons})
+        const coupons= await Coupon.find({
+          $and:[
+          {expiryDate:{$gt:Date.now()}},
+          { isCancelled:false }
+          ]
+        })       
+         res.render('users/checkout',{userExist,user,cart,totalCartAmount,defAddress,addresses,error:req.flash('error'),coupons})
     }else{
         res.redirect('/cart')
     }

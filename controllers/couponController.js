@@ -94,6 +94,7 @@ exports.applyCoupon = catchAsync(async (req, res) => {
         return res.json({ criteriaFailure: true, error: req.flash('error') });
     }
 
+
     const usedUser = coupon.usedUsers.find((item) => item.usedUser.toString() === userId.toString());
     if (usedUser) {
         if (usedUser.usedCount >= coupon.usageLimit) {
