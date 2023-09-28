@@ -57,6 +57,7 @@
                   </div>
       
                   <button type="submit" class="btn btn-primary">Add Coupon</button>
+                  <button type="button" class="btn btn-light" onclick="goBack()">Back</button>
               </form>
           </div>
 </div> 
@@ -64,3 +65,15 @@
 </div>
 </div>     
 </div>
+<script>
+    function goBack() {
+        window.history.back()
+    }
+  </script>
+    <script src="/admin/vendors/js/vendor.bundle.base.js"></script>
+    <script src="/admin/js/off-canvas.js"></script> 
+    <script src="/admin/js/hoverable-collapse.js"></script>
+    <script src="/admin/js/template.js"></script>
+    <script src="/admin/js/settings.js"></script>
+    <script src="/admin/js/todolist.js"></script> 
+<%- include('../../layouts/footerAdmin') %>

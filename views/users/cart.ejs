@@ -73,12 +73,16 @@
                       </div>
                     </td>
                     <td class="text-center">
-                      <div class="display-tc">
-                        <span class="price"
-                          >&#8377;<%= cartprdt.product.regularPrice %></span
-                        >
+                      <div class="display-tc" id="price">
+                        <% if(cartprdt.product.offerPrice!==0 && cartprdt.product.offer.status==='Available' ){ %>
+                          <span class="regular">&#8377;<%=cartprdt.product.offerPrice %></span>
+                          <span class="text-success">by offer</span>
+                          <% }else{ %>
+                            <span class="regular">&#8377;<%=cartprdt.product.regularPrice %></span>
+                          <% } %>
                       </div>
                     </td>
+                    
                     <td class="text-center">
                       <div class="product_count">
                         <button
@@ -273,6 +277,8 @@
                   currentValue = response.stock;
                   return  inputElement.value = currentValue;
                 }
+
+
                 const newTotal = response.total;
                 const cartTotal = document.querySelector(`#cartTotal_${cartItemId}`);
                 cartTotal.textContent = newTotal;

@@ -1,0 +1,122 @@
+<%- include('../../layouts/headerAdmin') %>
+
+    <body>
+        <div class="container-scroller">
+
+            <%- include('../../layouts/_navbar') -%>
+
+                <!-- partial -->
+                <div class="container-fluid page-body-wrapper">
+                    <!-- partial -->
+
+                    <!-- partial:../../partials/_sidebar.html -->
+                    <%- include('../../layouts/_sidebar') -%>
+
+                        <!-- partial -->
+                        <div class="main-panel">
+
+                            <!-- error/success messages -->
+                            
+
+                                        <div class="content-wrapper">
+                                            <div class="row">
+                                                <% if (error && error.length > 0) { %>
+                                                    <div class="alert alert-danger text-center" id="error-message">
+                                                        <% error.forEach(function(message) { %>
+                                                            <p><%= message %></p>
+                                                        <% }); %>
+                                                    </div>
+                                                    <script>
+                                                        // Add a timeout to hide the error message after 3 seconds (adjust as needed)
+                                                        setTimeout(function() {
+                                                            var errorMessage = document.getElementById('error-message');
+                                                            if (errorMessage) {
+                                                                errorMessage.style.display = 'none';
+                                                            }
+                                                        }, 2000); // 3000 milliseconds (3 seconds)
+                                                    </script>
+                                                <% } %>
+
+                                                <div class="col-12 grid-margin stretch-card">
+                                                    <div class="card">
+                                                        <div class="card-body">
+                                                            <h4 class="card-title">Create new Offer</h4>
+
+                                                            <form class="forms-sample" action="/admin/offers/create"
+                                                                method="post">
+                                                                <div class="form-group">
+                                                                    <label for="offerName">Offer Name</label>
+                                                                    <input type="text" class="form-control" name="offerName"
+                                                                        id="offerName" required/>
+                                                                        <small id="nameErr" class="text-danger"></small>
+                                                                </div>
+                                                                
+                                                                <div class="form-group">
+                                                                    <label for="discount">Discount %</label>
+                                                                    <input type="text" class="form-control" name="discount"
+                                                                        id="discount" required/>
+                                                                        <small id="discountErr" class="text-danger"></small>
+
+                                                                </div>
+
+                                                               
+
+                                                                <div class="form-group">
+                                                                    <label for="startingDate">Select Starting Date</label>
+                                                                    <input type="date" id="startingDate"
+                                                                        class="form-control form-control-md rounded-0" name="startingDate" required/>
+                                                                    <small id="startingDateErr" class="error text-danger"></small>
+                                                                </div>
+
+                                                                <div class="form-group">
+                                                                    <label for="expiryDate">Select Expiry Date</label>
+                                                                    <input type="date" id="expiryDate" class="form-control form-control-md rounded-0" name="expiryDate" required/>
+                                                                    <small id="expiryDateErr" class="text-danger"></small>     
+                                                                </div>
+
+
+                                                                <button class="btn btn-dark btn-md rounded-pill px-5 py-2 login-btn" type="submit" onclick="return validateOffer()">ADD</button>
+                                                                <button type="button" class="btn btn-light" onclick="goBack()">Back</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+                                        </div>
+                        </div>
+                </div>
+                <!-- main-panel ends -->
+        </div>
+        <!-- page-body-wrapper ends -->
+        </div>
+        <!-- container-scroller -->
+        <script src="/validations/offerValidation.js"></script>
+        <script>
+            function goBack() {
+                window.history.back()
+            }
+          </script>
+
+        <script>
+            function hideErrorMessage() {
+                var errorMessageElement = document.getElementById('error-message');
+                if (errorMessageElement) {
+                    setTimeout(() => {
+                        errorMessageElement.style.display = 'none';
+                    }, 4000);
+
+                }
+            }
+            hideErrorMessage();
+              
+      </script>
+      <script src="/admin/vendors/js/vendor.bundle.base.js"></script>
+      <script src="/admin/js/off-canvas.js"></script> 
+      <script src="/admin/js/hoverable-collapse.js"></script>
+      <script src="/admin/js/template.js"></script>
+      <script src="/admin/js/settings.js"></script>
+      <script src="/admin/js/todolist.js"></script> 
+
+    <%- include('../../layouts/footerAdmin') %>

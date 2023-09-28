@@ -54,7 +54,7 @@
   
               <div class="mb-3">
                   <label for="expiryDate" class="form-label">Expiry Date:</label>
-                  <input type="date" class="form-control" id="expiryDate" name="expiryDate" value="<%= coupon.expiryDate %>" required>
+                  <input type="date" class="form-control" id="expiryDate" name="expiryDate" value="<%= coupon.expiryDate.toISOString().split('T')[0] %>" required>
               </div>
   
               <button type="submit" class="btn btn-primary">update Coupon</button>
@@ -87,8 +87,14 @@ function back() {
 }
 </script>
 <!-- <script src="/validations/couponValidation.js"></script> -->
-</body>
 
+
+<script src="/admin/vendors/js/vendor.bundle.base.js"></script>
+<script src="/admin/js/off-canvas.js"></script> 
+<script src="/admin/js/hoverable-collapse.js"></script>
+<script src="/admin/js/template.js"></script>
+<script src="/admin/js/settings.js"></script>
+<script src="/admin/js/todolist.js"></script> 
 
 
 <%- include('../../layouts/footerAdmin') -%>

@@ -26,6 +26,7 @@ const {
 } = require('../controllers/adminController');
 const orderController = require('../controllers/orderController');
 const couponController = require('../controllers/couponController')
+const offerController = require('../controllers/offerController')
 
 // Admin Login Routes
 router
@@ -87,6 +88,15 @@ router
        .get('/coupons/edit/:id',isAdminLoggedIn,couponController.showEditCoupon)  
        .post('/coupons/edit/:id',isAdminLoggedIn,couponController.editCoupon)
        .post('/coupons/destroy',isAdminLoggedIn,couponController.destroyCoupon) 
+
+//offers routes
+router
+      .get('/offers',isAdminLoggedIn,offerController.showOfferIndex) 
+      .get('/offers/create',isAdminLoggedIn,offerController.showAddOffer)
+      .post('/offers/create',isAdminLoggedIn,offerController.addOffer)
+      .get('/offers/edit/:id',isAdminLoggedIn,offerController.showOfferEdit)
+      .post('/offers/edit/:id',isAdminLoggedIn,offerController.updateOffer)
+      .post('/offers/destroy',isAdminLoggedIn,offerController.destroyOffer) 
 
 // Logout Route
 router.get('/logout', isAdminLoggedIn, adminLogout);

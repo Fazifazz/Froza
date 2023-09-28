@@ -68,6 +68,13 @@
                                                                         name="regular" id="regular" required />
                                                                         <small id="priceErr2" class="text-danger"></small>
                                                                 </div>
+
+                                                                <!-- <div class="form-group">
+                                                                    <label for="dPrice">Offer price</label>
+                                                                    <input type="number" class="form-control" 
+                                                                        name="dPrice" id="dPrice" required />
+                                                                        <small id="priceErr2" class="text-danger"></small>
+                                                                </div> -->
                                                                 <div class="form-group">
                                                                 <div class="row input-group form-check">
                                                                     <label class="form-check-label">Size :&nbsp;</label>
@@ -146,6 +153,23 @@
                                                                             <% }) %>
                                                                     </select>
                                                                 </div>
+
+                                                                <div class="form-group">
+                                                                    <label for="offer">Apply
+                                                                        offers</label>
+                                                                    <select class="form-control" name="offerId"
+                                                                        id="offer" required>
+                                                                        <option value="-1" class="text-danger" >No offer</option>
+                                                                        <% offers.forEach((offer)=> { %>
+                                                                            <% if(offer.is_deleted===false){ %>
+                                                                            <option value="<%= offer._id %>">
+                                                                                <%= offer.name %>
+                                                                            </option>
+                                                                            <% } %>
+                                                                            <% }) %>
+                                                                    </select>
+                                                                </div>
+
 
                                                                 <div class="row">
                                                                     <div class="col-12">

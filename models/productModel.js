@@ -26,7 +26,7 @@ const productSchema = new mongoose.Schema ({
     },
     stock:{
         type:Number,
-        required:true
+        required:true   
     },
     images:{
         type:[String],
@@ -39,6 +39,17 @@ const productSchema = new mongoose.Schema ({
     is_deleted:{
         type:Boolean,
         default:false
+    },
+    offer:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Offers'
+    },
+    offerPrice: { 
+        type: Number,
+        default:0
+    },
+    offerAppliedBy: { 
+        type: String
     }
 })
 

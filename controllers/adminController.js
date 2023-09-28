@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const catchAsync = require('../utils/catchAsync')
 const Category = require('../models/categoryModel')
 const Product = require('../models/productModel')
+const Offer = require('../models/offerModel')
 const User = require('../models/userModel')
 const fs = require('fs')
 const path = require('path')
@@ -132,9 +133,8 @@ exports.showProductsIndex = catchAsync(async (req, res) => {
 
 
 exports.createProduct = async (req, res) => {
-    const { title, brand, description, mrp, regular, check1, check2, check3, check4, check5, check6,check7,check8,check9,check10,check11,check12, images, stock, category } = req.body;
+    const { title, brand, description, mrp, regular, check1, check2, check3, check4, check5, check6,check7,check8,check9,check10,check11,check12, images, stock, category,offerId } = req.body;
     const imagesWithPath = images.map(img => '/products/' + img);
-
     try {
         let size = []
         if(check1) size.push(check1)
@@ -150,6 +150,17 @@ exports.createProduct = async (req, res) => {
         if(check11) size.push(check11)
         if(check12) size.push(check12)
 
+        let offerPrice;
+        if(offerId!=='-1'){
+          const offer = await Offer.findById(offerId)
+          offerPrice = (offer.discount/100) * regular
+          offerPrice = Math.ceil(regular - offerPrice)   
+          console.log(offerPrice)
+        }else{
+          offerPrice = 0
+          offerId  = null
+        }
+
         const product = await Product.create({
             title,
             brand,
@@ -159,7 +170,9 @@ exports.createProduct = async (req, res) => {
             regularPrice: regular,
             size, // Assign the 'size' array directly
             stock,
-            category
+            category,
+            offerPrice,
+            offer:offerId
         });
 
         res.redirect('/admin/products');
@@ -171,7 +184,8 @@ exports.createProduct = async (req, res) => {
 
 exports.showProductCreate= async (req,res)=>{
     const categories = await Category.find({})
-    res.render('admin/products/new',{categories})
+    const offers = await Offer.find({})
+    res.render('admin/products/new',{categories,offers})
 }
 
 exports.showProductEdit = async (req, res) => {
@@ -179,9 +193,10 @@ exports.showProductEdit = async (req, res) => {
     try {
       const product = await Product.findById(id);
       const category = await Category.find({});
+      const offers = await Offer.find({})
       // Determine the selected category ID based on the product's category field
       const selectedCategory = product.category; // Assuming 'category' is a field in the product object
-      res.render('admin/products/edit', { product, category, selectedCategory });
+      res.render('admin/products/edit', { product, category, selectedCategory,offers });
     } catch (error) {
       console.log(error.message);
     }
@@ -205,6 +220,21 @@ exports.updateProduct = async (req, res) => {
         if(check10) size.push(check10)
         if(check11) size.push(check11)
         if(check12) size.push(check12)
+
+
+        let offerPrice;
+        let offerId
+        if(req.body.offerId!=='-1'){
+          const offer  = await Offer.findById(req.body.offerId)
+          offerPrice = (offer.discount/100) * regular
+          offerPrice = Math.ceil(regular - offerPrice) 
+
+          offerId = req.body.offerId
+          console.log(offerPrice)
+        }else{
+          offerPrice = 0
+          offerId = null
+        }
       const product = await Product.findByIdAndUpdate(id, {$set: {
         title,
         brand,
@@ -214,6 +244,8 @@ exports.updateProduct = async (req, res) => {
         stock,
         regularPrice: regular,
         category,
+        offerPrice,
+        offer:offerId
       }}, { new: true })
   
       res.redirect('/admin/products')

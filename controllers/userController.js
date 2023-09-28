@@ -7,6 +7,7 @@ const catchAsync = require('../utils/catchAsync');
 const Category = require('../models/categoryModel');
 const path = require('path')
 const Address = require('../models/addressModel')
+const Offer = require('../models/offerModel')
 const Banner = require('../models/bannerModel');
 const { log } = require('console');
 require('dotenv').config()
@@ -375,64 +376,87 @@ exports.showshopIndex = async (req, res) => {
       }
 
       const aggragationPipeline = [
-          {
-              $lookup: {
-                  from: 'categories',
-                  localField: 'category',
-                  foreignField: '_id',
-                  as: 'category'
-              }
-          },
-          {
-              $unwind: '$category'
-          },
-          {
-              $match: neededFilter
-          },
-          {
-              $facet: {
-                  products: [
-                      {
-                          $skip: pageNumber * productsPerPage
-                      },
-                      {
-                          $limit: productsPerPage
-                      }
-                  ],
-                  totalPages: [
-                      {
-                          $count: 'total'
-                      }
-                  ]
-              }
+        {
+          $lookup: {
+            from: 'categories',
+            localField: 'category',
+            foreignField: '_id',
+            as: 'category'
           }
+        },
+        {
+          $unwind: '$category'
+        },
+        {
+          $match: neededFilter
+        },
+        {
+          $lookup: {
+            from: 'offers',
+            localField: 'offer',
+            foreignField: '_id',
+            as: 'offerDetails'
+          }
+        },
+        {
+          $unwind: {
+            path: '$offerDetails',
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $facet: {
+            products: [
+              {
+                $skip: pageNumber * productsPerPage
+              },
+              {
+                $limit: productsPerPage
+              }
+            ],
+            totalPages: [
+              {
+                $count: 'total'
+              }
+            ]
+          }
+        }
       ];
-
+      let isOfferAvailable = false
       const prdt = await Product.aggregate(aggragationPipeline);
       let totalItems = prdt[0].totalPages[0].total;
       let totalPages = Math.ceil(totalItems / 8);
       const products = prdt[0].products;
-
-      res.render('users/shop', { userExist, user, success: req.flash('success'), error: req.flash('error'), products, totalPages, categories, brands, totalItems, filterName });
+      // console.log(products.forEach((prdct)=>prdct.offerPrice))
+      // return console.log(products[0].offerPrice); 
+       // Calculate offer prices for products within the valid date range
+    const currentDate = new Date();
+    for (const product of products) {
+      product.isOfferAvailable =
+      product.offerDetails && product.offerDetails.is_deleted===false &&
+      currentDate >= product.offerDetails.startingDate &&
+      currentDate <= product.offerDetails.expiryDate;
+    }
+      res.render('users/shop', { userExist, user, success: req.flash('success'), error: req.flash('error'), products, totalPages, categories, brands, totalItems, filterName,isOfferAvailable});
 
   } catch (error) {
       console.log(error.message);
   }
 }
 
-      
-
-
-
 
 exports.showAddToCart=async (req,res)=>{
   try {
       const userExist = Boolean(req.session.user)
       if(userExist){
-        var user = await User.findById({_id:req.session.user}).populate('cart.product')  
+        var user = await User.findById({ _id: req.session.user }).populate({
+        path: 'cart.product',
+        populate: { path: 'offer' }, // Populate the 'offer' field inside 'product'
+      });
       }
       const cart=user.cart
-      const totalCartAmount=user.totalCartAmount   
+      const totalCartAmount=user.totalCartAmount 
+      
       res.render('users/cart',{userExist,user, cart,totalCartAmount,success:req.flash('success')})       
   } catch (error) {
       console.log(error.message)
@@ -444,7 +468,8 @@ exports.addTocart=async (req,res)=>{
     
   try {
       const user=await User.findById(req.session.user)
-      const product=await Product.findById(req.body.productId)
+      const product = await Product.findById(req.body.productId).populate('offer')
+    //  return console.log(product);
       if(req.body.quantity){
         var quantity= parseInt(req.body.quantity);
         if(quantity>product.stock){
@@ -454,7 +479,14 @@ exports.addTocart=async (req,res)=>{
       }else{
         quantity=1
       }
-      const total=quantity*product.regularPrice
+     console.log(product)
+let price = product.regularPrice;
+if (product.offerPrice !==0 && product.offer.status === 'Available') {
+  price = product.offerPrice;
+  console.log(price);
+ }
+
+      const total=quantity*price
       let totalCartAmount = 0;
       user.cart.forEach(item => {
          totalCartAmount +=  item.total;
@@ -492,12 +524,25 @@ exports.updateCartQauntity = catchAsync ( async (req,res) => {
             return res.status(404).json({ message: 'Cart item not found' });
         }
         // Calculate the new total based on the product's price and new quantity
-        const product = await Product.findById(cartItem.product);
+        const product = await Product.findById(cartItem.product).populate('offer');
         if(newQuantity>product.stock){
           req.flash('error','stock limit exceeded!')
           return res.json({stock:product.stock,error:req.flash('error')})
         }
-        const newTotal = newQuantity * product.regularPrice;
+        let price = product.regularPrice
+        const currentDate = new Date();
+const startDate  = product.offer.startingDate
+const endDate  = product.offer.expiryDate
+let isOfferAvailable = false
+if(startDate<=currentDate && endDate>=currentDate){
+  isOfferAvailable = true
+}
+// Check if offer details are available and valid
+if (isOfferAvailable===true) {
+  price = product.offerPrice;
+  console.log(price);
+ }
+        const newTotal = newQuantity * price;
         // Update cart item properties
         cartItem.quantity = newQuantity;
         cartItem.total = newTotal;
@@ -509,7 +554,7 @@ exports.updateCartQauntity = catchAsync ( async (req,res) => {
         user.totalCartAmount = totalCartAmount;
         await user.save();
         
-        res.json({ message: 'Cart item quantity updated successfully',totalCartAmount, total: newTotal });
+        res.json({ message: 'Cart item quantity updated successfully',totalCartAmount, total: newTotal ,isOfferAvailable});
 })
 
 exports.destroyCartItem = catchAsync(async (req, res) => {
@@ -607,10 +652,3 @@ exports.userLogout = (req, res) => {
   req.session.user = null
   res.redirect('/login')
 }
-
-
-
-
-
-
-
