@@ -63,7 +63,6 @@ exports.showLogin = (req, res) => {
 }
 
 exports.showSignup = (req, res) => {
-  // const referral = req.query.referral
   res.render('users/signup')
 }
 
@@ -322,8 +321,8 @@ exports.getProductDetails = catchAsync(async (req, res) => {
   if(userExist){
     var user = await User.findById({_id:req.session.user})
   }
-  const product = await Product.findOne({ _id: req.params.id })
-  const category = await Category.findOne({ _id: product.category })
+  const product = await Product.findOne({ _id: req.params.id }).populate('offer')
+  const category = await Category.findOne({ _id: product.category }).populate('offer')
   res.render('users/productDetails', {user, product, category,success:req.flash('success'),userExist,error:req.flash('error')})
 })
 
@@ -334,7 +333,7 @@ exports.showshopIndex = async (req, res) => {
       if (userExist) {
           var user = await User.findById({ _id: req.session.user });
       }
-      const categories = await Category.find({ is_deleted: false });
+      const categories = await Category.find({ is_deleted: false }).populate('offer')
       const brands = await Product.distinct('brand');
       const pageNumber = req.body.pageNumber || 0;
       const productsPerPage = 8;
@@ -385,24 +384,26 @@ exports.showshopIndex = async (req, res) => {
           }
         },
         {
-          $unwind: '$category'
-        },
-        {
-          $match: neededFilter
-        },
-        {
           $lookup: {
             from: 'offers',
             localField: 'offer',
             foreignField: '_id',
-            as: 'offerDetails'
+            as: 'offer'
           }
         },
         {
-          $unwind: {
-            path: '$offerDetails',
-            preserveNullAndEmptyArrays: true
+          $unwind: '$category'
+        },
+        {
+          $lookup: {
+              from: 'offers',
+              localField: 'category.offer',
+              foreignField: '_id',
+              as: 'category.offer'
           }
+            },
+        {
+          $match: neededFilter
         },
         {
           $facet: {
@@ -422,22 +423,14 @@ exports.showshopIndex = async (req, res) => {
           }
         }
       ];
-      let isOfferAvailable = false
+      // let isOfferAvailable = false
       const prdt = await Product.aggregate(aggragationPipeline);
       let totalItems = prdt[0].totalPages[0].total;
       let totalPages = Math.ceil(totalItems / 8);
       const products = prdt[0].products;
-      // console.log(products.forEach((prdct)=>prdct.offerPrice))
-      // return console.log(products[0].offerPrice); 
-       // Calculate offer prices for products within the valid date range
-    const currentDate = new Date();
-    for (const product of products) {
-      product.isOfferAvailable =
-      product.offerDetails && product.offerDetails.is_deleted===false &&
-      currentDate >= product.offerDetails.startingDate &&
-      currentDate <= product.offerDetails.expiryDate;
-    }
-      res.render('users/shop', { userExist, user, success: req.flash('success'), error: req.flash('error'), products, totalPages, categories, brands, totalItems, filterName,isOfferAvailable});
+
+    
+      res.render('users/shop', { userExist, user, success: req.flash('success'), error: req.flash('error'), products, totalPages, categories, brands, totalItems, filterName});
 
   } catch (error) {
       console.log(error.message);
@@ -468,7 +461,8 @@ exports.addTocart=async (req,res)=>{
     
   try {
       const user=await User.findById(req.session.user)
-      const product = await Product.findById(req.body.productId).populate('offer')
+      const product = await Product.findById(req.body.productId).populate(['offer','category'])
+
     //  return console.log(product);
       if(req.body.quantity){
         var quantity= parseInt(req.body.quantity);
@@ -479,13 +473,22 @@ exports.addTocart=async (req,res)=>{
       }else{
         quantity=1
       }
-     console.log(product)
-let price = product.regularPrice;
-if (product.offerPrice !==0 && product.offer.status === 'Available') {
+    //  console.log(product)
+let price ;
+
+
+const categoryOffer = await Offer.findById(product.category.offer)
+if(product.categoryOfferPrice!==0 && categoryOffer.status === 'Available' && categoryOffer.is_deleted === false){
+  console.log(categoryOffer);
+  price = product.categoryOfferPrice
+}
+else if(product.offerPrice !==0 && product.offer.status === 'Available') {
   price = product.offerPrice;
   console.log(price);
+ }else{
+  price = product.regularPrice
  }
-
+  console.log(price);
       const total=quantity*price
       let totalCartAmount = 0;
       user.cart.forEach(item => {
@@ -524,24 +527,25 @@ exports.updateCartQauntity = catchAsync ( async (req,res) => {
             return res.status(404).json({ message: 'Cart item not found' });
         }
         // Calculate the new total based on the product's price and new quantity
-        const product = await Product.findById(cartItem.product).populate('offer');
+        const product = await Product.findById(cartItem.product).populate(['offer','category']);
         if(newQuantity>product.stock){
           req.flash('error','stock limit exceeded!')
           return res.json({stock:product.stock,error:req.flash('error')})
         }
-        let price = product.regularPrice
-        const currentDate = new Date();
-const startDate  = product.offer.startingDate
-const endDate  = product.offer.expiryDate
-let isOfferAvailable = false
-if(startDate<=currentDate && endDate>=currentDate){
-  isOfferAvailable = true
-}
-// Check if offer details are available and valid
-if (isOfferAvailable===true) {
-  price = product.offerPrice;
-  console.log(price);
- }
+        let price ;
+
+
+        const categoryOffer = await Offer.findById(product.category.offer)
+        if(product.categoryOfferPrice!==0 && categoryOffer.status === 'Available' && categoryOffer.is_deleted === false){
+          console.log(categoryOffer);
+          price = product.categoryOfferPrice
+        }
+        else if(product.offerPrice !==0 && product.offer.status === 'Available') {
+          price = product.offerPrice;
+          console.log(price);
+         }else{
+          price = product.regularPrice
+         }
         const newTotal = newQuantity * price;
         // Update cart item properties
         cartItem.quantity = newQuantity;
@@ -554,7 +558,7 @@ if (isOfferAvailable===true) {
         user.totalCartAmount = totalCartAmount;
         await user.save();
         
-        res.json({ message: 'Cart item quantity updated successfully',totalCartAmount, total: newTotal ,isOfferAvailable});
+        res.json({ message: 'Cart item quantity updated successfully',totalCartAmount, total: newTotal});
 })
 
 exports.destroyCartItem = catchAsync(async (req, res) => {

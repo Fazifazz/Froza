@@ -74,13 +74,21 @@
                     </td>
                     <td class="text-center">
                       <div class="display-tc" id="price">
-                        <% if(cartprdt.product.offerPrice!==0 && cartprdt.product.offer.status==='Available' ){ %>
-                          <span class="regular">&#8377;<%=cartprdt.product.offerPrice %></span>
-                          <span class="text-success">by offer</span>
-                          <% }else{ %>
+                        <% if(cartprdt.product.categoryOfferPrice!==0 ){%>
+                          <% if(cartprdt.product.categoryOfferPrice===0){ %>
                             <span class="regular">&#8377;<%=cartprdt.product.regularPrice %></span>
-                          <% } %>
-                      </div>
+                            <% }else{ %>
+                              <span class="regular">&#8377;<%=cartprdt.product.categoryOfferPrice %></span>
+                              <small class="text-success">category offer</small>
+                              <% } %>
+                              <% }else{ %>
+                                <% if(cartprdt.product.offerPrice===0){ %>
+                                  <span class="regular">&#8377;<%=cartprdt.product.regularPrice %></span>
+                                  <% }else{ %>
+                                    <span class="regular">&#8377;<%=cartprdt.product.offerPrice %></span>
+                                    <small class="text-success">on offer</small>
+                                    <% } %>
+                              <% } %>      
                     </td>
                     
                     <td class="text-center">

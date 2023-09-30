@@ -49,23 +49,31 @@ exports.getCategories = catchAsync(async (req, res) => {
 
 exports.showCreateCategory = async (req, res) => {
   const category = await Category.findById({_id:req.session.admin})
-    res.render('admin/categories/new',{category,error:req.flash('error')})
+  const offers = await Offer.find({is_deleted:false})
+  res.render('admin/categories/new',{offers,category,error:req.flash('error')})
 }
 
 
 exports.createCategory = catchAsync(async (req, res) => {
-    const { name, photo } = req.body;
+    // const {id } = req.params
+    const { name, photo,offerId } = req.body;
     
     if (name.length === 0 || photo.length === 0) {
         return res.render('admin/categories/new', { error: 'Name and Photo are required fields.' });
     }
     
     const oldCategoryName = await Category.find({ name: new RegExp(name, 'i') });
-    
+
+        if(offerId!=='-1'){
+          const offer = await Offer.findById(offerId)
+        }else{
+          offerId  = null
+        }
     if (oldCategoryName.length === 0) { // Check the length of the array
         await Category.create({
             name,
-            image: '/category/' + photo
+            image: '/category/' + photo,
+            offer:offerId
         });
         req.flash('success', 'Category Added successfully');
         return res.redirect("/admin/Category");
@@ -79,14 +87,15 @@ exports.createCategory = catchAsync(async (req, res) => {
 exports.editCategory = catchAsync(async (req, res) => {
     const { id } = req.params
     const category = await Category.findById(id)
-    res.render('admin/categories/edit', { category })
+    const offers = await Offer.find({is_deleted:false})
+    res.render('admin/categories/edit', { category,offers })
 })
 
 exports.destroyCategory = catchAsync(async (req, res) => {
     const  id  = req.body.id
     const state = Boolean(req.body.state)
-    const category = await Category.findByIdAndUpdate(id,{$set:{ is_deleted:state} },{new:true})
-        res.redirect('/admin/Category')
+    await Category.findByIdAndUpdate(id,{$set:{ is_deleted:state} },{new:true})
+    res.redirect('/admin/Category')
 })
 
 // exports.destroyCtegoryImage = catchAsync( async (req,res) => {
@@ -103,11 +112,42 @@ exports.destroyCategory = catchAsync(async (req, res) => {
 
 exports.updateCategory = catchAsync(async (req, res) => {
     const { id } = req.params
-    const { name, photo } = req.body
-    const category = await Category.findById(id)
+    const { name, photo,offerId } = req.body
+    const category = await Category.findById(id).populate('offer')
+    let offer;
+    
+    if(offerId!=='-1'){
+      offer = offerId
+      const choosedoffer = await Offer.findById(offer)
+      const categoryProducts = await Product.find({category:id})
+      console.log(categoryProducts)
+
+      if(categoryProducts){  
+         for(let i=0;i<categoryProducts.length;i++){
+           let price =categoryProducts[i].regularPrice
+           let categoryOfferPrice = categoryProducts[i].categoryOfferPrice
+
+           categoryOfferPrice = (choosedoffer.discount/100) * price
+           categoryOfferPrice = Math.ceil(price-categoryOfferPrice)
+           categoryProducts[i].categoryOfferPrice = categoryOfferPrice
+           await categoryProducts[i].save()
+
+        }
+      }
+    }else{
+      offer  = null
+      let categoryProducts  = await Product.find({category:id})
+      if(categoryProducts){
+        for(let i=0;i<categoryProducts.length;i++){
+          categoryProducts[i].categoryOfferPrice = 0
+          categoryProducts[i].save()
+        }
+      }
+    }
 
     let updatedObj = {
         name,
+        offer
     }
 
     if (typeof photo !== "undefined") {
@@ -116,7 +156,6 @@ exports.updateCategory = catchAsync(async (req, res) => {
         })
         updatedObj.image = "/category/" + photo;
     }
-
     await category.updateOne(updatedObj)
 
     res.redirect('/admin/Category')
@@ -150,6 +189,14 @@ exports.createProduct = async (req, res) => {
         if(check11) size.push(check11)
         if(check12) size.push(check12)
 
+        const choosedCategory  = await Category.findById(category).populate('offer')
+        if(choosedCategory.offer && choosedCategory.offer.status === 'Available'){
+            const cOffer = choosedCategory.offer
+            console.log(cOffer);
+            var categoryOfferPrice = (cOffer.discount/100) * regular
+            categoryOfferPrice = Math.ceil(regular-categoryOfferPrice)
+        }
+
         let offerPrice;
         if(offerId!=='-1'){
           const offer = await Offer.findById(offerId)
@@ -160,6 +207,7 @@ exports.createProduct = async (req, res) => {
           offerPrice = 0
           offerId  = null
         }
+        
 
         const product = await Product.create({
             title,
@@ -172,9 +220,10 @@ exports.createProduct = async (req, res) => {
             stock,
             category,
             offerPrice,
+            categoryOfferPrice,
             offer:offerId
         });
-
+      
         res.redirect('/admin/products');
     } catch (error) {
         console.error(error.message);
@@ -222,6 +271,14 @@ exports.updateProduct = async (req, res) => {
         if(check12) size.push(check12)
 
 
+        const choosedCategory  = await Category.findById(category).populate('offer')
+        if(choosedCategory.offer && choosedCategory.offer.status === 'Available'){
+            const cOffer = choosedCategory.offer
+            console.log(cOffer);
+            var categoryOfferPrice = (cOffer.discount/100) * regular
+            categoryOfferPrice = Math.ceil(regular-categoryOfferPrice)
+        }
+
         let offerPrice;
         let offerId
         if(req.body.offerId!=='-1'){
@@ -235,6 +292,7 @@ exports.updateProduct = async (req, res) => {
           offerPrice = 0
           offerId = null
         }
+      
       const product = await Product.findByIdAndUpdate(id, {$set: {
         title,
         brand,
@@ -245,6 +303,7 @@ exports.updateProduct = async (req, res) => {
         regularPrice: regular,
         category,
         offerPrice,
+        categoryOfferPrice,
         offer:offerId
       }}, { new: true })
   

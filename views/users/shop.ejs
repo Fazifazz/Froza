@@ -144,15 +144,21 @@
                                                 <h2><%= prdct.title.toUpperCase() %></h2>
                                                 <h4 class="text-secondary"><%= prdct.brand.toUpperCase() %></h4>
                                                 <!-- no offer time -->
-                                                <% if (!prdct.isOfferAvailable) { %>
-                                                <span class="price">&#8377;<%= prdct.regularPrice %> </span>
-                                                <% }else{ %>    
-                                                <!-- offer time -->
-                                                <span class="price" style="text-decoration: line-through red;">&#8377;<%= prdct.regularPrice %> </span>
-                                                <span class="price text-success">&#8377;<%=prdct.offerPrice %> </span>
-                                                <span class="price text-success"><b><%=prdct.offerDetails.discount %>% <%= prdct.offerDetails.name %> offer</b></span>
-                                                <% } %>    
-                                               
+                                                <% if(prdct.category.offer.length && prdct.category.offer[0].status === 'Available' && prdct.category.offer[0].is_deleted === false){ %>
+                                                    <h4><%= prdct.name %></h4>
+                                                    <h3 style="text-decoration: line-through; color: #999;">&#8377;<%= prdct.regularPrice %></h3>
+                                                    <h5 class="text-success"><%= prdct.category.offer[0].discount  %>% <%= prdct.category.offer[0].name %> offer on <%= prdct.category.name %></h5>
+                                                    <h6 class="text-success"><%= prdct.categoryOfferPrice %>/- only</h6>
+                                                <% }else if(prdct.offerPrice !==0 && prdct.offer[0].status === 'Available' && prdct.offer[0].is_deleted === false) { %>
+                                                    <h4><%= prdct.name %></h4>
+                                                    <h3 style="text-decoration: line-through; color: #999;">&#8377;<%= prdct.regularPrice %></h3>
+                                                    <h5 class="text-success"><%= prdct.offer[0].discount  %>% <%= prdct.offer[0].name %> off</h5>
+                                                    <h6 class="text-success"><%= prdct.offerPrice %>/- only</h6>
+                                                <% }else{ %>
+                                                    <h4><%= prdct.name %></h4>
+                                                    <h3>&#8377;<%= prdct.regularPrice %></h3>
+                                                <% } %>   
+                                           
                                             </div>
                                             <% if(prdct.stock===0){ %>
                                                 <p class="text-danger">Out of Stock!</p>

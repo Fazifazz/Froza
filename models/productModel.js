@@ -48,9 +48,11 @@ const productSchema = new mongoose.Schema ({
         type: Number,
         default:0
     },
-    offerAppliedBy: { 
-        type: String
+    categoryOfferPrice: {
+        type:Number,
+        default:0
     }
+    
 })
 
 const Product = mongoose.model('Product',productSchema);

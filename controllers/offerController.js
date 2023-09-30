@@ -7,6 +7,7 @@ const crypto = require('crypto')
 const Offer = require('../models/offerModel')
 const catchAsync = require('../utils/catchAsync')
 const Product = require('../models/productModel')
+const Category = require('../models/categoryModel')
 
 
 exports.showOfferIndex = catchAsync(async (req,res) =>{
@@ -95,7 +96,26 @@ exports.updateOffer = catchAsync (async (req,res) => {
                 await offerExistingProducts[i].save()
             }
         }
+        const offerExistingCategories = await Category.find({offer:id})
+        console.log(offerExistingCategories)
+        if(offerExistingCategories.length > 0){
+            for(let i=0;i<offerExistingCategories.length;i++){
+                let category = await Category.findById(offerExistingCategories[i]._id)
+                let catProducts = await Product.find({category:category._id})
+                if(catProducts.length > 0){
+                 for(let j=0;j<catProducts.length;j++){
+                    let price = catProducts[j].regularPrice
+                    let categoryOfferPrice = catProducts[j].categoryOfferPrice
 
+                    categoryOfferPrice = (discount/100) * price
+                    categoryOfferPrice = Math.ceil(price - categoryOfferPrice)
+                    catProducts[j].categoryOfferPrice = categoryOfferPrice
+                    await catProducts[j].save()
+                 }
+                }
+            }
+        }
+    
     const offer = await Offer.findByIdAndUpdate(id,{$set:{
         name: offerName,
         discount,
@@ -119,6 +139,23 @@ exports.destroyOffer = catchAsync(async (req,res) => {
                     await offerExistingProducts[i].save()
                 }
             }
+            const offerExistingCategories = await Category.find({offer:id})
+        if(offerExistingCategories){
+            for(let i=0;i<offerExistingCategories.length;i++){
+                let category = await Category.findById(offerExistingCategories[i]._id)
+                category.offer = null
+                await category.save()
+
+                let catProducts = await Product.find({category:category._id})
+                if(catProducts.length > 0){
+                  for(let j=0;j<catProducts.length;j++){
+                    catProducts[j].categoryOfferPrice = 0
+                    await catProducts[j].save()
+                  }
+                }
+                
+            }
+        }
     }
     const offer  = await Offer.findByIdAndUpdate(id,{$set:{ is_deleted:state}},{new:true})
     res.redirect('/admin/offers')
