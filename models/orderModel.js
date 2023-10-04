@@ -57,7 +57,10 @@ const orderSchema = new mongoose.Schema({
     paymentMethod:{
         type:String,
         required:true
-    }
+    },
+    cancelledOn: {
+        type: Date
+    },
 });
 
 // Create the Order model

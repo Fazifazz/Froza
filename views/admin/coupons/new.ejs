@@ -22,11 +22,13 @@
                   <div class="mb-3">
                       <label for="code" class="form-label">Coupon Code prefix:</label>
                       <input type="text" class="form-control" id="code" name="codePrefix" placeholder="(eg:FROZA)" required>
+                      <small id="prefixErr" class="text-danger"></small>
                   </div>
       
                   <div class="mb-3">
                       <label for="description" class="form-label">Description:</label>
                       <input type="text" class="form-control" id="description" name="description" required>
+                      <small id="descriptionErr" class="text-danger"></small>
                   </div>
       
                   <div class="mb-3">
@@ -39,24 +41,28 @@
                   <div class="mb-3">
                       <label for="discountAmount" class="form-label">Discount Amount (in Rs):</label>
                       <input type="number" class="form-control" id="discountAmount" name="discountAmount" required>
+                      <small id="discountErr" class="text-danger"></small>
                   </div>
       
                   <div class="mb-3">
                       <label for="minPurchase" class="form-label">Minimum Purchase Amount (in Rs):</label>
                       <input type="number" class="form-control" id="minPurchase" name="minPurchase" required>
+                      <small id="minPurchaseErr" class="text-danger"></small>
                   </div>
       
                   <div class="mb-3">
                       <label for="usageLimit" class="form-label">Usage Limit:</label>
                       <input type="number" class="form-control" id="usageLimit" name="usageLimit" value="1" required>
+                      <small id="usagelimitErr" class="text-danger"></small>
                   </div>
       
                   <div class="mb-3">
                       <label for="expiryDate" class="form-label">Expiry Date:</label>
                       <input type="date" class="form-control" id="expiryDate" name="expiryDate" required>
+                      <small id="expiryDateErr" class="text-danger"></small>
                   </div>
       
-                  <button type="submit" class="btn btn-primary">Add Coupon</button>
+                  <button type="submit"  onclick="return validateCoupon()" class="btn btn-primary">Add Coupon</button>
                   <button type="button" class="btn btn-light" onclick="goBack()">Back</button>
               </form>
           </div>
@@ -65,6 +71,7 @@
 </div>
 </div>     
 </div>
+<script src="/validations/couponValidation.js"></script>
 <script>
     function goBack() {
         window.history.back()

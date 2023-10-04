@@ -77,7 +77,9 @@ router
 router
     .get('/orders', isAdminLoggedIn, orderController.getOrderList)
     .get('/orders/:id', isAdminLoggedIn, orderController.orderDetails)
-    .patch('/orders', isAdminLoggedIn, orderController.updateOrderStatus);
+    .patch('/orders', isAdminLoggedIn, orderController.updateOrderStatus)
+    .get('/salesReport',isAdminLoggedIn,orderController.salesReport)
+    .post('/salesReport',isAdminLoggedIn,orderController.salesReport)
 
   
  //coupon routes

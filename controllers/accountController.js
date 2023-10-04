@@ -18,12 +18,32 @@ exports.showProfile=async (req,res)=>{
       if(userExist){
         var user = await User.findById({_id:req.session.user})  
       }
-        res.render('users/account/profile',{userExist,user})
+        res.render('users/account/profile',{userExist,user,success:req.flash('success')})
     } catch (error) {
         console.log(error.message)
         res.status(500).send('Internal Server Error');
     }
 }
+
+exports.showEditProfile = catchAsync(async (req,res) => {
+  const userExist = Boolean(req.session.user)
+      if(userExist){
+        var user = await User.findById({_id:req.session.user})  
+      }
+  res.render('users/account/editProfile',{ user,userExist })
+})
+
+exports.updateProfile = catchAsync (async (req,res) => {
+  const userId = req.session.user;
+  const { name,phone,image } = req.body
+  await User.findByIdAndUpdate(userId,{$set:{
+    name,
+    mobile:phone,
+    profile:image
+  }},{new:true})
+  req.flash('success','Profile updated');
+  res.redirect('/profile')
+})
 
 exports.showAddress=async (req,res)=>{
     try {

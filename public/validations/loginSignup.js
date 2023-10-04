@@ -24,9 +24,11 @@ const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/
 function validateFName() {
     let name =document.getElementById('name').value.trim()
     // console.log('validating fname');
-    if (name.length === 0) {
+    if (name.length === 0 || name.length < 3) {
         nameErr.innerHTML = "Name required!";
         return false;
+    }else{
+        nameErr.innerHTML = "";
     }
     if (name.match(nameRegex)) {
         nameErr.innerHTML = "";

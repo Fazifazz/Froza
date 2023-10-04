@@ -103,13 +103,13 @@
 							<p class="price">
 								<span>&#8377;<%= product.mrp %>/- (MRP)</span>
 								<% if(category.offer !== null && category.offer.status === 'Available' && category.offer.is_deleted === false){ %>
-									<h2 style="text-decoration: line-through;">&#8377;<%= product.regularPrice %></h2>
-									<h4 class="text-success"><%= category.offer.discount  %>% <%= category.offer.name %> offer on <%= category.name %></h4>
-									<h5 class="text-success"><%= product.categoryOfferPrice %>/- only</h5>
+									<h2 style="text-decoration: line-through red;">&#8377;<%= product.regularPrice %></h2>
+									<h3 class="text-success"><%= category.offer.discount  %>% <%= category.offer.name %> offer on <%= category.name %></h3>
+									<h2 class="text-success">&#8377;<%= product.categoryOfferPrice %>/- only</h2>
 								  <% }else if(product.offerPrice !==0 && product.offer.status === 'Available' && product.offer.is_deleted === false ) { %>
-									<h2 style="text-decoration: line-through;">&#8377;<%= product.regularPrice %></h2>
-									<h4 class="text-success"><%= product.offer.discount  %>% <%= product.offer.name %> off</h4>
-									<h5 class="text-success"><%= product.offerPrice %>/- only</h5>
+									<h2 style="text-decoration: line-through red;">&#8377;<%= product.regularPrice %></h2>
+									<h3 class="text-success"><%= product.offer.discount  %>% <%= product.offer.name %> offer</h3>
+									<h2 class="text-success"><%= product.offerPrice %>/- only</h2>
 								  <% }else{ %>  
 									 <h2><%= product.regularPrice %></h2>
 								  <% } %>

@@ -68,12 +68,15 @@ router
     .get('/orderSuccess',isUserLoggedIn,orderController.showOrderSuccess)
     
     .get('/showOrders',isUserLoggedIn, orderController.showOrdersIndex)
+    .post('/showOrders/invoice',isUserLoggedIn,orderController.loadInvoice)
     .get('/razorpay/CreateOrder',isUserLoggedIn,orderController.createOrder)
     .post('/showOrders/orderDetails',isUserLoggedIn, orderController.orderDetails)
     .post('/showOrders/cancelOrder',isUserLoggedIn, orderController.destroyOrder)
     .post('/showOrders/refundOrder',isUserLoggedIn,orderController.refundOrder)
     //address
     .get('/profile',isUserLoggedIn,accountController.showProfile)
+    .get('/profile/edit',isUserLoggedIn,accountController.showEditProfile)
+    .patch('/profile/edit',isUserLoggedIn,profileImages.uploadProfileImage,profileImages.resizeProfileImage,accountController.updateProfile)
     .get('/profile/address',isUserLoggedIn, accountController.showAddress)
     .get('/profile/addAddress',isUserLoggedIn, accountController.showAddaddress)
     .post('/profile/addAddress',isUserLoggedIn, accountController.addAddress)

@@ -76,6 +76,18 @@
                                     <button  class="btn btn-primary btn-sm" type="submit">Details</button>
                                   </form>
                                   <% } %>
+                                  <% }else if(order.status === 'Delivered'){ %> 
+                                    <p class="text-success"><strong>Delivered on: </strong><br><%if(order.deliveredOn){ %>  <%=order.deliveredOn.toDateString() %>   <%}%></p>
+                                    <form action="/showOrders/invoice" method="post" novalidate="novalidate">
+                                      <input type="hidden" name="orderId" value="<%= order.orderId %>">
+                                      <button class="btn btn-outline-primary btn-sm mt-2"  type="submit">
+                                        download invoice
+                                      </button>
+                                    </form> 
+                                    <form action="/showOrders/orderDetails" method="post">
+                                      <input type="hidden" name="orderId" value="<%= order.orderId %>">
+                                      <button  class="btn btn-primary btn-sm" type="submit">Details</button>
+                                    </form>
                              <% } else { %>
                                  <h6 class="text-success"><%= order.status  %></h6>
                                  <div class="d-flex flex-column mt-4">

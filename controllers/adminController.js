@@ -4,17 +4,272 @@ const catchAsync = require('../utils/catchAsync')
 const Category = require('../models/categoryModel')
 const Product = require('../models/productModel')
 const Offer = require('../models/offerModel')
+const Order = require('../models/orderModel')
 const User = require('../models/userModel')
 const fs = require('fs')
 const path = require('path')
 
-exports.dashboard = (req, res) => {
-    res.render('admin/dashboard')
-}
+// exports.dashboard = (req, res) => {
+//     res.render('admin/dashboard')
+// }
 
 exports.loadLogin = (req, res) => {
     res.render('admin/adminLogin')
 }
+
+
+exports.dashboard =async (req, res) => {
+  try {
+     const orders = await Order.find().populate('products')
+     const totalUsers = await User.find().countDocuments();
+     const monthSales = await Order.aggregate([
+      {
+          $match:{
+              status:{$ne:'Cancelled'}
+          }
+      },
+      {
+
+          $group: {
+              _id: {
+                year: { $year: '$orderDate' },
+                month: { $month: '$orderDate' }
+              },
+              totalSales: { $sum: '$totalPrice' }
+          }
+      },
+      {
+          $sort: {
+            '_id.year': 1,
+            '_id.month': 1
+          }
+      }
+  ])
+
+  const totalRevenue = await Order.aggregate([
+    {
+        $group: {
+          _id: null,
+          totalRevenue: { $sum: '$totalPrice' }
+        }
+      }
+  ])
+
+const today = new Date().toISOString().split('T')[0];
+const todaysRevenue = await Order.aggregate([
+  {
+      $match: {
+          orderDate: {
+              $gte: new Date(today), 
+              $lt: new Date(new Date(today).setDate(new Date(today).getDate() + 1)) 
+          }
+      }
+  },
+  {
+      $group: {
+          _id: null,
+          todaysSales: { $sum: '$totalPrice' }
+      }
+  }
+])
+
+
+
+const topSellingCategory = await Order.aggregate([
+  {
+      $unwind: '$products'
+    },
+    {
+      $lookup: {
+        from: 'products', 
+        localField: 'products.product',
+        foreignField: '_id',
+        as: 'productInfo'
+      }
+    },
+    {
+      $unwind: '$productInfo'
+    },
+    {
+      $group: {
+        _id: '$productInfo.category',
+        totalQuantitySold: { $sum: '$products.quantity' }
+      }
+    },
+    {
+      $lookup: {
+        from: 'categories', 
+        localField: '_id',
+        foreignField: '_id',
+        as: 'category'
+      }
+    },
+    {
+      $sort: {
+        totalQuantitySold: -1 
+      }
+    },
+])
+
+
+const topSellingProducts = await Order.aggregate([
+  {
+      $unwind: '$products'
+  },
+  {
+      $group: {
+        _id: '$products.product',
+        totalQuantitySold: { $sum: '$products.quantity' }
+      }
+  },
+  {
+      $lookup: {
+        from: 'products', 
+        localField: '_id',
+        foreignField: '_id',
+        as: 'productInfo'
+      }
+  },
+  {
+      $unwind: '$productInfo'
+  },
+  {
+      $sort: {
+        totalQuantitySold: -1 
+      }
+  },
+  {
+      $limit: 5 
+  }
+])
+
+
+
+const pendingOrders = await Order.aggregate([
+  {
+      $match: {
+        status: 'Pending'
+      }
+  },
+  {
+      $lookup: {
+        from: 'products', 
+        localField: 'products.product',
+        foreignField: '_id',
+        as: 'productsInfo'
+      }
+  }
+])
+
+console.log(pendingOrders)
+
+const cancelOrders = await Order.aggregate([
+    {
+      $match: {
+        status: 'Cancelled' 
+      }
+    },
+    {
+      
+      $lookup: {
+        from: 'products', 
+        localField: 'products.product',
+        foreignField: '_id',
+        as: 'productsInfo'
+      }
+    },
+    
+  
+])
+
+
+
+const paymentStatics = await Order.aggregate([
+  {
+      $group: {
+        _id: '$paymentMethod',
+        totalAmount: { $sum: '$totalPrice' }
+      }
+    }
+])
+
+const blockedUser = await User.find({blocked:true}).countDocuments();
+
+
+
+const totalOrders = await Order.aggregate([
+  {
+      $match: {
+          status: { $ne: 'Cancelled' }
+      }
+  },
+  {
+      $group: {
+          _id: null,
+          totalOrders: { $sum: 1 }
+      }
+  }
+])
+
+
+
+
+const yearlyChart = await Order.aggregate([
+  {
+      $match: {
+        status: 'Delivered', 
+      }
+    },
+    {
+      $group: {
+        _id: {
+          year: { $year: '$orderDate' },
+          month: { $month: '$orderDate' }
+        },
+        totalSales: { $sum: '$totalPrice' }
+      }
+    },
+    {
+      $sort: {
+        '_id.year': 1,
+        '_id.month': 1
+      }
+    },
+    {
+
+      $project:{
+          _id:0
+      }
+    }
+])
+const yearlyData =yearlyChart.map((item)=>{ return item.totalSales});
+// console.log(yearlyChart)
+// console.log(yearlyData)
+
+   return res.render("admin/dashboard",{
+     monthSales,
+     totalRevenue,
+     todaysRevenue,
+     totalUsers,
+     topSellingCategory,
+     topSellingProducts,
+     pendingOrders,
+     cancelOrders,
+     paymentStatics,
+     blockedUser,
+     totalOrders,
+     yearlyData
+    });
+    
+    
+   } catch (error) {
+     
+     console.log(error.message)
+     res.status(500).send('Internal Server Error');
+   }
+ }
+
+ 
 
 
 exports.verifyAdminLogin = async (req, res, next) => {

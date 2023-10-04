@@ -66,7 +66,7 @@ exports.placeOrder = async (req,res)=>{
       req.flash('error','Insufficient Balance in your Wallet')
       return res.redirect('/checkout')
     }
-    await User.updateOne({_id:user._id},{$set:{cart:[],totalCartAmount:0,wallet:currentWallet},$push:{walletHistory},})
+    await User.updateOne({_id:user._id},{$set:{cart:[],totalCartAmount:0,wallet:currentWallet,is_deducted:true},$push:{walletHistory}})
           //stock managment
           const orderDetails = await Order.aggregate([
             {
@@ -271,6 +271,69 @@ exports.showCheckout = catchAsync(async (req,res) => {
   }); 
 
 })
+
+exports.salesReport=async (req,res)=>{
+  try {
+    let neededFilter;
+    if(req.body.startDate && req.body.endDate){
+      let startDate =req.body.startDate
+      let endDate= req.body.endDate
+     
+      const sales = await Order.find({
+        status:'Delivered',
+        orderDate:{ $gte:new Date(`${startDate}T00:00:00.000Z`), $lte:new Date(`${endDate}T23:59:59.999Z`) }
+      })
+
+       console.log(sales)
+       console.log('start', startDate)
+       console.log('end', endDate)
+       if(sales.length ===0){
+          req.flash('error','no reports found')
+          return res.redirect('/admin/salesReport')
+       }else{
+         neededFilter = { status:'Delivered', orderDate:{ $gte:new Date(`${startDate}T00:00:00.000Z`), $lte:new Date(`${endDate}T23:59:59.999Z`) }  }
+       }
+    }else{
+      neededFilter = { status:'Delivered' }
+    }  
+    
+    const allOrders=await Order.aggregate([
+          {
+            $match:neededFilter
+              
+          },
+        
+          {
+            $sort: { orderDate: -1 }
+          },
+          {
+            $lookup: {
+              from: "products", 
+              localField: "products.product", 
+              foreignField: "_id", 
+              as: "products.product" 
+            }
+          },
+          {
+            $lookup: {
+              from: "addresses", 
+              localField: "deliveryAddress", 
+              foreignField: "_id", 
+              as: "deliveryAddress" 
+            }
+          }
+        
+      ])
+
+    console.log(allOrders)  
+    res.render('Admin/orders/salesReport',{orders:allOrders, error:req.flash('error')})
+  } catch (error) {
+    console.log(error.message)
+    res.status(500).send('Internal Server Error');
+  }
+}
+
+
 exports.orderDetails=async (req,res)=>{
   try {
     const userExist = Boolean(req.session.user)
@@ -416,6 +479,7 @@ exports.destroyOrder = async (req, res) => {
           $push: {
             walletHistory,
           },
+          $set: { is_credited: true }
         }
       );
 
@@ -471,6 +535,7 @@ exports.refundOrder = catchAsync (async (req,res) =>{
       $push: {
         walletHistory,
       },
+      $set: { is_credited: true }
     }
   );
   await Order.findOneAndUpdate({orderId:orderId},{$set:{isRefunded:true}})
@@ -482,5 +547,53 @@ exports.refundOrder = catchAsync (async (req,res) =>{
 exports.showOrderSuccess  = catchAsync(async (req,res) => {
   res.render('users/orderSuccess')
 })
+
+
+exports.loadInvoice = async (req,res)=>{
+  try {
+    const order=await Order.find({orderId:req.body.orderId})
+
+    const orderDetails = await Order.aggregate([
+      {
+          $match:{
+            orderId:req.body.orderId
+          }
+      },
+      {
+        $sort: { orderDate: -1 }
+      },
+      {
+          $unwind:'$products'
+      },
+      {
+        $lookup: {
+          from: "products", 
+          localField: "products.product", 
+          foreignField: "_id", 
+          as: "products.product" 
+        }
+      },
+      {
+        $lookup: {
+          from: "addresses", 
+          localField: "deliveryAddress", 
+          foreignField: "_id", 
+          as: "deliveryAddress" 
+        }
+      }
+    ]);
+    
+    res.render('users/invoice',{Details:orderDetails})
+  } catch (error) {
+    console.log(error.message)
+    res.status(500).send('Internal Server Error');
+  }
+}
+      
+
+
+
+
+
 
 

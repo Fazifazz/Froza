@@ -55,7 +55,7 @@ exports.index = catchAsync(async (req, res) => {
   const skip = (page - 1) * ITEMS_per_PAGE;
   const products = await Product.find().skip(skip).limit(ITEMS_per_PAGE);
   const banners = await Banner.find()
-  res.render('users/index', {products,banners,userExist,user})
+  res.render('users/index', {success:req.flash('success'),products,banners,userExist,user})
 })
 
 exports.showLogin = (req, res) => {
@@ -112,8 +112,12 @@ exports.insertUser = async (req, res) => {
           amount:100,
           message: `Referal reward from ${user.name}`,
          };
-        await User.findByIdAndUpdate(referrerId,{$inc:{ wallet:100 },$push:{walletHistory},})
-      }else{
+         await User.findByIdAndUpdate(referrerId, {
+          $inc: { wallet: 100 },
+          $push: { walletHistory: walletHistory }, // Assuming walletHistory is an array
+          $set: { is_credited: true }
+        });
+              }else{
         req.flash('error','invalid referral code')
         return res.render('users/signup',{error:req.flash('error')})
       }
@@ -617,7 +621,7 @@ exports.addToWishlist = catchAsync (async (req,res) => {
   const productid=req.body.productId
   const product = await Product.findById(productid)
   const user = await User.findById(req.session.user)
-  const existingItemIndex=await user.wishlist.find(item=> item.equals(product._id))
+  const existingItemIndex= await user.wishlist.find(item=> item.equals(product._id))
   if(existingItemIndex === undefined){
       user.wishlist.push(product._id)
   }

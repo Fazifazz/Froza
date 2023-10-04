@@ -97,6 +97,39 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    
+    <script src="/js/zoomImg.js"></script>
+    <script>
+      function back() {
+          window.history.back()
+      }
+  
+      const img = document.getElementById('preview-img')
+      img.onclick = () => zoomImg(img)
+  
+      function hideErrorMessage() {
+        var errorMessageElement = document.getElementById('error-message');
+        if (errorMessageElement) {
+          setTimeout(()=>{
+            errorMessageElement.style.display = 'none';
+          }, 4000);
+          
+        }
+      }
+      hideErrorMessage();
+  
+      const previewArea = document.getElementById('preview-group')
+      const previewInput = document.getElementById('preview-input')
+      const previewImg = document.getElementById('preview-img')
+  
+      previewInput.onchange = e => {
+          if (e.target.files && e.target.files.length) {
+              const imgSrc = URL.createObjectURL(e.target.files[0])
+              previewImg.src = imgSrc
+              previewArea.style.display = 'block'
+          }
+      }
+  
+      
+    </script>
 </body>
 </html>

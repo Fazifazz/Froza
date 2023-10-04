@@ -4,6 +4,8 @@ const discountErr = document.getElementById('discountErr')
 const startingDateErr = document.getElementById('startingDateErr')
 const expiryDateErr = document.getElementById('expiryDateErr')
 
+
+
 function validateName(){
     const name = document.getElementById('offerName').value.trim()
     if(name.length === 0){
@@ -21,7 +23,7 @@ function validateDiscound(){
         return false
     }
     if(discount < 1 || discount > 90 ){
-        discountErr.innerHTML = 'Discount must be >= 1 or <= 90'
+        discountErr.innerHTML = 'Discount% must be >= 1 or <= 90'
         return false
     }
     discountErr.innerHTML = ''

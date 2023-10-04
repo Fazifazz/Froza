@@ -91,6 +91,14 @@ const userSchema = new mongoose.Schema({
     referredBy:{
         type: String,
         readOnly: true
+    },
+    is_deducted:{
+        type:Boolean,
+        default:false
+    },
+    is_credited:{
+        type:Boolean,
+        default:false
     }
 },
 {

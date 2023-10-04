@@ -116,6 +116,22 @@
 
 
 					<div class="row row-pb-md">
+						<% if (success && success.length > 0) { %>
+							<div class="alert  text-white text-center" id="success-message" style="position: fixed; z-index: 100; top: 50%;left: 50%; background-color: #23923D;">
+							  <% success.forEach(function(message) { %>
+								<p><%= message %></p>
+							  <% }); %>
+							</div>
+							<script>
+								setTimeout(function() {
+								  var successMessage = document.getElementById('success-message');
+								  if (successMessage) {
+									successMessage.style.display = 'none';
+								  }
+								}, 2000); 
+							  </script>
+							<% } %>
+	
 						<% products.forEach((prdct) => { %>
 							<% if (!prdct.is_deleted) { %>
 								<div class="col-lg-3 mb-4 text-center">
@@ -137,9 +153,9 @@
                                                     <i class="fa fa-shopping-cart"></i> Add to Cart
                                                 </button>
                                             </form>
-                                            <a class="btn btn-success" href="#">
+                                            <!-- <a class="btn btn-success" href="#">
                                                 <i class="fa fa-shopping-bag"></i> Shop  Now
-                                            </a>
+                                            </a> -->
                                         </div>
 									</div>
 								</div>
@@ -151,7 +167,7 @@
 				
 							<div class="row">
 								<div class="col-md-12 text-center">
-									<p><a href="/shop" class="btn btn-primary btn-lg">Shop All Products</a></p>
+									<p><a href="/shop" class="btn btn-success btn-lg">Shop All Products</a></p>
 								</div>
 							</div>
 			</div>
