@@ -115,7 +115,7 @@ exports.insertUser = async (req, res) => {
          await User.findByIdAndUpdate(referrerId, {
           $inc: { wallet: 100 },
           $push: { walletHistory: walletHistory }, // Assuming walletHistory is an array
-          $set: { is_credited: true }
+          // $set: { is_credited: true }
         });
               }else{
         req.flash('error','invalid referral code')

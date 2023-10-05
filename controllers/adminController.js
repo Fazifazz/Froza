@@ -231,7 +231,7 @@ exports.dashboard = async (req, res) => {
 
     const yearlyData = yearlyChart.map((item) => item.totalSales);
 
-    return res.render("Admin/dashboard", {
+    return res.render("admin/dashboard", {
       monthSales,
       totalRevenue,
       todaysRevenue,

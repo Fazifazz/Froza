@@ -66,7 +66,7 @@ exports.placeOrder = async (req,res)=>{
       req.flash('error','Insufficient Balance in your Wallet')
       return res.redirect('/checkout')
     }
-    await User.updateOne({_id:user._id},{$set:{cart:[],totalCartAmount:0,wallet:currentWallet,is_deducted:true},$push:{walletHistory}})
+    await User.updateOne({_id:user._id},{$set:{cart:[],totalCartAmount:0,wallet:currentWallet},$push:{walletHistory}})
           //stock managment
           const orderDetails = await Order.aggregate([
             {
@@ -326,7 +326,7 @@ exports.salesReport=async (req,res)=>{
       ])
 
     console.log(allOrders)  
-    res.render('Admin/orders/salesReport',{orders:allOrders, error:req.flash('error')})
+    res.render('admin/orders/salesReport',{orders:allOrders, error:req.flash('error')})
   } catch (error) {
     console.log(error.message)
     res.status(500).send('Internal Server Error');
@@ -479,7 +479,7 @@ exports.destroyOrder = async (req, res) => {
           $push: {
             walletHistory,
           },
-          $set: { is_credited: true }
+          // $set: { is_credited: true }
         }
       );
 
@@ -535,7 +535,7 @@ exports.refundOrder = catchAsync (async (req,res) =>{
       $push: {
         walletHistory,
       },
-      $set: { is_credited: true }
+      // $set: { is_credited: true }
     }
   );
   await Order.findOneAndUpdate({orderId:orderId},{$set:{isRefunded:true}})

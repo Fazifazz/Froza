@@ -43,17 +43,10 @@ if (walletHistory.length) {
         %>
         <tr>
             <td><%= payment.date.toDateString() %></td>
-            <% if (user.is_deducted) { %>
-                <td class="text-danger">&#8377;<%= payment.amount %>/-</td>
-                <td class="text-danger"><%= payment.message %></td>
-            <% } else if (user.is_credited) { %>
-                <td class="text-success">&#8377;<%= payment.amount %>/-</td>
-                <td class="text-success"><%= payment.message %></td>
-            <% } %>
-        </tr>
-        <%  
-    });
-} else {
+                <td class="text">&#8377;<%= payment.amount %>/-</td>
+                <td class="text"><%= payment.message %></td>
+                <%})%>
+<% } else {
     %>
     <tr>
         <td colspan="3">
