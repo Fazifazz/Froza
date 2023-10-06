@@ -80,6 +80,7 @@ router
     .patch('/orders', isAdminLoggedIn, orderController.updateOrderStatus)
     .get('/salesReport',isAdminLoggedIn,orderController.salesReport)
     .post('/salesReport',isAdminLoggedIn,orderController.salesReport)
+    .post('/salesReport/download', isAdminLoggedIn, orderController.downloadSalesReport)
 
   
  //coupon routes

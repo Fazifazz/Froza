@@ -5,6 +5,7 @@ const Address = require('../models/addressModel')
 const Product = require('../models/productModel')
 const Coupon = require('../models/couponModel')
 const crypto = require('crypto')
+const json2csv = require('json2csv')
 const Razorpay = require('razorpay')
 
 
@@ -333,6 +334,46 @@ exports.salesReport=async (req,res)=>{
   }
 }
 
+
+exports.downloadSalesReport = async (req,res)=>{
+  try {
+    const data = req.body
+    let dataLength;
+    let transformedData=[]
+    if( Array.isArray(data.orderId) ){
+      dataLength = data.orderId.length
+      for(let i=0; i<dataLength; i++){
+        transformedData.push({
+            orderDate: data.orderDate[i],
+            deliveredOn: data.deliveredOn[i],
+            orderId: data.orderId[i],
+            products:data.ProductsName[i],
+            paymentMethod:data.paymentMethod[i],
+        })
+      }
+    }else{
+       dataLength = 1
+       transformedData = [];
+      transformedData.push({
+        orderDate: data.orderDate,
+        deliveredOn: data.deliveredOn,
+        orderId: data.orderId,
+        products:data.ProductsName,
+        paymentMethod:data.paymentMethod,
+      })
+
+    }
+    
+    const fields = ['orderDate',"orderId","deliveredOn","products","paymentMethod"]
+    const csv = json2csv.parse(transformedData, { fields });
+    res.attachment('salesReport.csv');
+    res.status(200).send(csv);
+
+  } catch (error) {
+    console.log(error.message)
+    res.status(500).send('Internal Server Error');
+  }
+}
 
 exports.orderDetails=async (req,res)=>{
   try {
