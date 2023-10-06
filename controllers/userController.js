@@ -331,115 +331,239 @@ exports.getProductDetails = catchAsync(async (req, res) => {
 })
 
 
+// exports.showshopIndex = async (req, res) => {
+//   try {
+//       const userExist = Boolean(req.session.user);
+//       if (userExist) {
+//           var user = await User.findById({ _id: req.session.user });
+//       }
+//       const categories = await Category.find({ is_deleted: false }).populate('offer')
+//       const brands = await Product.distinct('brand');
+//       const pageNumber = req.body.pageNumber || 0;
+//       const productsPerPage = 8;
+//       let neededFilter;
+//       let filterName;
+
+      // if (req.query.category) {
+      //     console.log(req.query.category);
+      //     neededFilter = { is_deleted: false, 'category.is_deleted': false, 'category.name': req.query.category };
+      //     filterName = req.query.category;
+      // } else if (req.body.min && req.body.max) {
+      //     let min = parseInt(req.body.min) || 0;
+      //     let max = parseInt(req.body.max) || Number.MAX_SAFE_INTEGER;
+      //     neededFilter = { is_deleted: false, 'category.is_deleted': false, regularPrice: { $gte: min, $lte: max } };
+      //     filterName = `price: less than ${req.body.max}, greater than ${req.body.min}`;
+      //   } else if (req.body.searchItem) {
+      //     const searchTerms = req.body.searchItem.split(' '); // Split search terms
+      //     const result = await Product.find({
+      //         is_deleted: false,
+      //         $and: searchTerms.map((term) => ({ title: { $regex: '.*' + term + '.*', $options: 'i' } }))
+      //     })
+      //         .populate('category')
+      //         .exec();
+      //     if (result.length === 0) {
+      //         req.flash('error', 'Matching product not found, search another..');
+      //         return res.redirect('/shop');
+      //     } else {
+      //         // Construct an array of category names from the result
+      //         const categoryNames = result.map((product) => product.category.name);
+      //         neededFilter = { is_deleted: false, 'category.is_deleted': false, 'category.name': { $in: categoryNames } };
+      //         filterName = `Products matching "${searchTerms}"`;
+      //     }
+      // } else if (req.query.brand) {
+      //     neededFilter = { is_deleted: false, 'category.is_deleted': false, 'brand': req.query.brand };
+      //     filterName = req.query.brand;
+      // } else {
+      //     neededFilter = { is_deleted: false, 'category.is_deleted': false };
+      //     filterName = '';
+      // }
+
+//       const aggragationPipeline = [
+//         {
+//           $lookup: {
+//             from: 'categories',
+//             localField: 'category',
+//             foreignField: '_id',
+//             as: 'category'
+//           }
+//         },
+//         {
+//           $lookup: {
+//             from: 'offers',
+//             localField: 'offer',
+//             foreignField: '_id',
+//             as: 'offer'
+//           }
+//         },
+//         {
+//           $unwind: '$category'
+//         },
+//         {
+//           $lookup: {
+//               from: 'offers',
+//               localField: 'category.offer',
+//               foreignField: '_id',
+//               as: 'category.offer'
+//           }
+//             },
+//         {
+//           $match: neededFilter
+//         },
+//         {
+//           $facet: {
+//             products: [
+//               {
+//                 $skip: pageNumber * productsPerPage
+//               },
+//               {
+//                 $limit: productsPerPage
+//               }
+//             ],
+//             totalPages: [
+//               {
+//                 $count: 'total'
+//               }
+//             ]
+//           }
+//         }
+//       ];
+//       // let isOfferAvailable = false
+//       const prdt = await Product.aggregate(aggragationPipeline);
+//       let totalItems = prdt[0].totalPages[0].total;
+//       let totalPages = Math.ceil(totalItems / 8);
+//       const products = prdt[0].products;
+//       const currentPage = parseInt(req.query.pageNumber) + 1;
+    
+//       res.render('users/shop', { userExist, user, success: req.flash('success'), error: req.flash('error'), products, totalPages, categories, brands, totalItems, filterName,currentPage});
+
+//   } catch (error) {
+//       console.log(error.message);
+//   }
+// }
+
 exports.showshopIndex = async (req, res) => {
   try {
-      const userExist = Boolean(req.session.user);
-      if (userExist) {
-          var user = await User.findById({ _id: req.session.user });
-      }
-      const categories = await Category.find({ is_deleted: false }).populate('offer')
-      const brands = await Product.distinct('brand');
-      const pageNumber = req.body.pageNumber || 0;
-      const productsPerPage = 8;
-      let neededFilter;
-      let filterName;
+    const userExist = Boolean(req.session.user);
+    if (userExist) {
+      var user = await User.findById({ _id: req.session.user });
+    }
+    const categories = await Category.find({ is_deleted: false }).populate('offer');
+    const brands = await Product.distinct('brand');
+    const pageNumber = parseInt(req.query.pageNumber) || 1; // Parse the pageNumber query parameter
+    const productsPerPage = 8;
+    let neededFilter;
+    let filterName;
 
-      if (req.query.category) {
-          console.log(req.query.category);
-          neededFilter = { is_deleted: false, 'category.is_deleted': false, 'category.name': req.query.category };
-          filterName = req.query.category;
-      } else if (req.body.min && req.body.max) {
-          let min = parseInt(req.body.min) || 0;
-          let max = parseInt(req.body.max) || Number.MAX_SAFE_INTEGER;
-          neededFilter = { is_deleted: false, 'category.is_deleted': false, regularPrice: { $gte: min, $lte: max } };
-          filterName = `price: less than ${req.body.max}, greater than ${req.body.min}`;
-        } else if (req.body.searchItem) {
-          const searchTerms = req.body.searchItem.split(' '); // Split search terms
-          const result = await Product.find({
-              is_deleted: false,
-              $and: searchTerms.map((term) => ({ title: { $regex: '.*' + term + '.*', $options: 'i' } }))
-          })
-              .populate('category')
-              .exec();
-          if (result.length === 0) {
-              req.flash('error', 'Matching product not found, search another..');
-              return res.redirect('/shop');
-          } else {
-              // Construct an array of category names from the result
-              const categoryNames = result.map((product) => product.category.name);
-              neededFilter = { is_deleted: false, 'category.is_deleted': false, 'category.name': { $in: categoryNames } };
-              filterName = `Products matching "${searchTerms}"`;
-          }
-      } else if (req.query.brand) {
-          neededFilter = { is_deleted: false, 'category.is_deleted': false, 'brand': req.query.brand };
-          filterName = req.query.brand;
+    // Your existing filter logic remains unchanged
+    if (req.query.category) {
+      console.log(req.query.category);
+      neededFilter = { is_deleted: false, 'category.is_deleted': false, 'category.name': req.query.category };
+      filterName = req.query.category;
+  } else if (req.body.min && req.body.max) {
+      let min = parseInt(req.body.min) || 0;
+      let max = parseInt(req.body.max) || Number.MAX_SAFE_INTEGER;
+      neededFilter = { is_deleted: false, 'category.is_deleted': false, regularPrice: { $gte: min, $lte: max } };
+      filterName = `price: less than ${req.body.max}, greater than ${req.body.min}`;
+    } else if (req.body.searchItem) {
+      const searchTerms = req.body.searchItem.split(' '); // Split search terms
+      const result = await Product.find({
+          is_deleted: false,
+          $and: searchTerms.map((term) => ({ title: { $regex: '.*' + term + '.*', $options: 'i' } }))
+      })
+          .populate('category')
+          .exec();
+      if (result.length === 0) {
+          req.flash('error', 'Matching product not found, search another..');
+          return res.redirect('/shop');
       } else {
-          neededFilter = { is_deleted: false, 'category.is_deleted': false };
-          filterName = '';
+          // Construct an array of category names from the result
+          const categoryNames = result.map((product) => product.category.name);
+          neededFilter = { is_deleted: false, 'category.is_deleted': false, 'category.name': { $in: categoryNames } };
+          filterName = `Products matching "${searchTerms}"`;
       }
-
-      const aggragationPipeline = [
-        {
-          $lookup: {
-            from: 'categories',
-            localField: 'category',
-            foreignField: '_id',
-            as: 'category'
-          }
-        },
-        {
-          $lookup: {
-            from: 'offers',
-            localField: 'offer',
-            foreignField: '_id',
-            as: 'offer'
-          }
-        },
-        {
-          $unwind: '$category'
-        },
-        {
-          $lookup: {
-              from: 'offers',
-              localField: 'category.offer',
-              foreignField: '_id',
-              as: 'category.offer'
-          }
-            },
-        {
-          $match: neededFilter
-        },
-        {
-          $facet: {
-            products: [
-              {
-                $skip: pageNumber * productsPerPage
-              },
-              {
-                $limit: productsPerPage
-              }
-            ],
-            totalPages: [
-              {
-                $count: 'total'
-              }
-            ]
-          }
-        }
-      ];
-      // let isOfferAvailable = false
-      const prdt = await Product.aggregate(aggragationPipeline);
-      let totalItems = prdt[0].totalPages[0].total;
-      let totalPages = Math.ceil(totalItems / 8);
-      const products = prdt[0].products;
-
-    
-      res.render('users/shop', { userExist, user, success: req.flash('success'), error: req.flash('error'), products, totalPages, categories, brands, totalItems, filterName});
-
-  } catch (error) {
-      console.log(error.message);
+  } else if (req.query.brand) {
+      neededFilter = { is_deleted: false, 'category.is_deleted': false, 'brand': req.query.brand };
+      filterName = req.query.brand;
+  } else {
+      neededFilter = { is_deleted: false, 'category.is_deleted': false };
+      filterName = '';
   }
-}
+
+
+    // Adjust your aggregation pipeline to include $skip and $limit stages based on pageNumber
+    const aggregationPipeline = [
+      {
+        $lookup: {
+          from: 'categories',
+          localField: 'category',
+          foreignField: '_id',
+          as: 'category'
+        }
+      },
+      {
+        $lookup: {
+          from: 'offers',
+          localField: 'offer',
+          foreignField: '_id',
+          as: 'offer'
+        }
+      },
+      {
+        $unwind: '$category'
+      },
+      {
+        $lookup: {
+          from: 'offers',
+          localField: 'category.offer',
+          foreignField: '_id',
+          as: 'category.offer'
+        }
+      },
+      {
+        $match: neededFilter
+      },
+      {
+        $facet: {
+          products: [
+            {
+              $skip: (pageNumber - 1) * productsPerPage // Calculate the skip value
+            },
+            {
+              $limit: productsPerPage
+            }
+          ],
+          totalPages: [
+            {
+              $count: 'total'
+            }
+          ]
+        }
+      }
+    ];
+
+    const prdt = await Product.aggregate(aggregationPipeline);
+    const totalItems = prdt[0].totalPages[0].total;
+    const totalPages = Math.ceil(totalItems / productsPerPage);
+    const products = prdt[0].products;
+
+    res.render('users/shop', {
+      userExist,
+      user,
+      success: req.flash('success'),
+      error: req.flash('error'),
+      products,
+      totalPages,
+      categories,
+      brands,
+      totalItems,
+      filterName,
+      currentPage: pageNumber, // Pass the calculated currentPage
+    });
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
 
 
 exports.showAddToCart=async (req,res)=>{

@@ -10,44 +10,44 @@
 		<div class="breadcrumbs">
 			<div class="container">
 				<div class="row">
-                    <div class="col">
-                        <div id="flash-message" class="alert text-white text-center" style="display: none;position:fixed;z-index: 100;top: 50%;left: 50%;background:#23923D;"></div>
-                        <p class="bread"><span><a href="index.html">Home</a></span> / <span>Shop</span></p>
+					<div class="col">
+						<div id="flash-message" class="alert text-white text-center" style="display: none;position:fixed;z-index: 100;top: 50%;left: 50%;background:#23923D;"></div>
+						<p class="bread"><span><a href="index.html">Home</a></span> / <span>Shop</span></p>
 					</div>
 
-                    <% if (success && success.length > 0) { %>
-                        <div class="alert  text-white text-center" id="success-message" style="position: fixed; z-index: 100; top: 50%;left: 50%; background-color: #23923D;">
-                          <% success.forEach(function(message) { %>
-                            <p><%= message %></p>
-                          <% }); %>
-                        </div>
-                        <script>
-                            setTimeout(function() {
-                              var successMessage = document.getElementById('success-message');
-                              if (successMessage) {
-                                successMessage.style.display = 'none';
-                              }
-                            }, 2000); 
-                          </script>
-                        <% } %>
+					<% if (success && success.length > 0) { %>
+						<div class="alert  text-white text-center" id="success-message" style="position: fixed; z-index: 100; top: 50%;left: 50%; background-color: #23923D;">
+						  <% success.forEach(function(message) { %>
+							<p><%= message %></p>
+						  <% }); %>
+						</div>
+						<script>
+							setTimeout(function() {
+							  var successMessage = document.getElementById('success-message');
+							  if (successMessage) {
+								successMessage.style.display = 'none';
+							  }
+							}, 2000); 
+						  </script>
+						<% } %>
 
-                       
-                    <% if (error && error.length > 0) { %>
-                        <div class="alert alert-danger text-center" id="error-message">
-                          <% error.forEach(function(message) { %>
-                            <p><%= message %></p>
-                          <% }); %>
-                        </div>
-                        <script>
-                            setTimeout(function() {
-                              var errorMessage = document.getElementById('error-message');
-                              if (errorMessage) {
-                                errorMessage.style.display = 'none';
-                              }
-                            }, 2000); 
-                          </script>
-                        <% } %>
-                        
+					   
+					<% if (error && error.length > 0) { %>
+						<div class="alert alert-danger text-center" id="error-message">
+						  <% error.forEach(function(message) { %>
+							<p><%= message %></p>
+						  <% }); %>
+						</div>
+						<script>
+							setTimeout(function() {
+							  var errorMessage = document.getElementById('error-message');
+							  if (errorMessage) {
+								errorMessage.style.display = 'none';
+							  }
+							}, 2000); 
+						  </script>
+						<% } %>
+						
 				</div>
 			</div>
 		</div>
@@ -70,9 +70,6 @@
                                             <li><a href="/shop?brand=<%= encodeURIComponent(brand) %>"><%= brand.toUpperCase() %></a></li>
                                         <% }); %>
                                     </ul>
-                                    
-                                    
-
 								</div>
 							</div>
                             <div class="col-sm-12">
@@ -87,20 +84,17 @@
                                     </form>
                                 </div>
                             </div>
-<!-- Filter by Category -->
-<div class="col-sm-12">
-    <div class="side border mb-1">
-        <h3>Category</h3>
-        <ul>
-            <% categories.forEach((category) => { %>
-                <li><a href="/shop?category=<%= encodeURIComponent(category.name) %>"><%= category.name.toUpperCase() %></a></li>
-            <% }); %>
-        </ul>
-    </div>
-</div>
-
-
-
+                            <!-- Filter by Category -->
+                            <div class="col-sm-12">
+                                <div class="side border mb-1">
+                                    <h3>Category</h3>
+                                    <ul>
+                                        <% categories.forEach((category) => { %>
+                                            <li><a href="/shop?category=<%= encodeURIComponent(category.name) %>"><%= category.name.toUpperCase() %></a></li>
+                                        <% }); %>
+                                    </ul>
+                                </div>
+                            </div>
 						</div>
 					</div>
 
@@ -113,113 +107,108 @@
                         <div class="row row-pb-md">
                             <% products.forEach((prdct) => { %>
                                 <% if (!prdct.is_deleted) { %>
-                                    <div class="col-lg-3 mb-4 text-center">
-                                        <div class="product-entry border">
-                                            <div class="prod-img">
-                                                <a class="WishlistBtn" style="position: absolute; top: 0; z-index: 2; background-color: white;" href="#" data-product-id="<%= prdct._id %>">
-                                                    <i class="far fa-heart"></i>
-                                                </a>                                              
-                                                <a href="/shop/<%= prdct._id %>">
-                                                    <img src="<%= prdct.images[0] %>" class="img-fluid" alt="<%= prdct.title.toUpperCase()%>">
-                                                </a>
+                                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                                        <div class="card h-100">
+                                            <a class="WishlistBtn" style="position: absolute; top: 0; z-index: 2; background-color: white;" href="#" data-product-id="<%= prdct._id %>">
+                                                <i class="far fa-heart"></i>
+                                            </a>  
+                                            <!-- Product Image -->
+                                            <a href="/shop/<%= prdct._id %>">
+                                            <img src="<%= prdct.images[0] %>" class="card-img-top" alt="<%= prdct.title.toUpperCase() %>">
+                                            </a>
+                                            <div class="card-body">
+                                                <!-- Product Title -->
+                                                <h5 class="card-title"><%= prdct.title.toUpperCase() %></h5>
+
+                                                <!-- Product Category -->
+                                                <p class="card-text text-secondary"><%= prdct.category.name %></p>
+
+                                                <!-- Product Brand -->
+                                                <h5 class="card-subtitle mb-2 text-secondary"><%= prdct.brand.toUpperCase() %></h5>
+
+                                                <!-- Product Price -->
+                                                <% if (prdct.category.offer.length && prdct.category.offer[0].status === 'Available' && !prdct.category.offer[0].is_deleted) { %>
+                                                  <h4><%= prdct.name %></h4>
+                                                  <h6 style="text-decoration: line-through; color: #999;">&#8377;<%= prdct.regularPrice %></h6>
+                                                  <h4 class="text-success"><%= prdct.category.offer[0].discount %>%
+                                                    <%= prdct.category.offer[0].name %> offer on <%= prdct.category.name %></h4>
+                                                  <h3 class="text-success">&#8377;<%= prdct.categoryOfferPrice %>/- only</h3>
+                                                <% } else if (prdct.offerPrice !== 0 && prdct.offer[0].status === 'Available' && !prdct.offer[0].is_deleted) { %>
+                                                  <h4><%= prdct.name %></h4>
+                                                  <h6 style="text-decoration: line-through; color: #999;">&#8377;<%= prdct.regularPrice %></h6>
+                                                  <h4 class="text-success"><%= prdct.offer[0].discount %>%
+                                                    <%= prdct.offer[0].name %> off</h4>
+                                                  <h3 class="text-success">&#8377;<%= prdct.offerPrice %>/- only</h3>
+                                                <% } else { %>
+                                                  <h4><%= prdct.name %></h4>
+                                                  <h3>&#8377;<%= prdct.regularPrice %></h3>
+                                                <% } %>
                                             </div>
-                                            <div class="desc">
-                                                <p class="text-secondary"><%= prdct.category.name%></p>
-                                                <h2><%= prdct.title.toUpperCase() %></h2>
-                                                <h4 class="text-secondary"><%= prdct.brand.toUpperCase() %></h4>
-                                                <!-- no offer time -->
-                                                <% if(prdct.category.offer.length && prdct.category.offer[0].status === 'Available' && prdct.category.offer[0].is_deleted === false){ %>
-                                                    <h4><%= prdct.name %></h4>
-                                                    <h3 style="text-decoration: line-through; color: #999;">&#8377;<%= prdct.regularPrice %></h3>
-                                                    <h4 class="text-success"><%= prdct.category.offer[0].discount  %>% <%= prdct.category.offer[0].name %> offer on <%= prdct.category.name %></h4>
-                                                    <h3 class="text-success">&#8377;<%= prdct.categoryOfferPrice %>/- only</h3>
-                                                <% }else if(prdct.offerPrice !==0 && prdct.offer[0].status === 'Available' && prdct.offer[0].is_deleted === false) { %>
-                                                    <h4><%= prdct.name %></h4>
-                                                    <h3 style="text-decoration: line-through; color: #999;">&#8377;<%= prdct.regularPrice %></h3>
-                                                    <h4 class="text-success"><%= prdct.offer[0].discount  %>% <%= prdct.offer[0].name %> off</h4>
-                                                    <h3 class="text-success">&#8377;<%= prdct.offerPrice %>/- only</h3>
-                                                <% }else{ %>
-                                                    <h4><%= prdct.name %></h4>
-                                                    <h3>&#8377;<%= prdct.regularPrice %></h3>
-                                                <% } %>   
-                                           
+
+                                            <!-- Add to Wishlist -->
+                                            <div class="card-footer">
+                                                <% if (prdct.stock === 0) { %>
+                                                  <p class="text-danger">Out of Stock!</p>
+                                                <% } else { %>
+                                                  <form action="/cart/<%= prdct._id %>" method="post">
+                                                    <input type="hidden" name="productId" value="<%= prdct._id %>">
+                                                    <button type="submit" class="btn btn-dark btn-sm">
+                                                      <i class="fas fa-shopping-cart"></i> Add to Cart
+                                                    </button>
+                                                  </form>
+                                                <% } %>
                                             </div>
-                                            <% if(prdct.stock===0){ %>
-                                                <p class="text-danger">Out of Stock!</p>
-                                            <% } else { %>
-                                                <div class="icons">
-                                                    <form action="/cart/<%= prdct._id %>" method="post">
-                                                        <input type="hidden" name="productId" value="<%= prdct._id %>">
-                                                        <button class="btn btn-dark" type="submit" onclick="storeScrollPosition();">
-                                                            <i class="fa fa-shopping-cart"></i> Add to Cart
-                                                    </form>
-                                                    <!-- <a class="btn btn-success" href="#">
-                                                        <i class="fa fa-shopping-bag"></i> Shop Now
-                                                    </a> -->
-                                                </div>
-                                            <% } %>
                                         </div>
                                     </div>
                                 <% } %>
                             <% }) %>
                         </div>
 
-
-						<!-- Pagination -->
-					   <div class="pageination">
+                        <!-- Pagination -->
+                        <div class="pageination">
                             <nav aria-label="Page navigation example">
-                                <ul class="pagination justify-content-center">
-                                    <!-- <li class="page-item">
-                                        <a class="page-link" href="#" aria-label="Previous">
-                                            <i class="ti-angle-double-left"></i>
-                                        </a>
-                                    </li> -->
-                        
-                                    <% for (let page = 1; page <= totalPages; page++) { %>
-                                        <li class="page-item">
-                                            <form action="/shop" method="post">
-                                                <input type="hidden" name="pageNumber" value="<%= page-1 %>">
-                                                <button class="page-link" type="submit"><%= page  %></button>
-                                            </form>
-                                        </li>
-                                    <% } %>
-                        
-                                    <!-- <li class="page-item">
-                                        <a class="page-link" href="#" aria-label="Next">
-                                            <i class="ti-angle-double-right"></i>
-                                        </a>
-                                    </li> -->
-                                </ul>
+                              <ul class="pagination justify-content-center">
+                                <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+                                  <a class="page-link" href="/shop?pageNumber=<%= currentPage - 1 %>" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                  </a>
+                                </li>
+                                <% for (let page = 1; page <= totalPages; page++) { %>
+                                  <li class="page-item <%= currentPage === page ? 'active' : '' %>">
+                                    <a class="page-link" href="/shop?pageNumber=<%= page %>"><%= page %></a>
+                                  </li>
+                                <% } %>
+                                <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+                                  <a class="page-link" href="/shop?pageNumber=<%= currentPage + 1 %>" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                  </a>
+                                </li>
+                              </ul>
                             </nav>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%- include('../layouts/footer') %>
 
-              
-
-					</div>
-				</div>
-			</div>
-		</div>
-            
-  
-
-		<%- include('../layouts/footer') %>
-
-<script>
-    // JavaScript for preserving scroll position
-    function storeScrollPosition() {
-        const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
-        localStorage.setItem('scrollPosition', scrollPosition);
-    }
-
-    window.addEventListener('load', function() {
-        const storedScrollPosition = localStorage.getItem('scrollPosition');
-        if (storedScrollPosition) {
-            window.scrollTo(0, storedScrollPosition);
-            localStorage.removeItem('scrollPosition');
+    <script>
+        // JavaScript for preserving scroll position
+        function storeScrollPosition() {
+            const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+            localStorage.setItem('scrollPosition', scrollPosition);
         }
-    });
-</script>
- <!-- Include jQuery -->
+
+        window.addEventListener('load', function() {
+            const storedScrollPosition = localStorage.getItem('scrollPosition');
+            if (storedScrollPosition) {
+                window.scrollTo(0, storedScrollPosition);
+                localStorage.removeItem('scrollPosition');
+            }
+        });
+    </script>
+
 <script>
     $(document).ready(function() {
         // Listen for clicks on the "Add to Wishlist" icons
@@ -259,6 +248,3 @@
   }, 2000);
 }
 </script>
-
-
-</body>

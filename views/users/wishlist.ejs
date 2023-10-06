@@ -30,6 +30,7 @@
               <div class="container">
             <div class="table-responsive">
               <table class="table">
+                <% if(!noWishlist){ %> 
                 <thead>
                   <tr>
                     <th>Product Details</th>
@@ -38,7 +39,6 @@
                   </tr>
                 </thead>
                 <tbody>
-                    <% if(!noWishlist){ %> 
                  <% wishlistDetails.forEach((wishItem,index)=>{  %> 
                   <tr>
                     <td>
@@ -74,10 +74,10 @@
                   </tr>
                   <% }) %>
                 </tbody>
+                <% }else{ %> 
+                  <h6><center>no items</center></h6>
+                  <% } %>
             </table>
-            <% }else{ %> 
-              <h6><center>no items</center></h6>
-              <% } %>
             </div>
           </div>
         </div>

@@ -24,43 +24,43 @@
 
             
 
-            <!-- Wallet Transaction History -->
-            <div class="row mt-4">
-                <div class="col-md-12">
-                    <h3>Wallet Transaction History</h3>
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Amount (INR)</th>
-                                <th>Message</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% 
-if (walletHistory.length) {
-    walletHistory.forEach(payment => {
-        %>
-        <tr>
-            <td><%= payment.date.toDateString() %></td>
-                <td class="text">&#8377;<%= payment.amount %>/-</td>
-                <td class="text"><%= payment.message %></td>
-                <%})%>
-<% } else {
-    %>
-    <tr>
-        <td colspan="3">
-            <p>No Transactions yet!</p>
-        </td>
-    </tr>
-    <%  
-}
-%>
+       <!-- Wallet Transaction History -->
+<div class="row mt-4">
+    <div class="col-md-12">
+        <h3>Wallet Transaction History</h3>
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Amount (INR)</th>
+                        <th>Message</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% 
+                    if (walletHistory.length) {
+                        walletHistory.forEach(payment => {
+                    %>
+                    <tr>
+                        <td><%= payment.date.toDateString() %></td>
+                        <td class="text">&#8377;<%= payment.amount %>/-</td>
+                        <td class="text"><%= payment.message %></td>
+                    </tr>
+                    <% }) %>
+                    <% } else { %>
+                    <tr>
+                        <td colspan="3">
+                            <p>No Transactions yet!</p>
+                        </td>
+                    </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
-                        </tbody>
-                    </table>
-                </div>
-            </div>
         </section>
     </div>
 </div>
