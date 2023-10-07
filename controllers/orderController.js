@@ -267,6 +267,7 @@ exports.showCheckout = catchAsync(async (req,res) => {
         }
       }
     ]);
+    console.log(myOrders[0]);
   res.render('users/account/orders',{
       userExist,user,orders:myOrders,success:req.flash('success')
   }); 
@@ -417,7 +418,7 @@ exports.orderDetails=async (req,res)=>{
             }
           }
         ]);
-
+        console.log(orderDetails);
       if(req.body.orderId){
         res.render('users/account/orderDetails',{userExist,user,details:orderDetails})
       }
@@ -456,11 +457,7 @@ exports.getOrderList =  catchAsync(async (req,res) => {
     },
   ]);
 
-// orders.forEach((order)=>{
-//     order.deliveryAddress.userId = undefined
-//     order.deliveryAddress._id = undefined,
-//     order.deliveryAddress[0]._id = undefined
-// })
+ 
 res.render('admin/orders/index',{userExist,user,orders,success:req.flash('success')});
 })
 

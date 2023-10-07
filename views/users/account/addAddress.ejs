@@ -36,8 +36,8 @@
             
             <%- include('../../layouts/profile_sidebar') -%>
 
-            <!-- Main Content -->
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+              <!-- Main Content -->
+              <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
                 
                 <form action="/profile/addAddress" method="post" class="colorlib-form">
                   <h4>Create your Cart Address</h4> <br>
@@ -47,7 +47,8 @@
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label for="fname">Name</label>
-                                <input type="text" id="fname" name="name" minlength="3"  class="form-control" placeholder="Your fullname" required>
+                                <input type="text" id="name" name="name" class="form-control" placeholder="Your fullname">
+                                <small id="nameErr" class="text-danger"></small>
                             </div>
                         </div>
                         
@@ -55,28 +56,32 @@
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="phone">phone</label>
-                            <input type="number" id="phone" name="phone" minlength="10" maxlength="10" class="form-control" placeholder="Enter Your phone" required>
-                      </div>
+                            <input type="number" id="phone" name="phone" class="form-control" placeholder="Enter your phone">
+                            <small id="phoneErr" class="text-danger"></small>
+                        </div>
                     </div>
                       
                 
                    <div class="col-md-12">
                             <div class="form-group">
-                                <label for="pincode">pincode</label>
-                            <input type="number" id="pincode" name="pincode" minlength="6" maxlength=6 class="form-control" placeholder="Enter your pincode" required>
+                            <label for="pincode">pincode</label>
+                            <input type="number" id="pincode" name="pincode" class="form-control" placeholder="Enter your pincode">
+                            <small id="pinErr" class="text-danger"></small>
                       </div>
                    </div>
                 
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="locality">Locality</label>
-                                <input type="text" id="locality" name="locality" class="form-control" placeholder="locality" required>
+                                <input type="text" id="locality" name="locality" class="form-control" placeholder="locality">
+                                <small id="localityErr" class="text-danger"></small>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="city">district</label>
-                                <input type="text" id="district" name="district" class="form-control" placeholder="district" required>
+                                <input type="text" id="district" name="district" class="form-control" placeholder="district">
+                                <small id="districtErr" class="text-danger"></small>
                             </div>
                         </div>
                     
@@ -84,7 +89,8 @@
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label for="email">Address</label>
-                                <input type="text" id="address" name="address" class="form-control" placeholder="(house name,post,street)" required>
+                                <input type="text" id="address" name="address" class="form-control" placeholder="(house name,post,street)">
+                                <small id="addressErr" class="text-danger"></small>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -96,34 +102,23 @@
                         
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="number">phone</label>
-                                <input type="number" id="phone" name="altNo" minlength="10" maxlength="10" class="form-control" placeholder="(optional)">
-                          </div>
+                                <label for="number">Alternate phone</label>
+                                <input type="number" id="phone" name="altNo" class="form-control" min="10" placeholder="(optional)">
+                            </div>
                         </div>
                         
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label for="state">Select state</label>
-                                <div class="form-field">
-                                    <i class="icon icon-arrow-down3"></i>
-                                    <select name="state" id="state" class="form-control">
-                                        <option value="#">Select state</option>
-                                        <option value="Kerala">Kerala</option>
-                                        <option value="Tamil Nadu">Tamil Nadu</option>
-                                        <option value="Karnataka">Karnataka</option>
-                                        <option value="Odissia">Odissia</option>
-                                        <option value="Goa">Goa</option>
-                                        <option value="Maharashtra">Maharashtra</option>
-                                    </select>
-                                </div>
+                                <label for="state">state</label>
+                                <input type="text" id="state" name="state" class="form-control" placeholder="state">
+                                <small id="stateErr" class="text-danger"></small>
                             </div>
                         </div>
                         
-                        
 
                         <span>
-                            <button type="submit" class="btn btn-primary">Add</button>
-                            <a href="/profile/address" class="btn btn-light">Cancel</a>
+                            <button type="submit" onclick="return validateNewAddress()" class="btn btn-primary">Add</button>
+                            <a onclick="return goBack()" class="btn btn-light">Cancel</a>
                         </span>
 
                         
@@ -135,13 +130,19 @@
             </main>
         </div>
     </div>
+    <script>
+        function goBack() {
+            window.history.back()
+        }
+      </script>
+<script src="/validations/addressValidation.js"></script>
+<script>
+    function restrictToNumbers(event) {
+            const input = event.target;
+            const currentValue = input.value;
+            const newValue = currentValue.replace(/[^0-9]/g, '');
+            input.value = newValue;
+    }
+</script>
 
-
-    
-    <!-- Include Bootstrap JS and jQuery -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    
 </body>
-</html>

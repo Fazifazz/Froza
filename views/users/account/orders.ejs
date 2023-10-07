@@ -37,11 +37,17 @@
                         <div class="card-body">
                           <div class="row">
                             <div class="col-md-12 col-lg-3 col-xl-3 mb-4 mb-lg-0">
-                              <h6>Order Id</h6>
+                              <h6><b>Order Id</b></h6>
                               <p><%= order.orderId  %></p>
                               <h6 class="text-truncate mb-4 mb-md-0">
-                                Ordered at:<p> <%= order.orderDate.toDateString()  %> </p>
+                                <b>Ordered at:</b><p> <%= order.orderDate.toDateString()  %> </p>
                               </h6>
+                              <p><b>shipped to:</b><%=order.deliveryAddress[0].name%><br>
+                                <%=order.deliveryAddress[0].locality%> <br>                                
+                                <%=order.deliveryAddress[0].phone%> ,                                
+                                <%=order.deliveryAddress[0].pincode%>,                                 
+                                <%=order.deliveryAddress[0].address%>                                 
+                              </p>
                             </div>
                           
                             <div class="col-md-6 col-lg-6 col-xl-6">
