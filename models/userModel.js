@@ -92,14 +92,6 @@ const userSchema = new mongoose.Schema({
         type: String,
         readOnly: true
     },
-    is_deducted:{
-        type:Boolean,
-        default:false
-    },
-    is_credited:{
-        type:Boolean,
-        default:false
-    }
 },
 {
     timestamps:true,

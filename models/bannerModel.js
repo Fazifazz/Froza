@@ -4,7 +4,6 @@ const bannerSchema =new  mongoose.Schema({
     heading:{
         type: String,
         required: true
-        // unique: true
     },
     images:{
         type: [String],

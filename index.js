@@ -33,7 +33,6 @@ app.use('/', require('./routes/userRoutes'))
 app.use('/admin', require('./routes/adminRoutes'))
 
 
-
 const PORT = process.env.PORT 
 
 app.listen(PORT, () => console.log('Server running...')) 

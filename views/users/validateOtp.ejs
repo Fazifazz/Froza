@@ -22,10 +22,10 @@
                 <div class="mb-3 text-center">
                     <p class="otp-timer" id="otpTimer">Time Left: <span id="timerValue">0:30</span></p>
                 </div>
-                <button class="btn w-100 login_submit">submit</button>
+                <button class="btn btn-secondary w-100 login_submit">submit</button>
             </form>
             <form action="/resendOtp?_method=PATCH" method="post">
-                <button type="submit" class="btn btn-secondary w-100 mt-2" >Resend OTP</button>    
+                <button type="submit" class="mt-2" style="border: none;" >Resend OTP</button>    
             </form>
             <% }else{ %>
                 <form action="/forgetVerifyOtp" method="post">
